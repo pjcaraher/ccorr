@@ -1,0 +1,258 @@
+<html>
+<head>
+</head>
+
+<body>
+<a href="http://172.20.10.4:9999/logout">logout</a>
+<h1>Edit Shipment</h1>
+	<form action="http://172.20.10.4:9999/updateShipment" method="POST">
+		<input type="hidden" name="shipmentId" value="{{ Shipment.id}}"/>
+		Description: <input type="text" name="description" value="{{ Shipment.description }}"/><br>
+		Shipped Date: <select name="shipped_month">
+					<option value="None">None</option>
+					<option value="01" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "01" %}selected{% endif %}{% endif %}>Jan</option>
+					<option value="02" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "02" %}selected{% endif %}{% endif %}>Feb</option>
+					<option value="03" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "03" %}selected{% endif %}{% endif %}>Mar</option>
+					<option value="04" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "04" %}selected{% endif %}{% endif %}>Apr</option>
+					<option value="05" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "05" %}selected{% endif %}{% endif %}>May</option>
+					<option value="06" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "06" %}selected{% endif %}{% endif %}>Jun</option>
+					<option value="07" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "07" %}selected{% endif %}{% endif %}>Jul</option>
+					<option value="08" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "08" %}selected{% endif %}{% endif %}>Aug</option>
+					<option value="09" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "09" %}selected{% endif %}{% endif %}>Sep</option>
+					<option value="10" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "10" %}selected{% endif %}{% endif %}>Oct</option>
+					<option value="11" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "11" %}selected{% endif %}{% endif %}>Nov</option>
+					<option value="12" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "12" %}selected{% endif %}{% endif %}>Dec</option>
+				</select> /
+				<select name="shipped_day">
+<option value="1" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "1" %}selected{% endif %}{% endif %}>1</option>
+<option value="2" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "2" %}selected{% endif %}{% endif %}>2</option>
+<option value="3" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "3" %}selected{% endif %}{% endif %}>3</option>
+<option value="4" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "4" %}selected{% endif %}{% endif %}>4</option>
+<option value="5" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "5" %}selected{% endif %}{% endif %}>5</option>
+<option value="6" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "6" %}selected{% endif %}{% endif %}>6</option>
+<option value="7" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "7" %}selected{% endif %}{% endif %}>7</option>
+<option value="8" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "8" %}selected{% endif %}{% endif %}>8</option>
+<option value="9" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "9" %}selected{% endif %}{% endif %}>9</option>
+<option value="10" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "10" %}selected{% endif %}{% endif %}>10</option>
+<option value="11" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "11" %}selected{% endif %}{% endif %}>11</option>
+<option value="12" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "12" %}selected{% endif %}{% endif %}>12</option>
+<option value="13" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "13" %}selected{% endif %}{% endif %}>13</option>
+<option value="14" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "14" %}selected{% endif %}{% endif %}>14</option>
+<option value="15" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "15" %}selected{% endif %}{% endif %}>15</option>
+<option value="16" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "16" %}selected{% endif %}{% endif %}>16</option>
+<option value="17" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "17" %}selected{% endif %}{% endif %}>17</option>
+<option value="18" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "18" %}selected{% endif %}{% endif %}>18</option>
+<option value="19" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "19" %}selected{% endif %}{% endif %}>19</option>
+<option value="20" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "20" %}selected{% endif %}{% endif %}>20</option>
+<option value="21" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "21" %}selected{% endif %}{% endif %}>21</option>
+<option value="22" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "22" %}selected{% endif %}{% endif %}>22</option>
+<option value="23" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "23" %}selected{% endif %}{% endif %}>23</option>
+<option value="24" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "24" %}selected{% endif %}{% endif %}>24</option>
+<option value="25" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "25" %}selected{% endif %}{% endif %}>25</option>
+<option value="26" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "26" %}selected{% endif %}{% endif %}>26</option>
+<option value="27" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "27" %}selected{% endif %}{% endif %}>27</option>
+<option value="28" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "28" %}selected{% endif %}{% endif %}>28</option>
+<option value="29" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "29" %}selected{% endif %}{% endif %}>29</option>
+<option value="30" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "30" %}selected{% endif %}{% endif %}>30</option>
+<option value="31" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%d") == "31" %}selected{% endif %}{% endif %}>31</option>
+				</select> /
+				<select name="shipped_year">
+<option value="2017" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%Y") == "2017" %}selected{% endif %}{% endif %}>2017</option>
+<option value="2018" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%Y") == "2018" %}selected{% endif %}{% endif %}>2018</option>
+<option value="2019" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%Y") == "2019" %}selected{% endif %}{% endif %}>2019</option>
+<option value="2020" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%Y") == "2020" %}selected{% endif %}{% endif %}>2020</option>
+				</select>
+		Time: <select name="shipped_hour">
+<option value="1" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "1" %}selected{% endif %}{% endif %}>1</option>
+<option value="2" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "2" %}selected{% endif %}{% endif %}>2</option>
+<option value="3" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "3" %}selected{% endif %}{% endif %}>3</option>
+<option value="4" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "4" %}selected{% endif %}{% endif %}>4</option>
+<option value="5" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "5" %}selected{% endif %}{% endif %}>5</option>
+<option value="6" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "6" %}selected{% endif %}{% endif %}>6</option>
+<option value="7" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "7" %}selected{% endif %}{% endif %}>7</option>
+<option value="8" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "8" %}selected{% endif %}{% endif %}>8</option>
+<option value="9" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "9" %}selected{% endif %}{% endif %}>9</option>
+<option value="10" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "10" %}selected{% endif %}{% endif %}>10</option>
+<option value="11" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "11" %}selected{% endif %}{% endif %}>11</option>
+<option value="12" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%-I") == "12" %}selected{% endif %}{% endif %}>12</option>
+				</select> : 
+				<select name="shipped_minute">
+<option value="00" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%M") == "00" %}selected{% endif %}{% endif %}>00</option>
+<option value="15" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%M") == "15" %}selected{% endif %}{% endif %}>15</option>
+<option value="30" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%M") == "30" %}selected{% endif %}{% endif %}>30</option>
+<option value="45" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%M") == "45" %}selected{% endif %}{% endif %}>45</option>
+				</select>  
+				<select name="shipped_meridian">
+<option value="AM" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%p") == "AM" %}selected{% endif %}{% endif %}>AM</option>
+<option value="PM" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%p") == "PM" %}selected{% endif %}{% endif %}>PM</option>
+				</select></br>
+		Expected Date: <select name="expected_month">
+					<option value="None">None</option>
+					<option value="01" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "01" %}selected{% endif %}{% endif %}>Jan</option>
+					<option value="02" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "02" %}selected{% endif %}{% endif %}>Feb</option>
+					<option value="03" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "03" %}selected{% endif %}{% endif %}>Mar</option>
+					<option value="04" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "04" %}selected{% endif %}{% endif %}>Apr</option>
+					<option value="05" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "05" %}selected{% endif %}{% endif %}>May</option>
+					<option value="06" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "06" %}selected{% endif %}{% endif %}>Jun</option>
+					<option value="07" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "07" %}selected{% endif %}{% endif %}>Jul</option>
+					<option value="08" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "08" %}selected{% endif %}{% endif %}>Aug</option>
+					<option value="09" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "09" %}selected{% endif %}{% endif %}>Sep</option>
+					<option value="10" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "10" %}selected{% endif %}{% endif %}>Oct</option>
+					<option value="11" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "11" %}selected{% endif %}{% endif %}>Nov</option>
+					<option value="12" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%m") == "12" %}selected{% endif %}{% endif %}>Dec</option>
+				</select> /
+				<select name="expected_day">
+<option value="1" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "1" %}selected{% endif %}{% endif %}>1</option>
+<option value="2" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "2" %}selected{% endif %}{% endif %}>2</option>
+<option value="3" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "3" %}selected{% endif %}{% endif %}>3</option>
+<option value="4" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "4" %}selected{% endif %}{% endif %}>4</option>
+<option value="5" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "5" %}selected{% endif %}{% endif %}>5</option>
+<option value="6" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "6" %}selected{% endif %}{% endif %}>6</option>
+<option value="7" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "7" %}selected{% endif %}{% endif %}>7</option>
+<option value="8" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "8" %}selected{% endif %}{% endif %}>8</option>
+<option value="9" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "9" %}selected{% endif %}{% endif %}>9</option>
+<option value="10" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "10" %}selected{% endif %}{% endif %}>10</option>
+<option value="11" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "11" %}selected{% endif %}{% endif %}>11</option>
+<option value="12" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "12" %}selected{% endif %}{% endif %}>12</option>
+<option value="13" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "13" %}selected{% endif %}{% endif %}>13</option>
+<option value="14" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "14" %}selected{% endif %}{% endif %}>14</option>
+<option value="15" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "15" %}selected{% endif %}{% endif %}>15</option>
+<option value="16" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "16" %}selected{% endif %}{% endif %}>16</option>
+<option value="17" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "17" %}selected{% endif %}{% endif %}>17</option>
+<option value="18" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "18" %}selected{% endif %}{% endif %}>18</option>
+<option value="19" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "19" %}selected{% endif %}{% endif %}>19</option>
+<option value="20" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "20" %}selected{% endif %}{% endif %}>20</option>
+<option value="21" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "21" %}selected{% endif %}{% endif %}>21</option>
+<option value="22" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "22" %}selected{% endif %}{% endif %}>22</option>
+<option value="23" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "23" %}selected{% endif %}{% endif %}>23</option>
+<option value="24" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "24" %}selected{% endif %}{% endif %}>24</option>
+<option value="25" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "25" %}selected{% endif %}{% endif %}>25</option>
+<option value="26" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "26" %}selected{% endif %}{% endif %}>26</option>
+<option value="27" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "27" %}selected{% endif %}{% endif %}>27</option>
+<option value="28" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "28" %}selected{% endif %}{% endif %}>28</option>
+<option value="29" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "29" %}selected{% endif %}{% endif %}>29</option>
+<option value="30" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "30" %}selected{% endif %}{% endif %}>30</option>
+<option value="31" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%d") == "31" %}selected{% endif %}{% endif %}>31</option>
+				</select> /
+				<select name="expected_year">
+<option value="2017" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%Y") == "2017" %}selected{% endif %}{% endif %}>2017</option>
+<option value="2018" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%Y") == "2018" %}selected{% endif %}{% endif %}>2018</option>
+<option value="2019" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%Y") == "2019" %}selected{% endif %}{% endif %}>2019</option>
+<option value="2020" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%Y") == "2020" %}selected{% endif %}{% endif %}>2020</option>
+				</select>
+		Time: <select name="expected_hour">
+<option value="1" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "1" %}selected{% endif %}{% endif %}>1</option>
+<option value="2" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "2" %}selected{% endif %}{% endif %}>2</option>
+<option value="3" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "3" %}selected{% endif %}{% endif %}>3</option>
+<option value="4" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "4" %}selected{% endif %}{% endif %}>4</option>
+<option value="5" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "5" %}selected{% endif %}{% endif %}>5</option>
+<option value="6" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "6" %}selected{% endif %}{% endif %}>6</option>
+<option value="7" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "7" %}selected{% endif %}{% endif %}>7</option>
+<option value="8" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "8" %}selected{% endif %}{% endif %}>8</option>
+<option value="9" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "9" %}selected{% endif %}{% endif %}>9</option>
+<option value="10" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "10" %}selected{% endif %}{% endif %}>10</option>
+<option value="11" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "11" %}selected{% endif %}{% endif %}>11</option>
+<option value="12" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%-I") == "12" %}selected{% endif %}{% endif %}>12</option>
+				</select> : 
+				<select name="expected_minute">
+<option value="00" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%M") == "00" %}selected{% endif %}{% endif %}>00</option>
+<option value="15" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%M") == "15" %}selected{% endif %}{% endif %}>15</option>
+<option value="30" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%M") == "30" %}selected{% endif %}{% endif %}>30</option>
+<option value="45" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%M") == "45" %}selected{% endif %}{% endif %}>45</option>
+				</select>  
+				<select name="expected_meridian">
+<option value="AM" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%p") == "AM" %}selected{% endif %}{% endif %}>AM</option>
+<option value="PM" {% if Shipment.expectedDate %}{% if Shipment.expectedDate.strftime("%p") == "PM" %}selected{% endif %}{% endif %}>PM</option>
+				</select></br>
+		Arrived Date: <select name="arrival_month">
+					<option value="None">None</option>
+					<option value="01" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "01" %}selected{% endif %}{% endif %}>Jan</option>
+					<option value="02" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "02" %}selected{% endif %}{% endif %}>Feb</option>
+					<option value="03" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "03" %}selected{% endif %}{% endif %}>Mar</option>
+					<option value="04" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "04" %}selected{% endif %}{% endif %}>Apr</option>
+					<option value="05" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "05" %}selected{% endif %}{% endif %}>May</option>
+					<option value="06" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "06" %}selected{% endif %}{% endif %}>Jun</option>
+					<option value="07" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "07" %}selected{% endif %}{% endif %}>Jul</option>
+					<option value="08" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "08" %}selected{% endif %}{% endif %}>Aug</option>
+					<option value="09" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "09" %}selected{% endif %}{% endif %}>Sep</option>
+					<option value="10" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "10" %}selected{% endif %}{% endif %}>Oct</option>
+					<option value="11" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "11" %}selected{% endif %}{% endif %}>Nov</option>
+					<option value="12" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%m") == "12" %}selected{% endif %}{% endif %}>Dec</option>
+				</select> /
+				<select name="arrival_day">
+<option value="1" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "1" %}selected{% endif %}{% endif %}>1</option>
+<option value="2" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "2" %}selected{% endif %}{% endif %}>2</option>
+<option value="3" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "3" %}selected{% endif %}{% endif %}>3</option>
+<option value="4" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "4" %}selected{% endif %}{% endif %}>4</option>
+<option value="5" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "5" %}selected{% endif %}{% endif %}>5</option>
+<option value="6" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "6" %}selected{% endif %}{% endif %}>6</option>
+<option value="7" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "7" %}selected{% endif %}{% endif %}>7</option>
+<option value="8" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "8" %}selected{% endif %}{% endif %}>8</option>
+<option value="9" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "9" %}selected{% endif %}{% endif %}>9</option>
+<option value="10" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "10" %}selected{% endif %}{% endif %}>10</option>
+<option value="11" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "11" %}selected{% endif %}{% endif %}>11</option>
+<option value="12" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "12" %}selected{% endif %}{% endif %}>12</option>
+<option value="13" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "13" %}selected{% endif %}{% endif %}>13</option>
+<option value="14" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "14" %}selected{% endif %}{% endif %}>14</option>
+<option value="15" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "15" %}selected{% endif %}{% endif %}>15</option>
+<option value="16" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "16" %}selected{% endif %}{% endif %}>16</option>
+<option value="17" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "17" %}selected{% endif %}{% endif %}>17</option>
+<option value="18" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "18" %}selected{% endif %}{% endif %}>18</option>
+<option value="19" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "19" %}selected{% endif %}{% endif %}>19</option>
+<option value="20" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "20" %}selected{% endif %}{% endif %}>20</option>
+<option value="21" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "21" %}selected{% endif %}{% endif %}>21</option>
+<option value="22" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "22" %}selected{% endif %}{% endif %}>22</option>
+<option value="23" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "23" %}selected{% endif %}{% endif %}>23</option>
+<option value="24" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "24" %}selected{% endif %}{% endif %}>24</option>
+<option value="25" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "25" %}selected{% endif %}{% endif %}>25</option>
+<option value="26" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "26" %}selected{% endif %}{% endif %}>26</option>
+<option value="27" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "27" %}selected{% endif %}{% endif %}>27</option>
+<option value="28" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "28" %}selected{% endif %}{% endif %}>28</option>
+<option value="29" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "29" %}selected{% endif %}{% endif %}>29</option>
+<option value="30" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "30" %}selected{% endif %}{% endif %}>30</option>
+<option value="31" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%d") == "31" %}selected{% endif %}{% endif %}>31</option>
+				</select> /
+				<select name="arrival_year">
+<option value="2017" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%Y") == "2017" %}selected{% endif %}{% endif %}>2017</option>
+<option value="2018" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%Y") == "2018" %}selected{% endif %}{% endif %}>2018</option>
+<option value="2019" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%Y") == "2019" %}selected{% endif %}{% endif %}>2019</option>
+<option value="2020" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%Y") == "2020" %}selected{% endif %}{% endif %}>2020</option>
+				</select>
+		Time: <select name="arrival_hour">
+<option value="1" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "1" %}selected{% endif %}{% endif %}>1</option>
+<option value="2" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "2" %}selected{% endif %}{% endif %}>2</option>
+<option value="3" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "3" %}selected{% endif %}{% endif %}>3</option>
+<option value="4" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "4" %}selected{% endif %}{% endif %}>4</option>
+<option value="5" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "5" %}selected{% endif %}{% endif %}>5</option>
+<option value="6" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "6" %}selected{% endif %}{% endif %}>6</option>
+<option value="7" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "7" %}selected{% endif %}{% endif %}>7</option>
+<option value="8" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "8" %}selected{% endif %}{% endif %}>8</option>
+<option value="9" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "9" %}selected{% endif %}{% endif %}>9</option>
+<option value="10" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "10" %}selected{% endif %}{% endif %}>10</option>
+<option value="11" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "11" %}selected{% endif %}{% endif %}>11</option>
+<option value="12" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%-I") == "12" %}selected{% endif %}{% endif %}>12</option>
+				</select> : 
+				<select name="arrival_minute">
+<option value="00" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%M") == "00" %}selected{% endif %}{% endif %}>00</option>
+<option value="15" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%M") == "15" %}selected{% endif %}{% endif %}>15</option>
+<option value="30" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%M") == "30" %}selected{% endif %}{% endif %}>30</option>
+<option value="45" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%M") == "45" %}selected{% endif %}{% endif %}>45</option>
+				</select>  
+				<select name="arrival_meridian">
+<option value="AM" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%p") == "AM" %}selected{% endif %}{% endif %}>AM</option>
+<option value="PM" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%p") == "PM" %}selected{% endif %}{% endif %}>PM</option>
+				</select></br>
+		<input type="submit" value="Save"/>
+	</form>
+	<form action="http://172.20.10.4:9999/cancelEditShipment" method="POST">
+		<input type="submit" value="Cancel"/>
+	</form>
+<br>
+{% for Photo in Photos %}
+<img src="{{ Photo.src() }}" alt="{{ Photo.id }}" style="width:304px;height:228px;">
+<br>
+{{ Photo.photoDate.strftime("%-m/%d %-I:%M %p") }}
+<br>
+{% endfor %}
+</body>
+</html>

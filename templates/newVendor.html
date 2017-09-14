@@ -1,0 +1,15 @@
+<html>
+<head>
+</head>
+
+<body>
+<a href="http://172.20.10.4:9999/logout">logout</a>
+<h1>Edit Vendor</h1>
+	<form action="http://172.20.10.4:9999/createVendor" method="POST">
+		<input type="hidden" name="jobId" value="{{ Vendor.jobId}}"/>
+		<input type="text" name="name" value=""/>
+		<input type="submit" value="Save"/>
+	</form>
+</body>
+<a href="http://172.20.10.4:9999/cancel">Cancel</a>
+</html>

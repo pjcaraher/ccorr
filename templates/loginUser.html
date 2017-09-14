@@ -1,0 +1,19 @@
+<html>
+<head>
+</head>
+<title>CCorr Shipment Tracking Login</title>
+
+<body>
+{% if warning %}
+<h1 style="color:red;"">{{ warning }}</h1>
+{% endif %}
+<h1>Login</h1>
+	<form action="http://172.20.10.4:9999/loginUser" method="POST">
+		email : <input type="text" name="email" value=""/><br>
+		password : <input type="password" name="password" value=""/><br>
+		<input type="submit" value="Login"/>
+	</form>
+<br>
+<a href="http://172.20.10.4:9999/newUser">Create New User</a>
+</body>
+</html>

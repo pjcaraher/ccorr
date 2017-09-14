@@ -1,0 +1,20 @@
+<html>
+<head>
+</head>
+
+<body>
+<a href="http://172.20.10.4:9999/logout">logout</a>
+<h1>Select Job</h1>
+	<ul>
+		{% for Job in Jobs %}
+		<li>
+			{{ Job.name }}
+			<form action="http://172.20.10.4:9999/selectJob" method="POST">
+				<input type="hidden" name="jobId" value="{{ Job.id}}"/>
+				<input type="submit" value="Use"/>
+			</form>
+		</li>
+		{% endfor %}
+	</ul>
+</body>
+</html>

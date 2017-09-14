@@ -1,0 +1,45 @@
+<html>
+<head>
+</head>
+
+<body>
+<a href="http://172.20.10.4:9999/logout">logout</a>
+<h1>Shipments for Job <i>{{ Job.name }}</i></h1><br>
+	<ul>
+		{% for shipment in Shipments %}
+		<li>
+		Shipment from {{ shipment.vendor.name }} expected {{ shipment.expectedDate }} <form action="http://172.20.10.4:9999/editShipment" method="POST"> <input type="hidden" name="shipmentId" value="{{ shipment.id}}"/> <input type="submit" value="Edit"/>
+			</form>
+		</li>
+		{% endfor %}
+	</ul>
+<h1>New Shipment</h1>
+	{% for vendor in Job.vendors %}
+	New Shipment for {{ vendor.name }}
+	<form action="http://172.20.10.4:9999/newShipment" method="POST">
+		<input type="hidden" name="vendorId" value="{{ vendor.id}}"/>
+		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
+		<input type="submit" value="Create"/>
+	</form>
+	{% endfor %}
+</body>
+<h1>Vendors for Job <i>{{ Job.name }}</i></h1>
+<h1>Edit Vendors</h1>
+	<ul>
+		{% for vendor in Job.vendors %}
+		<li>
+			{{ vendor.name }}
+			<form action="http://172.20.10.4:9999/editVendor" method="POST">
+				<input type="hidden" name="vendorId" value="{{ vendor.id}}"/>
+				<input type="submit" value="Edit"/>
+			</form>
+		</li>
+		{% endfor %}
+	</ul>
+<h1>New Vendor</h1>
+	<form action="http://172.20.10.4:9999/newVendor" method="POST">
+		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
+		<input type="submit" value="Create"/>
+	</form>
+</body>
+</html>

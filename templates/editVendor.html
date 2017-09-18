@@ -3,13 +3,13 @@
 </head>
 
 <body>
-<a href="http://172.20.10.4:9999/logout">logout</a>
+<a href="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/logout">logout</a>
 <h1>Edit Vendor</h1>
-	<form action="http://172.20.10.4:9999/updateVendor" method="POST">
+	<form action="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/updateVendor" method="POST">
 		<input type="hidden" name="vendorId" value="{{ Vendor.id}}"/>
 		<input type="text" name="name" value="{{ Vendor.name}}"/>
 		<input type="submit" value="Update"/>
 	</form>
 </body>
-<a href="http://172.20.10.4:9999/cancel">Cancel</a>
+<a href="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/cancel">Cancel</a>
 </html>

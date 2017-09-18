@@ -3,9 +3,9 @@
 </head>
 
 <body>
-<a href="http://172.20.10.4:9999/logout">logout</a>
+<a href="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/logout">logout</a>
 <h1>Edit Shipment</h1>
-	<form action="http://172.20.10.4:9999/updateShipment" method="POST">
+	<form action="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/updateShipment" method="POST">
 		<input type="hidden" name="shipmentId" value="{{ Shipment.id}}"/>
 		Description: <input type="text" name="description" value="{{ Shipment.description }}"/><br>
 		Shipped Date: <select name="shipped_month">
@@ -244,7 +244,7 @@
 				</select></br>
 		<input type="submit" value="Save"/>
 	</form>
-	<form action="http://172.20.10.4:9999/cancelEditShipment" method="POST">
+	<form action="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/cancelEditShipment" method="POST">
 		<input type="submit" value="Cancel"/>
 	</form>
 <br>

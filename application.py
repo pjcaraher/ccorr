@@ -254,7 +254,7 @@ def login_user():
     try :
     	user = db.session.query(User).filter_by(email=email.lower()).first()
     except Exception as ex :
-    	print 'Exception fetching User id [' + str(email) + '] ' + str(ex)
+    	sys.stderr.write('Exception fetching User id [' + str(email) + '] ' + str(ex))
     	user = None
 
     if None == user :
@@ -728,6 +728,6 @@ def mobile_delete_shipment_photo():
     return Response(json.dumps(retVal),  mimetype='application/json')
 
 if __name__ == "__main__":
-	# application.run(debug=True,host='0.0.0.0',port=8888)
-	application.run(debug=True,host='172.20.10.4',port=9999)
+	application.run(debug=True,host='0.0.0.0',port=8888)
+	# application.run(debug=True,host='172.20.10.4',port=9999)
 

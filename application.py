@@ -614,6 +614,8 @@ def mobile_post_photo() :
                                 try :
                                 	db.session.add(shipmentPhoto)
                                 	db.session.commit()
+                                	# Synch up the Shipment object.
+                                	shipment = shipment_for_id(shipment.id)
                                 	retVal['id'] = shipmentPhoto.id
                                 	imageFilename = uri_for_shipment_photo_id(shipmentPhoto.id)
                                 	file = open(imageFilename, 'wb') # create a writable image and write the decoding result
@@ -709,6 +711,8 @@ def mobile_delete_shipment_photo():
     			try :
     				db.session.delete(shipmentPhoto)
     				db.session.commit()
+    				# Synch up the Shipment object.
+    				shipment = shipment_for_id(shipmentPhoto.shipmentId)
     				status = ERR_NONE
     			except Exception as ex:
     				db.session.rollback()

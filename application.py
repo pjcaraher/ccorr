@@ -667,6 +667,11 @@ def mobile_fetch_photos_for_shipment():
     		shipmentId = dict['shipmentId']
     		shipment = shipment_for_id(shipmentId)
     		if shipment :
+    			# Refresh the Shipment.   We had problems with photos
+    			# hanging around after they were deleted.
+    			db.session.expire(shipment)
+    			db.session.commit()
+    			shipment = shipment_for_id(shipmentId)
     			retVal['shipment'] = shipment.asDict()
     			photos = []
     			for photo in shipment.photos :
@@ -711,8 +716,6 @@ def mobile_delete_shipment_photo():
     			try :
     				db.session.delete(shipmentPhoto)
     				db.session.commit()
-    				# Synch up the Shipment object.
-    				shipment = shipment_for_id(shipmentPhoto.shipmentId)
     				status = ERR_NONE
     			except Exception as ex:
     				db.session.rollback()

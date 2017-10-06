@@ -111,10 +111,12 @@ class Job(db.Model):
 
 	def vendors(self):
 		userIds = []
+		vendors = []
 		result = db.session.connection().execute("Select user_id from UserJob, User where User.id = UserJob.user_id and User.permissionId = 4 and UserJob.job_id = " + str(self.id))
 		for row in result :
 			userIds.append(row[0])
-		vendors = db.session.query(User).filter(User.id.in_(userIds)).all()
+		if len(userIds) > 0 :
+			vendors = db.session.query(User).filter(User.id.in_(userIds)).all()
 		return vendors
 
 	def asDict(self):

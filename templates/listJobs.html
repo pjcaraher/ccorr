@@ -3,13 +3,21 @@
 </head>
 
 <body>
-<a href="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/logout">logout</a>
+<a href="http://0.0.0.0:8888/logout">logout</a>
+{% if User %}
+        {% if User.hasPermission(1) %}
+                <br><a href="http://0.0.0.0:8888/newJob">Create New Job</a>
+        {% endif %}
+        {% if User.hasPermission(2) %}
+                <br><a href="http://0.0.0.0:8888/newUser">Create New User</a>
+        {% endif %}
+{% endif %}
 <h1>Select Job</h1>
 	<ul>
 		{% for Job in Jobs %}
 		<li>
 			{{ Job.name }}
-			<form action="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/selectJob" method="POST">
+			<form action="http://0.0.0.0:8888/selectJob" method="POST">
 				<input type="hidden" name="jobId" value="{{ Job.id}}"/>
 				<input type="submit" value="Use"/>
 			</form>

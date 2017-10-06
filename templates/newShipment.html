@@ -3,9 +3,13 @@
 </head>
 
 <body>
-<a href="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/logout">logout</a>
+<a href="http://0.0.0.0:8888/logout">logout</a>
+<br><form action="http://0.0.0.0:8888/selectJob" method="POST">
+	<input type="hidden" name="jobId" value="{{ Job.id}}"/>
+        <input type="submit" value="Back"/>
+</form>
 <h1>Edit Shipment</h1>
-	<form action="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/createShipment" method="POST">
+	<form action="http://0.0.0.0:8888/createShipment" method="POST">
 		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
 		<input type="hidden" name="vendorId" value="{{ Vendor.id}}"/>
 		Description: <input type="text" name="description" value=""/><br>
@@ -245,7 +249,7 @@
 				</select></br>
 		<input type="submit" value="Save"/>
 	</form>
-	<form action="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/cancelEditShipment" method="POST">
+	<form action="http://0.0.0.0:8888/cancelEditShipment" method="POST">
 		<input type="submit" value="Cancel"/>
 	</form>
 </body>

@@ -10,7 +10,7 @@ from datetime import datetime
 
 from flask import Flask, request, session, flash, url_for, redirect, \
      render_template, abort, send_from_directory, Response
-from application.models import User, Job, Vendor, Shipment, ShipmentPhoto
+from application.models import User, Job, Shipment, ShipmentPhoto
 from application import db
 from application import apUtils
 from flask.ext.mail import Mail
@@ -31,6 +31,7 @@ application.config['MAIL_PASSWORD'] = 'yd082893!'
 mail = Mail(application)
 
 AllJobs = []
+AllVendors = []
 WarningMessage = ""
 MobileTTL = 60 * 60
 ERR_NONE = 100
@@ -45,7 +46,7 @@ def user_for_id(userId) :
     try :
     	user = db.session.query(User).filter_by(id=userId).first()
     except Exception as ex :
-    	print 'Exception fetching user id [' + str(vendorId) + '] ' + str(ex)
+    	print 'Exception fetching user id [' + str(userId) + '] ' + str(ex)
     	user = None
 
     return user
@@ -60,17 +61,6 @@ def job_for_id(jobId) :
     	print 'Exception fetching job for id [' + str(jobId) + '] = ' + str(ex)
 
     return job
-
-def vendor_for_id(vendorId) :
-    vendor = None
-
-    try :
-    	vendor = db.session.query(Vendor).filter_by(id=vendorId).first()
-    except Exception as ex :
-    	print 'Exception fetching vendor id [' + str(vendorId) + '] ' + str(ex)
-    	vendor = None
-
-    return vendor
 
 def shipment_for_id(shipmentId) :
     shipment = None
@@ -155,6 +145,26 @@ def date_with_prefix(prefix, form) :
 
     return returnDate
 
+def jobIds_from_form(form) :
+    jobIds = []
+
+    for key in form.keys() :
+    	if key.startswith("jobId_") :
+    		jobId = key[6:]
+    		jobIds.append(jobId)
+
+    return jobIds
+
+def jobs_from_form(form) :
+    jobIds = jobIds_from_form(form)
+    jobs = []
+
+    for jobId in jobIds:
+    	job = job_for_id(jobId)
+    	jobs.append(job)
+
+    return jobs
+
 def save_shipment(shipment, request):
     description = request.form['description']
     shippedDate = date_with_prefix('shipped_', request.form)
@@ -179,36 +189,58 @@ def save_shipment(shipment, request):
 
     return render_job_page()
 
-def save_vendor(vendor, request):
-    name = request.form['name']
+def render_jobs_page(user=None):
+    global AllJobs
+    jobs = []
+    session['jobId'] = None
+    userDict = session['user']
+    user = None
 
-    vendor.name = name
+    if userDict:
+    	user = user_for_id(userDict['id'])
 
-    try :
-        db.session.commit()
-    except Exception as ex:
-        db.session.rollback()
-        print 'Unable to save vendor [%s]' % str(ex)
+    if user :
+	if user.hasPermission(1) :  # If we are Admin
+		jobs = AllJobs
+	else :
+		jobs = user.jobs
 
-    return render_job_page()
+    if len(jobs) == 1 :
+	session['jobId'] = jobs[0].id
+	return render_job_page()
+
+    return render_template('listJobs.html', Jobs=jobs, User=user)
 
 def render_job_page():
     job = job_for_id(session['jobId'])
     shipments = job.shipments
     shipments.sort()
+    userDict = session['user']
+    user = None
 
-    return render_template('listVendors.html', Job=job, Shipments=shipments)
+    if userDict:
+    	user = user_for_id(userDict['id'])
+
+    return render_template('displayJob.html', Job=job, Shipments=shipments, User=user)
 
 @application.before_first_request
 def startup() :
     # Fetch Jobs
     global AllJobs
+    # Fetch Vendors
+    global AllVendors
 
     try :
     	AllJobs = db.session.query(Job).all()
     except Exception as ex :
     	AllJobs = []
     	print 'Exception fetching Jobs ' + str(ex)
+
+    try :
+    	AllVendors = db.session.query(User).filter_by(permissionId=4)
+    except Exception as ex :
+    	AllVendors = []
+    	print 'Exception fetching Vendors ' + str(ex)
 
 @application.before_request
 def before_request() :
@@ -219,7 +251,13 @@ def before_request() :
     # Ensure that we are logged in.
     userDict = session.get('user')
 
-    print 'PJC processing : ' + str(request.endpoint)
+    print 'PJC processing : [' + str(request.endpoint) + ']'
+
+    # Make certain that we have cleared out any prior user
+    if request.endpoint == 'logout_user' :
+    	userDict = None
+    	session['user'] = None
+
     print 'PJC userDict : ' + str(userDict)
     if None == userDict :
     	if request.endpoint and request.endpoint.startswith('mobile_') :
@@ -242,6 +280,10 @@ def before_request() :
 def index():
     global AllJobs
     return render_template('listJobs.html', Jobs=AllJobs)
+
+@application.route('/refreshDB')
+def refresh_db():
+    db.session.expire_all()
 
 @application.route('/loginUser',methods=['POST'])
 def login_user():
@@ -266,7 +308,7 @@ def login_user():
     		if user.asDict()['passwordRequiresReset'].lower() in ("yes", "true", "t", "1") :
     			return render_template('resetPassword.html', user=user.asDict(), warning=WarningMessage)
     		else :
-    			return render_template('listJobs.html', Jobs=AllJobs)
+    			return render_jobs_page(user)
     	else :
     		WarningMessage = "Your password is incorrect."
     		return render_template('loginUser.html', warning=WarningMessage)
@@ -280,6 +322,10 @@ def logout_user():
     WarningMessage = "User has been logged out."
 
     return render_template('loginUser.html', warning=WarningMessage)
+
+@application.route('/mainPage',methods=['GET'])
+def main_page() :
+    return render_jobs_page()
 
 @application.route('/selectJob',methods=['POST'])
 def select_job():
@@ -303,33 +349,89 @@ def send_async_email(app, msg):
     except Exception as ex :
     	print 'Email exception of ' + str(ex)
 
+@application.route('/newJob',methods=['GET'])
+def new_job():
+    global WarningMessage
+    userDict = session['user']
+    user = None
+
+    if userDict:
+    	user = user_for_id(userDict['id'])
+    
+    if user == None :
+    	WarningMessage = "No logged in User"
+
+    return render_template('newJob.html', User=user, warning=WarningMessage)
+
+@application.route('/createJob',methods=['POST'])
+def create_job():
+    global WarningMessage
+    global AllJobs
+    job = Job()
+    job.name = request.form['name']
+    userDict = session['user']
+    user = None
+
+    if userDict:
+    	user = user_for_id(userDict['id'])
+
+    db.session.add(job)
+    try :
+        db.session.commit()
+    	AllJobs = db.session.query(Job).all()
+    	WarningMessage = job.name + " was successfully created"
+    except Exception as ex:
+        db.session.rollback()
+    	WarningMessage = "Unable to create new Job " + str(ex.message)
+        print 'Unable to create Job [%s]' % str(ex)
+
+    return render_template('newJob.html', User=user, warning=WarningMessage)
+
 @application.route('/newUser',methods=['POST','GET'])
 def new_user():
-    return render_template('newUser.html')
+    global WarningMessage
+    global AllJobs
+    global AllVendors
+    
+    return render_template('newUser.html', Jobs=AllJobs, Vendors=AllVendors, warning=WarningMessage)
 
 @application.route('/createUser',methods=['POST'])
 def create_user():
     global WarningMessage
+    global AllJobs
+    global AllVendors
     user = User()
     user.setEmail(request.form['email'])
-    user.firstName = request.form['firstName']
-    user.lastName = request.form['lastName']
+    user.permissionId = request.form['permissionId']
     tmpPassword = User.tmpPassword()
     user.setPassword(tmpPassword)
     user.passwordRequiresReset = True
 
+    if user.permissionId == '4' :
+    	user.firstName = request.form['name']
+    else :
+    	user.firstName = request.form['firstName']
+    	user.lastName = request.form['lastName']
+
+    jobs = jobs_from_form(request.form)
+    user.jobs = jobs
+
     db.session.add(user)
     try :
         db.session.commit()
-    	send_email([user.email],'Welcome to CrownCorr','Your temporary password is ' + tmpPassword)
+    	# send_email([user.email],'Welcome to CrownCorr','Your temporary password is ' + tmpPassword)
+    	print 'PJC: Temporarily disabled email'
     	print 'PJC: Welcome to CrownCorr, Your temporary password is ' + tmpPassword
     	WarningMessage = "User " + str(user.email) + " has been created.   Check your email inbox for a temporary password"
+    	# PJC - remove the line below after we re-enable email.
+    	WarningMessage = WarningMessage + "  Temporarily disabled email.   Temporary password is " + tmpPassword
     except Exception as ex:
         db.session.rollback()
-    	WarningMessage = "Unable to create new User " + str(user.email) 
+    	print dir(ex)
+    	WarningMessage = "Unable to create new User " + str(user.email) + " " + str(ex.message)
         print 'Unable to save User [%s]' % str(ex)
 
-    return render_template('loginUser.html', warning=WarningMessage)
+    return render_template('newUser.html', Jobs=AllJobs, Vendors=AllVendors, warning=WarningMessage)
 
 @application.route('/resetPassword',methods=['POST'])
 def reset_password():
@@ -347,7 +449,7 @@ def reset_password():
     			db.session.commit()
     			session['user'] = user.asDict()
     			WarningMessage = "Password successfully reset"
-    			return render_template('listJobs.html', Jobs=AllJobs)
+    			return render_jobs_page(user)
     		except Exception as ex:
     			db.session.rollback()
     			print 'Unable to update User [%s]' % str(ex)
@@ -372,7 +474,7 @@ def new_shipment():
     shipment = Shipment()
     shipment.jobId = jobId
     shipment.vendorId = vendorId
-    vendor = vendor_for_id(vendorId)
+    vendor = user_for_id(vendorId)
     job = job_for_id(jobId)
 
     return render_template('newShipment.html', Shipment=shipment, Vendor=vendor, Job=job)
@@ -405,43 +507,6 @@ def update_shipment():
     shipment = shipment_for_id(shipmentId)
 
     return save_shipment(shipment, request)
-
-@application.route('/newVendor',methods=['POST'])
-def new_vendor():
-    jobId = request.form['jobId']
-    vendor = Vendor()
-    vendor.jobId = jobId
-
-    return render_template('newVendor.html', Vendor=vendor)
-
-@application.route('/editVendor',methods=['POST'])
-def edit_vendor():
-    vendorId = request.form['vendorId']
-    vendor = vendor_for_id(vendorId)
-
-    return render_template('editVendor.html', Vendor=vendor)
-
-@application.route('/createVendor',methods=['POST'])
-def create_vendor():
-    vendor = Vendor()
-    jobId = request.form['jobId']
-    vendor.jobId = jobId
-    db.session.add(vendor)
-
-    return save_vendor(vendor, request)
-
-@application.route('/updateVendor',methods=['POST'])
-def update_vendor():
-    vendorId = request.form['vendorId']
-    vendor = None
-
-    try :
-    	vendor = db.session.query(Vendor).filter_by(id=vendorId).first()
-    except Exception as ex :
-    	print 'Exception fetching vendor id [' + str(vendorId) + '] ' + str(ex)
-    	vendor = None
-
-    return save_vendor(vendor, request)
 
 @application.route('/mLoginUser',methods=['POST'])
 def mobile_login_user():

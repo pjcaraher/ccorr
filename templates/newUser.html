@@ -3,12 +3,51 @@
 </head>
 
 <body>
-<h1>Create A New User</h1>
-	<form action="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/createUser" method="POST">
-		email : <input type="text" name="email" value=""/><br>
-		FirstName : <input type="text" name="firstName" value=""/><br>
-		LastName : <input type="text" name="lastName" value=""/><br>
-		<input type="submit" value="Save"/>
-	</form>
+<a href="http://0.0.0.0:8888/mainPage">Main Page</a><br>
+<h1 style="color:red;"">{{ warning }}</h1>
+<table>
+<tr>
+	<th width="20"></th>
+	<th>New Crown Corr User</th>
+	<th width="20"></th>
+	<th>New Vendor</th>
+</tr>
+<tr>
+	<td>
+	</td>
+	<td valign="top">
+		<form action="http://0.0.0.0:8888/createUser" method="POST">
+			email : <input type="text" name="email" value=""/><br>
+			FirstName : <input type="text" name="firstName" value=""/><br>
+			LastName : <input type="text" name="lastName" value=""/><br>
+			Permission : <select name="permissionId" size="2">
+				<option value="2">Project Manager</option>
+				<option selected="selected" value="3">Field Staff</option>
+			</select>
+			<br>
+			Select Jobs for User: 
+			{% for Job in Jobs %}
+				<br><input type="checkbox" id="jobId_{{ Job.id }}" name="jobId_{{ Job.id }}" value="{{ Job.id }}"/> {{ Job.name }} 
+			{% endfor %}
+			<br><input type="submit" value="Save"/>
+		</form>
+	</td>
+	<td>
+	</td>
+	<td valign="top">
+		<form action="http://0.0.0.0:8888/createUser" method="POST">
+			<input type="hidden" name="permissionId" value="4"/>
+			email : <input type="text" name="email" value=""/><br>
+			Name : <input type="text" name="name" value=""/><br>
+			<br>
+			Select Jobs for Vendor: 
+			{% for Job in Jobs %}
+				<br><input type="checkbox" id="jobId_{{ Job.id }}" name="jobId_{{ Job.id }}" value="{{ Job.id }}"/> {{ Job.name }} 
+			{% endfor %}
+			</select>
+			<br><input type="submit" value="Save"/>
+		</form>
+	</td>
+</tr>
 </body>
 </html>

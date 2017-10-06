@@ -4,16 +4,31 @@
 <title>CCorr Shipment Tracking Login</title>
 
 <body>
+<table>
+<tr>
+	<td colspan="2" align="center">
+		<h1>Crown Corr Login</h1>
+	</td>
+</tr>
 {% if warning %}
-<h1 style="color:red;"">{{ warning }}</h1>
+<tr>
+	<td colspan="2">
+		<h1 style="color:red;"">{{ warning }}</h1>
+	</td>
+</tr>
 {% endif %}
-<h1>Login</h1>
-	<form action="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/loginUser" method="POST">
-		email : <input type="text" name="email" value=""/><br>
-		password : <input type="password" name="password" value=""/><br>
-		<input type="submit" value="Login"/>
-	</form>
-<br>
-<a href="http://ccorr-staging.ke6wrptupr.us-west-2.elasticbeanstalk.com:8888/newUser">Create New User</a>
+<tr>
+	<td width="50">
+	</td>
+	<td>
+	<h1>Login</h1>
+		<form action="http://0.0.0.0:8888/loginUser" method="POST">
+			email : <input type="text" name="email" value=""/><br>
+			password : <input type="password" name="password" value=""/><br>
+			<input type="submit" value="Login"/>
+		</form>
+	</td>
+</tr>
+</table>
 </body>
 </html>

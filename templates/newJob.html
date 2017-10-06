@@ -1,0 +1,20 @@
+<html>
+<head>
+</head>
+
+<body>
+<a href="http://0.0.0.0:8888/logout">logout</a>
+<br>
+<a href="http://0.0.0.0:8888/mainPage">Main Page</a>
+<br>
+<h1 style="color:red;"">{{ warning }}</h1>
+<br>
+{% if User.permissionId == 1 %}
+<h1>Create Job</h1>
+	<form action="http://0.0.0.0:8888/createJob" method="POST">
+		<input type="text" name="name" value=""/>
+		<input type="submit" value="Save"/>
+	</form>
+</body>
+{% endif %}
+</html>

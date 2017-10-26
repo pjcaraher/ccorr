@@ -1,0 +1,56 @@
+<html>
+<head>
+<title>Project Manager Main Page</title>
+</head>
+
+<body>
+<a href="http://0.0.0.0:8888/logout">logout</a>
+{% if User %}
+<table>
+<tr>
+        {% if User.hasPermission(2) %}
+		<th width="30"></th>
+		<th width="150" bgcolor="cyan">Set Up Job</th>
+		<th width="30"></th>
+		<th width="150" bgcolor="cyan">Set Up Vendor</th>
+		<th width="30"></th>
+		<th width="150" bgcolor="cyan">Active Jobs</th>
+		<th width="30"></th>
+		<th width="150" bgcolor="cyan">Closed Jobs</th>
+        {% endif %}
+</tr>
+<tr>
+        {% if User.hasPermission(2) %}
+		<td width="30"></td>
+		<td valign="top" align="center">
+                	<br><a href="http://0.0.0.0:8888/newJob">New Job</a>
+		</td>
+		<td width="30"></td>
+		<td valign="top" align="center">
+                	<br><a href="http://0.0.0.0:8888/newVendor">New Vendor</a>
+		</td>
+		<td width="30"></td>
+		<td align="center">
+		<ul>
+		{% for Job in Jobs %}
+		<li>
+			{{ Job.name }}
+			<form action="http://0.0.0.0:8888/selectJob" method="POST">
+				<input type="hidden" name="jobId" value="{{ Job.id}}"/>
+				<input type="submit" value="Select"/>
+			</form>
+		</li>
+		{% endfor %}
+		</ul>
+		</td>
+		<td width="30"></td>
+		<td>
+		</td>
+        {% endif %}
+</tr>
+</table>
+{% else %}
+	<h1>No Permission</h1>
+{% endif %}
+</body>
+</html>

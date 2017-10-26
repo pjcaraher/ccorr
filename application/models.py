@@ -104,6 +104,10 @@ class Job(db.Model):
 	__tablename__ = 'Job'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(64))
+	number = db.Column(db.String(64))
+	pmName = db.Column(db.String(64))
+	address = db.Column(db.String(128))
+	instructions = db.Column(db.String(1024))
 	shipments = db.relationship('Shipment', backref='job')
 
 	def __repr__(self):

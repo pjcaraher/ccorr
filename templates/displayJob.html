@@ -6,11 +6,8 @@
 <body>
 <a href="http://0.0.0.0:8888/logout">logout</a>
 {% if User %}
- {% if User.hasPermission(1) %}
-		<br><a href="http://0.0.0.0:8888/newJob">Create New Job</a>
- {% endif %}
  {% if User.hasPermission(2) %}
-		<br><a href="http://0.0.0.0:8888/newUser">Create New User</a>
+		 <br><a href="http://0.0.0.0:8888/mainPage">Main Page</a>
  {% endif %}
  {% if User.hasPermission(3) %}
     <h1>Shipments for Job <i>{{ Job.name }}</i></h1><br>
@@ -27,6 +24,7 @@
  {% endif %}
  {% if User.hasPermission(2) %}
 <h1>New Shipment</h1>
+     {% if Job.vendors()| length > 0 %}
 	{% for vendor in Job.vendors() %}
 	New Shipment for {{ vendor.name() }}
 	<form action="http://0.0.0.0:8888/newShipment" method="POST">
@@ -35,6 +33,11 @@
 		<input type="submit" value="Create"/>
 	</form>
 	{% endfor %}
+     {% else %}
+Vendors are required for Shipments<br>
+No Vendors exist for this Job.<br>
+You need to <a href="http://0.0.0.0:8888/newUser">Create a new Vendor</a> (a Vendor is a User)
+     {% endif %}
  {% elif User.hasPermission(4) %}
 	<h1>Shipments for Job <i>{{ Job.name }}</i></h1><br>
 	<ul>

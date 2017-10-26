@@ -205,14 +205,17 @@ def render_jobs_page(user=None):
 	else :
 		jobs = user.jobs
 
-    if len(jobs) == 1 :
-	session['jobId'] = jobs[0].id
-	return render_job_page()
+# If we have a Vendor, see if we have only 1 job.
+    # if len(jobs) == 1 :
+#	session['jobId'] = jobs[0].id
+	#return render_job_page()
 
-    return render_template('listJobs.html', Jobs=jobs, User=user)
+    return render_template('pmMainPage.html', Jobs=jobs, User=user)
 
 def render_job_page():
     job = job_for_id(session['jobId'])
+    print 'PJC render_job_page and Job = ' + str(job.asDict())
+    print 'PJC render_job_page and Shipments = ' + str(job.shipments)
     shipments = job.shipments
     shipments.sort()
     userDict = session['user']
@@ -221,6 +224,7 @@ def render_job_page():
     if userDict:
     	user = user_for_id(userDict['id'])
 
+    print 'PJC render_job_page and Shipments = ' + str(shipments)
     return render_template('displayJob.html', Job=job, Shipments=shipments, User=user)
 
 @application.before_first_request
@@ -279,7 +283,7 @@ def before_request() :
 @application.route('/')
 def index():
     global AllJobs
-    return render_template('listJobs.html', Jobs=AllJobs)
+    return render_template('pmMainPage.html', Jobs=AllJobs)
 
 @application.route('/refreshDB')
 def refresh_db():
@@ -369,6 +373,9 @@ def create_job():
     global AllJobs
     job = Job()
     job.name = request.form['name']
+    job.number = request.form['number']
+    job.address = request.form['address']
+    job.instructions = request.form['instructions']
     userDict = session['user']
     user = None
 
@@ -391,9 +398,15 @@ def create_job():
 def new_user():
     global WarningMessage
     global AllJobs
-    global AllVendors
     
-    return render_template('newUser.html', Jobs=AllJobs, Vendors=AllVendors, warning=WarningMessage)
+    return render_template('newUser.html', Jobs=AllJobs, warning=WarningMessage)
+
+@application.route('/newVendor',methods=['POST','GET'])
+def new_vendor():
+    global WarningMessage
+    global AllJobs
+    
+    return render_template('newVendor.html', Jobs=AllJobs, warning=WarningMessage)
 
 @application.route('/createUser',methods=['POST'])
 def create_user():
@@ -406,9 +419,11 @@ def create_user():
     tmpPassword = User.tmpPassword()
     user.setPassword(tmpPassword)
     user.passwordRequiresReset = True
+    templateName = "newUser.html"
 
     if user.permissionId == '4' :
     	user.firstName = request.form['name']
+    	templateName = "newVendor.html"
     else :
     	user.firstName = request.form['firstName']
     	user.lastName = request.form['lastName']
@@ -431,7 +446,7 @@ def create_user():
     	WarningMessage = "Unable to create new User " + str(user.email) + " " + str(ex.message)
         print 'Unable to save User [%s]' % str(ex)
 
-    return render_template('newUser.html', Jobs=AllJobs, Vendors=AllVendors, warning=WarningMessage)
+    return render_template('newUser.html', Jobs=AllJobs, warning=WarningMessage)
 
 @application.route('/resetPassword',methods=['POST'])
 def reset_password():

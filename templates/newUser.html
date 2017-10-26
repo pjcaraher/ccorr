@@ -10,7 +10,6 @@
 	<th width="20"></th>
 	<th>New Crown Corr User</th>
 	<th width="20"></th>
-	<th>New Vendor</th>
 </tr>
 <tr>
 	<td>
@@ -33,20 +32,6 @@
 		</form>
 	</td>
 	<td>
-	</td>
-	<td valign="top">
-		<form action="http://0.0.0.0:8888/createUser" method="POST">
-			<input type="hidden" name="permissionId" value="4"/>
-			email : <input type="text" name="email" value=""/><br>
-			Name : <input type="text" name="name" value=""/><br>
-			<br>
-			Select Jobs for Vendor: 
-			{% for Job in Jobs %}
-				<br><input type="checkbox" id="jobId_{{ Job.id }}" name="jobId_{{ Job.id }}" value="{{ Job.id }}"/> {{ Job.name }} 
-			{% endfor %}
-			</select>
-			<br><input type="submit" value="Save"/>
-		</form>
 	</td>
 </tr>
 </body>

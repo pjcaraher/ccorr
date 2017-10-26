@@ -11,8 +11,11 @@
 <br>
 {% if User.permissionId == 1 %}
 <h1>Create Job</h1>
-	<form action="http://0.0.0.0:8888/createJob" method="POST">
-		<input type="text" name="name" value=""/>
+	<form id="jobForm" action="http://0.0.0.0:8888/createJob" method="POST">
+		Name: <input type="text" name="name" value=""/><br>
+		Number: <input type="text" name="number" value=""/><br>
+		Address: <textarea rows="4" cols="75" name="address" form="jobForm"></textarea><br>
+		Instructions: <textarea rows="6" cols="75" name="instructions" form="jobForm"></textarea><br>
 		<input type="submit" value="Save"/>
 	</form>
 </body>

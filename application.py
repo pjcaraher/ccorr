@@ -413,6 +413,11 @@ def login_user():
 
     try :
     	user = db.session.query(User).filter_by(email=email.lower()).first()
+    	# Sometimes the new Object did not make it in to the Session.
+    	if None == user :
+                db.session.expire_all()
+                db.session.commit()
+                user = db.session.query(User).filter_by(email=email.lower()).first()
     except Exception as ex :
     	sys.stderr.write('Exception fetching User id [' + str(email) + '] ' + str(ex))
     	user = None

@@ -3,16 +3,15 @@
 </head>
 
 <body>
-<a href="http://0.0.0.0:8888/logout">logout</a>
-<br><form action="http://0.0.0.0:8888/selectJob" method="POST">
+<a href="http://localhost:8888/logout">logout</a>
+<br><form action="http://localhost:8888/selectJob" method="POST">
 	<input type="hidden" name="jobId" value="{{ Job.id}}"/>
         <input type="submit" value="Back"/>
 </form>
-<h1>Edit Shipment</h1>
-	<form action="http://0.0.0.0:8888/createShipment" method="POST">
+<h1>New Delivery</h1>
+	<form action="http://localhost:8888/createShipment" method="POST">
 		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
 		<input type="hidden" name="vendorId" value="{{ Vendor.id}}"/>
-		Description: <input type="text" name="description" value=""/><br>
 		Shipped Date: <select name="shipped_month">
 					<option value="None">None</option>
 					<option value="01">Jan</option>
@@ -247,9 +246,46 @@
 					<option value="AM">AM</option>
 					<option value="PM">PM</option>
 				</select></br>
+{% if Config.showDescriptionOfGoods %}
+Description: <input type="text" name="description" value="{% if Shipment.description %}{{ Shipment.description }}{% endif %}"/><br>
+{% endif %}
+{% if Config.showContactName %}
+ADD CONTACT NAME<br>
+{% endif %}
+{% if Config.showContactNumber %}
+ADD CONTACT NUMBER<br>
+{% endif %}
+{% if Config.showDeliveryNumber %}
+Delivery Number : <input type="text" name="deliveryNumber" value="{% if Shipment.deliveryNumber %}{{ Shipment.deliveryNumber }}{% endif %}"/><br>
+{% endif %}
+{% if Config.showBOLNumber %}
+BOL Number : <input type="text" name="bolNumber" value="{% if Shipment.bolNumber %}{{ Shipment.bolNumber }}{% endif %}"/><br>
+{% endif %}
+{% if Config.showNumberOfPackages %}
+Number of Packages : <input type="text" name="numberOfPackages" value="{% if Shipment.numberOfPackages %}{{ Shipment.numberOfPackages }}{% endif %}"/><br>
+{% endif %}
+{% if Config.showTypeOfTruck %}
+Type of Truck : <input type="text" name="truckType" value="{% if Shipment.truckType %}{{ Shipment.truckType }}{% endif %}"/><br>
+{% endif %}
+{% if Config.showWeightOfLoad %}
+Weight of Load : <input type="text" name="weight" value="{% if Shipment.weight %}{{ Shipment.weight }}{% endif %}"/><br>
+{% endif %}
+{% if Config.showTruckingCompany %}
+Trucking Company : <input type="text" name="truckingCompany" value="{% if Shipment.specialInstructions %}{{ Shipment.truckingCompany }}{% endif %}"/><br>
+{% endif %}
+{% if Config.showSpecialInstructions %}
+Instructions : <input type="text" name="specialInstructions" value="{% if Shipment.specialInstructions %}{{ Shipment.specialInstructions }}{% endif %}"/><br>
+{% endif %}
+{% if Config.showTrackingNumber %}
+Tracking Number : <input type="text" name="trackingNumber" value="{% if Shipment.trackingNumber %}{{ Shipment.trackingNumber }}{% endif %}"/><br>
+{% endif %}
+{% if Config.showVendorNotes %}
+Notes : <input type="text" name="vendorNotes" value="{% if Shipment.vendorNotes %}{{ Shipment.vendorNotes }}{% endif %}"/><br>
+{% endif %}
+
 		<input type="submit" value="Save"/>
 	</form>
-	<form action="http://0.0.0.0:8888/cancelEditShipment" method="POST">
+	<form action="http://localhost:8888/cancelEditShipment" method="POST">
 		<input type="submit" value="Cancel"/>
 	</form>
 </body>

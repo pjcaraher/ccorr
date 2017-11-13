@@ -3,16 +3,16 @@
 </head>
 
 <body>
-<a href="http://0.0.0.0:8888/logout">logout</a><br>
-<a href="http://0.0.0.0:8888/mainPage">Main Page</a><br>
-<br><form action="http://0.0.0.0:8888/selectJob" method="POST">
+<a href="http://localhost:8888/logout">logout</a><br>
+<a href="http://localhost:8888/mainPage">Main Page</a><br>
+<br><form action="http://localhost:8888/selectJob" method="POST">
 	<input type="hidden" name="jobId" value="{{ Shipment.jobId}}"/>
 	<input type="submit" value="Back"/>
 </form>
-<h1>Edit Shipment</h1>
-	<form action="http://0.0.0.0:8888/updateShipment" method="POST">
+<h1>Edit Delivery</h1>
+Vendor : {{ Vendor.name() }}<br>
+	<form action="http://localhost:8888/updateShipment" method="POST">
 		<input type="hidden" name="shipmentId" value="{{ Shipment.id}}"/>
-		Description: <input type="text" name="description" value="{{ Shipment.description }}"/><br>
 		Shipped Date: <select name="shipped_month">
 					<option value="None">None</option>
 					<option value="01" {% if Shipment.shippedDate %}{% if Shipment.shippedDate.strftime("%m") == "01" %}selected{% endif %}{% endif %}>Jan</option>
@@ -247,9 +247,47 @@
 <option value="AM" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%p") == "AM" %}selected{% endif %}{% endif %}>AM</option>
 <option value="PM" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%p") == "PM" %}selected{% endif %}{% endif %}>PM</option>
 				</select></br>
+{% if Config.showDescriptionOfGoods %}
+Description : {% if Shipment.description %}{{ Shipment.description }}{% endif %}<br>
+{% endif %}
+{% if Config.showContactName %}
+ADD CONTACT NAME<br>
+{% endif %}
+{% if Config.showContactNumber %}
+ADD CONTACT NUMBER<br>
+{% endif %}
+{% if Config.showDeliveryNumber %}
+Delivery Number : {% if Shipment.deliveryNumber %}{{ Shipment.deliveryNumber }}{% endif %}<br>
+{% endif %}
+{% if Config.showBOLNumber %}
+BOL Number : {% if Shipment.bolNumber %}{{ Shipment.bolNumber }}{% endif %}<br>
+{% endif %}
+{% if Config.showNumberOfPackages %}
+Number of Packages : {% if Shipment.numberOfPackages %}{{ Shipment.numberOfPackages }}{% endif %}<br>
+{% endif %}
+{% if Config.showTypeOfTruck %}
+Type of Truck : {% if Shipment.truckType %}{{ Shipment.truckType }}{% endif %}<br>
+{% endif %}
+{% if Config.showWeightOfLoad %}
+Weight of Load : {% if Shipment.weight %}{{ Shipment.weight }}{% endif %}<br>
+{% endif %}
+{% if Config.showTruckingCompany %}
+Trucking Company : {% if Shipment.truckingCompany %}{{ Shipment.truckingCompany }}{% endif %}<br>
+{% endif %}
+{% if Config.showSpecialInstructions %}
+Instructions : {% if Shipment.specialInstructions %}{{ Shipment.specialInstructions }}{% endif %}<br>
+{% endif %}
+{% if Config.showTrackingNumber %}
+Tracking Number : {% if Shipment.trackingNumber %}{{ Shipment.trackingNumber }}{% endif %}<br>
+{% endif %}
+{% if Config.showVendorNotes %}
+Notes : {% if Shipment.vendorNotes %}{{ Shipment.vendorNotes }}{% endif %}<br>
+{% endif %}
+
+
 		<input type="submit" value="Save"/>
 	</form>
-	<form action="http://0.0.0.0:8888/cancelEditShipment" method="POST">
+	<form action="http://localhost:8888/cancelEditShipment" method="POST">
 		<input type="submit" value="Cancel"/>
 	</form>
 <br>

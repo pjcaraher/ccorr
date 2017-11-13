@@ -4,11 +4,11 @@
 </head>
 
 <body>
-<a href="http://0.0.0.0:8888/logout">logout</a>
+<a href="http://localhost:8888/logout">logout</a>
 {% if User %}
 <table>
 <tr>
-        {% if User.hasPermission(2) %}
+        {% if User.hasPermission(3) %}
 		<th width="30"></th>
 		<th width="150" bgcolor="cyan">Set Up Job</th>
 		<th width="30"></th>
@@ -18,33 +18,39 @@
 		<th width="30"></th>
 		<th width="150" bgcolor="cyan">Closed Jobs</th>
         {% endif %}
+        {% if User.hasPermission(2) %}
+		<th width="30"></th>
+		<th width="150" bgcolor="cyan">New User</th>
+        {% endif %}
 </tr>
 <tr>
-        {% if User.hasPermission(2) %}
+        {% if User.hasPermission(3) %}
 		<td width="30"></td>
 		<td valign="top" align="center">
-                	<br><a href="http://0.0.0.0:8888/newJob">New Job</a>
+                	<br><a href="http://localhost:8888/newJob">New Job</a>
 		</td>
 		<td width="30"></td>
 		<td valign="top" align="center">
-                	<br><a href="http://0.0.0.0:8888/newVendor">New Vendor</a>
+			{% if Jobs| length > 0 %}
+                		<br><a href="http://localhost:8888/newVendor">New Vendor</a>
+			{% endif %}
 		</td>
 		<td width="30"></td>
 		<td align="center">
-		<ul>
 		{% for Job in Jobs %}
-		<li>
-			{{ Job.name }}
-			<form action="http://0.0.0.0:8888/selectJob" method="POST">
-				<input type="hidden" name="jobId" value="{{ Job.id}}"/>
-				<input type="submit" value="Select"/>
-			</form>
-		</li>
+                	<a href="http://localhost:8888/selectJob?jobId={{ Job.id }}">{{ Job.name }}</a>
+			<br>
+			<br>
 		{% endfor %}
-		</ul>
 		</td>
 		<td width="30"></td>
 		<td>
+		</td>
+        {% endif %}
+        {% if User.hasPermission(2) %}
+		<td width="30"></td>
+		<td valign="top" align="center">
+                	<br><a href="http://localhost:8888/newUser">New User</a>
 		</td>
         {% endif %}
 </tr>

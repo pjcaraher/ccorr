@@ -3,13 +3,13 @@
 </head>
 
 <body>
-<a href="http://0.0.0.0:8888/logout">logout</a>
+<a href="http://localhost:8888/logout">logout</a>
 {% if User %}
         {% if User.hasPermission(1) %}
-                <br><a href="http://0.0.0.0:8888/newJob">Create New Job</a>
+                <br><a href="http://localhost:8888/newJob">Create New Job</a>
         {% endif %}
         {% if User.hasPermission(2) %}
-                <br><a href="http://0.0.0.0:8888/newUser">Create New User</a>
+                <br><a href="http://localhost:8888/newUser">Create New User</a>
         {% endif %}
 {% endif %}
 <h1>Select Job</h1>
@@ -17,7 +17,7 @@
 		{% for Job in Jobs %}
 		<li>
 			{{ Job.name }}
-			<form action="http://0.0.0.0:8888/selectJob" method="POST">
+			<form action="http://localhost:8888/selectJob" method="POST">
 				<input type="hidden" name="jobId" value="{{ Job.id}}"/>
 				<input type="submit" value="Use"/>
 			</form>

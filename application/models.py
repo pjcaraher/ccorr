@@ -81,7 +81,7 @@ class User(db.Model):
 		salt = "JJwV/8"
 
 		hash = hashlib.md5(salt + password).hexdigest()
-		return "%s:%s" % (salt, hash)
+		return "%s" % (hash)
 
 class Permission(db.Model):
 	__tablename__ = 'Permission'
@@ -123,12 +123,78 @@ class Job(db.Model):
 			vendors = db.session.query(User).filter(User.id.in_(userIds)).all()
 		return vendors
 
+	def configForVendor(self,vendor):
+		vendorConfig = db.session.query(VendorJobConfig).filter_by(jobId=self.id).filter_by(vendorId=vendor.id).first()
+		return vendorConfig
+
 	def asDict(self):
 		returnDict = {}
 		returnDict['id'] = str(self.id)
 		returnDict['name'] = str(self.name)
 	
 		return returnDict
+
+	def json(self):
+		returnDict = self.asDict()
+		return json.dumps(returnDict)
+
+class VendorJobConfig(db.Model):
+	__tablename__ = 'VendorJobConfig'
+	id = db.Column(db.Integer, primary_key=True)
+	jobId = db.Column(db.Integer, db.ForeignKey('Job.id'))
+	vendorId = db.Column(db.Integer, db.ForeignKey('User.id'))
+	contact = db.Column(db.String(64))
+	phone = db.Column(db.String(32))
+	emailList = db.Column(db.String(256))
+	showDeliveryNumber = db.Column(db.Boolean)
+	showContactName = db.Column(db.Boolean)
+	showContactNumber = db.Column(db.Boolean)
+	showBOLNumber = db.Column(db.Boolean)
+	showSpecialInstructions = db.Column(db.Boolean)
+	showDescriptionOfGoods = db.Column(db.Boolean)
+	showTruckingCompany = db.Column(db.Boolean)
+	showNumberOfPackages = db.Column(db.Boolean)
+	showTypeOfTruck = db.Column(db.Boolean)
+	showTrackingNumber = db.Column(db.Boolean)
+	showWeightOfLoad = db.Column(db.Boolean)
+	showVendorNotes = db.Column(db.Boolean)
+	showDeliveryDate = db.Column(db.Boolean)
+	showDateLoaded = db.Column(db.Boolean)
+	attachBOL = db.Column(db.Boolean)
+	attachPackingList = db.Column(db.Boolean)
+	attachPhotos = db.Column(db.Boolean)
+	attachMap = db.Column(db.Boolean)
+
+	def asDict(self):
+		returnDict = {}
+		returnDict['id'] = str(self.id)
+		returnDict['contact'] = self.contact
+		returnDict['phone'] = self.phone
+		returnDict['emailList'] = self.emailList
+		returnDict['showDeliveryNumber'] = self.showDeliveryNumber
+		returnDict['showContactName'] = self.showContactName
+		returnDict['showContactNumber'] = self.showContactNumber
+		returnDict['showBOLNumber'] = self.showBOLNumber
+		returnDict['showSpecialInstructions'] = self.showSpecialInstructions
+		returnDict['showDescriptionOfGoods'] = self.showDescriptionOfGoods
+		returnDict['showTruckingCompany'] = self.showTruckingCompany
+		returnDict['showNumberOfPackages'] = self.showNumberOfPackages
+		returnDict['showTypeOfTruck'] = self.showTypeOfTruck
+		returnDict['showTrackingNumber'] = self.showTrackingNumber
+		returnDict['showWeightOfLoad'] = self.showWeightOfLoad
+		returnDict['showVendorNotes'] = self.showVendorNotes
+		returnDict['showDeliveryDate'] = self.showDeliveryDate
+		returnDict['showDateLoaded'] = self.showDateLoaded
+		returnDict['attachBOL'] = self.attachBOL
+		returnDict['attachPackingList'] = self.attachPackingList
+		returnDict['attachPhotos'] = self.attachPhotos
+		returnDict['attachMap'] = self.attachMap
+	
+		return returnDict
+
+	def vendor(self):
+		vendor = db.session.query(User).filter_by(id=self.vendorId).first()
+		return vendor
 
 	def json(self):
 		returnDict = self.asDict()
@@ -141,6 +207,15 @@ class Shipment(db.Model):
 	expectedDate = db.Column(db.DateTime)
 	arrivalDate = db.Column(db.DateTime)
 	description = db.Column(db.String(512))
+	truckingCompany = db.Column(db.String(128))
+	truckType = db.Column(db.String(128))
+	weight = db.Column(db.String(64))
+	numberOfPackages = db.Column(db.Integer)
+	deliveryNumber = db.Column(db.String(64))
+	bolNumber = db.Column(db.String(64))
+	specialInstructions = db.Column(db.String(256))
+	trackingNumber = db.Column(db.String(64))
+	vendorNotes = db.Column(db.String(256))
 	jobId = db.Column(db.Integer, db.ForeignKey('Job.id'))
 	vendorId = db.Column(db.Integer, db.ForeignKey('User.id'))
 	photos = db.relationship('ShipmentPhoto', backref='shipment')
@@ -152,9 +227,18 @@ class Shipment(db.Model):
 		vendor = db.session.query(User).filter_by(id=self.vendorId).first()
 		return vendor
 
+	# First return the arrived Shipments, the most recent at top.
+	# Second, return the expected Shipments, the most recent at top.
 	def __lt__(self, other):
-		if self.expectedDate :
-			if other.expectedDate :
+		if self.arrivalDate :
+			if other.arrivalDate :
+				return self.arrivalDate < other.arrivalDate
+			else :
+				return True
+		elif self.expectedDate :
+			if other.arrivalDate :
+				return False
+			elif other.expectedDate :
 				return self.expectedDate < other.expectedDate
 			else :
 				return True

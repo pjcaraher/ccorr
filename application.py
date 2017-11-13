@@ -10,7 +10,7 @@ from datetime import datetime
 
 from flask import Flask, request, session, flash, url_for, redirect, \
      render_template, abort, send_from_directory, Response
-from application.models import User, Job, Shipment, ShipmentPhoto
+from application.models import User, Job, Shipment, ShipmentPhoto, VendorJobConfig
 from application import db
 from application import apUtils
 from flask.ext.mail import Mail
@@ -83,6 +83,17 @@ def shipment_photo_for_id(shipmentPhotoId) :
     	shipmentPhoto = None
 
     return shipmentPhoto
+
+def vendor_config_for_id(vendorConfigId) :
+    vendorConfig = None
+
+    try :
+    	vendorConfig = db.session.query(VendorJobConfig).filter_by(id=vendorConfigId).first()
+    except Exception as ex :
+    	print 'Exception fetching Vendor Config id [' + str(vendorConfigId) + '] ' + str(ex)
+    	vendorConfig = None
+
+    return vendorConfig
 
 def uri_for_shipment_photo_id(shipmentPhotoId) :
     imageFilename = os.path.dirname(os.path.realpath(__file__)) + IMAGE_DIR + "shipmentPhoto." + str(shipmentPhotoId) + ".jpg"
@@ -165,22 +176,96 @@ def jobs_from_form(form) :
 
     return jobs
 
+def form_bool_for_key(form, key) :
+    torf = False
+
+    if key in form.keys() :
+	if form[key].lower() == 'on' :
+    		torf = True
+    print 'torf is ' + str(torf)
+
+    return torf
+
+def vendorJobConfig_from_form(form) :
+    config = VendorJobConfig()
+    return update_vendorJobConfig_from_form(config, form)
+
+def update_vendorJobConfig_from_form(config, form) :
+    config.jobId = form['jobId']
+    config.contact = form['contact']
+    config.phone = form['phone']
+    config.emailList = form['emailList']
+    config.showDeliveryNumber = form_bool_for_key(form,'showDeliveryNumber')
+    config.showContactName = form_bool_for_key(form,'showContactName')
+    config.showContactNumber = form_bool_for_key(form,'showContactNumber')
+    config.showBOLNumber = form_bool_for_key(form,'showBOLNumber')
+    config.showSpecialInstructions = form_bool_for_key(form,'showSpecialInstructions')
+    config.showDescriptionOfGoods = form_bool_for_key(form,'showDescriptionOfGoods')
+    config.showTruckingCompany = form_bool_for_key(form,'showTruckingCompany')
+    config.showNumberOfPackages = form_bool_for_key(form,'showNumberOfPackages')
+    config.showTypeOfTruck = form_bool_for_key(form,'showTypeOfTruck')
+    config.showTrackingNumber = form_bool_for_key(form,'showTrackingNumber')
+    config.showWeightOfLoad = form_bool_for_key(form,'showWeightOfLoad')
+    config.showVendorNotes = form_bool_for_key(form,'showVendorNotes')
+    config.showDeliveryDate = form_bool_for_key(form,'showDeliveryDate')
+    config.showDateLoaded = form_bool_for_key(form,'showDateLoaded')
+    config.attachBOL = form_bool_for_key(form,'attachBOL')
+    config.attachPackingList = form_bool_for_key(form,'attachPackingList')
+    config.attachPhotos = form_bool_for_key(form,'attachPhotos')
+    config.attachMap = form_bool_for_key(form,'attachMap')
+    
+    return config
+
+def stringForShipmentKey(key, form) :
+    retVal = None
+    value = form[key]
+
+    if value and len(value) > 0 :
+    	retVal = value
+
+    return retVal
+
+def intForShipmentKey(key, form) :
+    retVal = None
+
+    value = form[key]
+    
+    if isinstance(value, (int, long)) :
+    	retVal = int(value)
+
+    return retVal
+
+def update_shipment_from_form(shipment, form) :
+    if "description" in form.keys() :
+    	shipment.description = stringForShipmentKey("description", form)
+    if "deliveryNumber" in form.keys() :
+    	shipment.deliveryNumber = stringForShipmentKey("deliveryNumber", form)
+    if "numberOfPackages" in form.keys() :
+    	shipment.numberOfPackages = intForShipmentKey('numberOfPackages', form)
+    if "truckType" in form.keys() :
+    	shipment.truckType = stringForShipmentKey("truckType", form)
+    if "weight" in form.keys() :
+    	shipment.weight = stringForShipmentKey("weight", form)
+    if "truckingCompany" in form.keys() :
+    	shipment.truckingCompany = stringForShipmentKey("truckingCompany", form)
+    if "specialInstructions" in form.keys() :
+    	shipment.specialInstructions = stringForShipmentKey("specialInstructions", form)
+    if "trackingNumber" in form.keys() :
+    	shipment.trackingNumber = stringForShipmentKey("trackingNumber", form)
+    if "vendorNotes" in form.keys() :
+    	shipment.vendorNotes = stringForShipmentKey("vendorNotes", form)
+
+    return
+
 def save_shipment(shipment, request):
-    description = request.form['description']
     shippedDate = date_with_prefix('shipped_', request.form)
     expectedDate = date_with_prefix('expected_', request.form)
     arrivalDate = date_with_prefix('arrival_', request.form)
 
-    shipment.description = description
     shipment.shippedDate = shippedDate
     shipment.expectedDate = expectedDate
     shipment.arrivalDate = arrivalDate
 
-    try :
-        db.session.commit()
-    except Exception as ex:
-        db.session.rollback()
-        print 'Unable to save Shipment [%s]' % str(ex)
     try :
         db.session.commit()
     except Exception as ex:
@@ -200,15 +285,17 @@ def render_jobs_page(user=None):
     	user = user_for_id(userDict['id'])
 
     if user :
-	if user.hasPermission(1) :  # If we are Admin
+    	jobs = user.jobs
+	if user.hasPermission(2) :  # If we are Admin
 		jobs = AllJobs
-	else :
+	elif user.hasPermission(3) :  # If we are a PM
 		jobs = user.jobs
-
-# If we have a Vendor, see if we have only 1 job.
-    # if len(jobs) == 1 :
-#	session['jobId'] = jobs[0].id
-	#return render_job_page()
+	elif user.hasPermission(4) :  # If we are a Vendor
+		if len(jobs) == 1 :
+			session['jobId'] = jobs[0].id
+			return render_job_page()
+		else :
+    			return render_template('listJobs.html', Jobs=jobs, User=user)
 
     return render_template('pmMainPage.html', Jobs=jobs, User=user)
 
@@ -218,14 +305,26 @@ def render_job_page():
     print 'PJC render_job_page and Shipments = ' + str(job.shipments)
     shipments = job.shipments
     shipments.sort()
+    openShipments = []
+    completedShipments = []
     userDict = session['user']
     user = None
 
     if userDict:
     	user = user_for_id(userDict['id'])
 
-    print 'PJC render_job_page and Shipments = ' + str(shipments)
-    return render_template('displayJob.html', Job=job, Shipments=shipments, User=user)
+    	if user.permissionId == 4 :  # If we are a Vendor show only our Deliveries
+    		for shipment in reversed(shipments):
+    			if shipment.vendorId != user.id :
+    				shipments.remove(shipment)
+
+    for shipment in shipments :
+    	if shipment.arrivalDate :
+    		completedShipments.append(shipment)
+    	else :
+    		openShipments.append(shipment)
+
+    return render_template('displayJob.html', Job=job, OpenShipments=openShipments, CompletedShipments=completedShipments, User=user)
 
 @application.before_first_request
 def startup() :
@@ -339,6 +438,14 @@ def select_job():
     session['jobId'] = job.id
     return render_job_page()
 
+@application.route('/selectJob',methods=['GET'])
+def select_job_get():
+    jobId = request.args.get('jobId', 0, type=int)
+    job = job_for_id(jobId)
+
+    session['jobId'] = job.id
+    return render_job_page()
+
 def send_email(recipients,subject,text) :
     msg = Message(subject, sender='aeroengineer@yandex.com', recipients=recipients)
     msg.body = text
@@ -401,12 +508,44 @@ def new_user():
     
     return render_template('newUser.html', Jobs=AllJobs, warning=WarningMessage)
 
-@application.route('/newVendor',methods=['POST','GET'])
+@application.route('/editVendor',methods=['POST','GET'])
+def edit_vendor():
+    global WarningMessage
+    vendorId = request.form['vendorId']
+    jobId = request.form['jobId']
+    vendor = user_for_id(vendorId)
+    job = job_for_id(jobId)
+    vendorConfig = job.configForVendor(vendor)
+    
+    return render_template('editVendorConfig.html', Vendor=vendor, Config=vendorConfig, warning=WarningMessage)
+
+@application.route('/newVendor',methods=['GET'])
 def new_vendor():
     global WarningMessage
     global AllJobs
     
     return render_template('newVendor.html', Jobs=AllJobs, warning=WarningMessage)
+
+@application.route('/updateVendorConfig',methods=['POST'])
+def update_vendor():
+    global WarningMessage
+    vendorId = request.form['vendorId']
+    vendorConfigId = request.form['vendorConfigId']
+    vendor = user_for_id(vendorId)
+    vendorConfig = vendor_config_for_id(vendorConfigId)
+
+    if vendorConfig :
+    	update_vendorJobConfig_from_form(vendorConfig, request.form)
+
+    try :
+        db.session.commit()
+    	WarningMessage = "Updates saved for Vendor " + str(vendor.name())
+    except Exception as ex:
+        db.session.rollback()
+    	print dir(ex)
+    	WarningMessage = "Unable to create update Vendor " + str(vendor.name) + " " + str(ex.message)
+
+    return render_template('editVendorConfig.html', Vendor=vendor, Config=vendorConfig, warning=WarningMessage)
 
 @application.route('/createUser',methods=['POST'])
 def create_user():
@@ -424,12 +563,19 @@ def create_user():
     if user.permissionId == '4' :
     	user.firstName = request.form['name']
     	templateName = "newVendor.html"
+    	if 'jobId' in request.form.keys() :
+    		vendorJobConfig = vendorJobConfig_from_form(request.form)
+    		vendorJob = job_for_id(vendorJobConfig.jobId)
+    		user.jobs = [vendorJob]
+    		db.session.add(vendorJobConfig)
+    	else :
+    		WarningMessage = "Vendors must be assigned to a Job."
+    		return render_template(templateName, Jobs=AllJobs, warning=WarningMessage)
     else :
     	user.firstName = request.form['firstName']
     	user.lastName = request.form['lastName']
-
-    jobs = jobs_from_form(request.form)
-    user.jobs = jobs
+    	jobs = jobs_from_form(request.form)
+    	user.jobs = jobs
 
     db.session.add(user)
     try :
@@ -440,13 +586,17 @@ def create_user():
     	WarningMessage = "User " + str(user.email) + " has been created.   Check your email inbox for a temporary password"
     	# PJC - remove the line below after we re-enable email.
     	WarningMessage = WarningMessage + "  Temporarily disabled email.   Temporary password is " + tmpPassword
+
+    	if user.permissionId == 4 :
+    		vendorJobConfig.vendorId = user.id
+        	db.session.commit()
     except Exception as ex:
         db.session.rollback()
     	print dir(ex)
     	WarningMessage = "Unable to create new User " + str(user.email) + " " + str(ex.message)
         print 'Unable to save User [%s]' % str(ex)
 
-    return render_template('newUser.html', Jobs=AllJobs, warning=WarningMessage)
+    return render_template(templateName, Jobs=AllJobs, warning=WarningMessage)
 
 @application.route('/resetPassword',methods=['POST'])
 def reset_password():
@@ -491,15 +641,19 @@ def new_shipment():
     shipment.vendorId = vendorId
     vendor = user_for_id(vendorId)
     job = job_for_id(jobId)
+    vendorConfig = job.configForVendor(vendor)
 
-    return render_template('newShipment.html', Shipment=shipment, Vendor=vendor, Job=job)
+    return render_template('newShipment.html', Shipment=shipment, Vendor=vendor, Config=vendorConfig, Job=job)
 
 @application.route('/editShipment',methods=['POST'])
 def edit_shipment():
     shipmentId = request.form['shipmentId']
     shipment = shipment_for_id(shipmentId)
+    job = job_for_id(shipment.jobId)
+    vendor = user_for_id(shipment.vendorId)
+    vendorConfig = job.configForVendor(vendor)
 
-    return render_template('editShipment.html', Shipment=shipment, Photos=shipment.photos)
+    return render_template('editShipment.html', Vendor=vendor, Config=vendorConfig, Shipment=shipment, Photos=shipment.photos)
 
 @application.route('/createShipment',methods=['POST'])
 def create_shipment():
@@ -508,6 +662,8 @@ def create_shipment():
     vendorId = request.form['vendorId']
     shipment.jobId = jobId
     shipment.vendorId = vendorId
+
+    update_shipment_from_form(shipment, request.form)
     db.session.add(shipment)
 
     return save_shipment(shipment, request)

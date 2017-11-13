@@ -45,6 +45,11 @@ def user_for_id(userId) :
 
     try :
     	user = db.session.query(User).filter_by(id=userId).first()
+    	# Sometimes the new Object did not make it in to the Session.
+    	if None == user :
+                db.session.expire_all()
+                db.session.commit()
+                user = db.session.query(User).filter_by(id=userId).first()
     except Exception as ex :
     	print 'Exception fetching user id [' + str(userId) + '] ' + str(ex)
     	user = None
@@ -56,6 +61,11 @@ def job_for_id(jobId) :
 
     try :
     	job = db.session.query(Job).filter_by(id=jobId).first()
+    	# Sometimes the new Object did not make it in to the Session.
+    	if None == job :
+                db.session.expire_all()
+                db.session.commit()
+                job = db.session.query(Job).filter_by(id=jobId).first()
     except Exception as ex :
     	job = None
     	print 'Exception fetching job for id [' + str(jobId) + '] = ' + str(ex)
@@ -67,6 +77,11 @@ def shipment_for_id(shipmentId) :
 
     try :
     	shipment = db.session.query(Shipment).filter_by(id=shipmentId).first()
+    	# Sometimes the new Object did not make it in to the Session.
+    	if None == shipment :
+                db.session.expire_all()
+                db.session.commit()
+                shipment = db.session.query(Shipment).filter_by(id=shipmentId).first()
     except Exception as ex :
     	print 'Exception fetching shipment id [' + str(shipmentId) + '] ' + str(ex)
     	shipment = None

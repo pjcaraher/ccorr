@@ -8,11 +8,15 @@
 {% if User %}
 <table>
 <tr>
-        {% if User.hasPermission(3) %}
+        {% if User.hasPermission(1) %}
 		<th width="30"></th>
 		<th width="150" bgcolor="cyan">Set Up Job</th>
+        {% endif %}
+        {% if User.hasPermission(2) %}
 		<th width="30"></th>
-		<th width="150" bgcolor="cyan">Set Up Vendor</th>
+		<th width="150" bgcolor="cyan">Vendor Management</th>
+        {% endif %}
+        {% if User.hasPermission(3) %}
 		<th width="30"></th>
 		<th width="150" bgcolor="cyan">Active Jobs</th>
 		<th width="30"></th>
@@ -20,26 +24,29 @@
         {% endif %}
         {% if User.hasPermission(2) %}
 		<th width="30"></th>
-		<th width="150" bgcolor="cyan">New User</th>
+		<th width="150" bgcolor="cyan">User Management</th>
         {% endif %}
 </tr>
 <tr>
-        {% if User.hasPermission(3) %}
+        {% if User.hasPermission(1) %}
 		<td width="30"></td>
 		<td valign="top" align="center">
                 	<br><a href="http://localhost:8888/newJob">New Job</a>
 		</td>
+        {% endif %}
+        {% if User.hasPermission(2) %}
 		<td width="30"></td>
 		<td valign="top" align="center">
-			{% if Jobs| length > 0 %}
-                		<br><a href="http://localhost:8888/newVendor">New Vendor</a>
-			{% endif %}
+                	<br><a href="http://localhost:8888/newVendor">New Vendor</a>
+			<br>
+                	<br><a href="http://localhost:8888/listVendors">List Vendors</a>
 		</td>
+        {% endif %}
+        {% if User.hasPermission(3) %}
 		<td width="30"></td>
 		<td align="center">
 		{% for Job in Jobs %}
                 	<a href="http://localhost:8888/selectJob?jobId={{ Job.id }}">{{ Job.name }}</a>
-			<br>
 			<br>
 		{% endfor %}
 		</td>

@@ -7,65 +7,49 @@
 <a href="http://localhost:8888/mainPage">Main Page</a><br>
 <h1 style="color:red;"">{{ warning }}</h1>
 <table>
-<form id="vendorForm" action="http://localhost:8888/createUser" method="POST">
+<form id="vendorForm" action="http://localhost:8888/createVendor" method="POST">
 <tr>
-	<th width="20"></th>
+	<th width="50"></th>
 	<th>New Vendor</th>
 </tr>
 <tr>
-	<td></td>
+	<td>Name: </td>
 	<td valign="top">
-			<input type="hidden" name="permissionId" value="4"/>
-			email : <input type="text" name="email" value=""/><br>
-			Name : <input type="text" name="name" value=""/><br>
-			<br>
-			Select Job for Vendor: 
-			<select name="jobId" size="2">
-			{% for Job in Jobs %}
-                                <option value="{{ Job.id }}">{{ Job.name }}</option>
-			{% endfor %}
-                        </select>
+		<input type="text" name="name" value=""/><br>
+	</td>
+	<td></td>
+</tr>
+<tr>
+	<td>Contact: </td>
+	<td valign="top">
+		<input type="text" name="contact" value=""/><br>
+	</td>
+	<td></td>
+</tr>
+<tr>
+	<td>Phone: </td>
+	<td valign="top">
+		<input type="text" name="phone" value=""/><br>
+	</td>
+	<td></td>
+</tr>
+<tr>
+	<td>email List: </td>
+	<td valign="top">
+		<input type="text" name="emailList" value=""/><br>
 	</td>
 	<td></td>
 </tr>
 <tr>
 	<td>
+		Select Jobs for Vendor: 
 	</td>
 	<td>
-		Contact : <input form="vendorForm" name="contact"><br>
-		Phone : <input form="vendorForm" name="phone"><br>
-		Email List : <input form="vendorForm" name="emailList"><br>
+		{% for Job in Jobs %}
+			<br><input type="checkbox" id="jobId_{{ Job.id }}" name="jobId_{{ Job.id }}" value="{{ Job.id }}"/> {{ Job.name }} 
+		{% endfor %}
 	</td>
 	<td>
-	</td>
-</tr>
-<tr>
-	<td></td>
-	<td>
-		<b>Fields to display for the Vendor</b><br>
-		<input form="vendorForm" type="checkbox" name="showDeliveryNumber">Delivery Number<br>
-		<input form="vendorForm" type="checkbox" name="showContactName">Contact Name<br>
-		<input form="vendorForm" type="checkbox" name="showContactNumber">Contact Number<br>
-		<input form="vendorForm" type="checkbox" name="showBOLNumber">BOL Number<br>
-		<input form="vendorForm" type="checkbox" name="showSpecialInstructions">Special Instructions<br>
-		<input form="vendorForm" type="checkbox" name="showDescriptionOfGoods">Description Of Goods<br>
-		<input form="vendorForm" type="checkbox" name="showTruckingCompany">Trucking Company<br>
-	</td>
-	<td>
-		<input form="vendorForm" type="checkbox" name="showNumberOfPackages">Number Of Packages<br>
-		<input form="vendorForm" type="checkbox" name="showTypeOfTruck">Type of Truck<br>
-		<input form="vendorForm" type="checkbox" name="showTrackingNumber">Tracking Number<br>
-		<input form="vendorForm" type="checkbox" name="showWeightOfLoad">Weight of Load<br>
-		<input form="vendorForm" type="checkbox" name="showVendorNotes">Vendor Notes<br>
-		<input form="vendorForm" type="checkbox" name="showDeliveryDate">Delivery Date<br>
-		<input form="vendorForm" type="checkbox" name="showDateLoaded">Date Loaded<br>
-	</td>
-	<td valign="top">
-		<b>Items to Attach for Vendor</b><br>
-		<input form="vendorForm" type="checkbox" name="attachBOL">BOL<br>
-		<input form="vendorForm" type="checkbox" name="attachPackingList">Packing List<br>
-		<input form="vendorForm" type="checkbox" name="attachPhotos">Photos<br>
-		<input form="vendorForm" type="checkbox" name="attachMap">Map<br>
 	</td>
 </tr>
 <tr>

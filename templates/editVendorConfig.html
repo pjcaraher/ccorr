@@ -1,0 +1,63 @@
+<html>
+<head>
+</head>
+
+<body>
+<a href="http://localhost:8888/logout">logout</a>
+<br><h1 style="color:red;"">{{ warning }}</h1>
+<form action="http://localhost:8888/selectJob" method="POST">
+	<input type="hidden" name="jobId" value="{{ Config.jobId}}"/>
+	<br><input type="submit" value="Return to Job"/>
+</form>
+<h1>Edit Vendor</h1>
+	<form id="vendorForm" action="http://localhost:8888/updateVendorConfig" method="POST">
+		<input type="hidden" name="vendorId" value="{{ Vendor.id}}"/>
+		<input type="hidden" name="vendorConfigId" value="{{ Config.id}}"/>
+		<input type="hidden" name="jobId" value="{{ Config.jobId}}"/>
+		<input type="text" name="name" value="{{ Vendor.name() }}"/>
+		<br>Contact Name : <input type="text" name="contact" value="{{ Config.contact }}"/>
+		<br>Phone : <input type="text" name="phone" value="{{ Config.phone }}"/>
+		<br>Email List : <input type="text" name="emailList" value="{{ Config.emailList }}"/>
+	</form>
+<table>
+<tr>
+	<td></td>
+	<td>
+		<b>Fields to display for the Vendor</b><br>
+		<input form="vendorForm" type="checkbox" name="showDeliveryNumber" {% if Config.showDeliveryNumber %} checked {% endif %}/>Delivery Number<br>
+		<input form="vendorForm" type="checkbox" name="showContactName" {% if Config.showContactName %} checked {% endif %}/>Contact Name<br>
+		<input form="vendorForm" type="checkbox" name="showContactNumber" {% if Config.showContactNumber %} checked {% endif %}/>Contact Number<br>
+		<input form="vendorForm" type="checkbox" name="showBOLNumber" {% if Config.showBOLNumber %} checked {% endif %}/>BOL Number<br>
+		<input form="vendorForm" type="checkbox" name="showSpecialInstructions" {% if Config.showSpecialInstructions %} checked {% endif %}/>Special Instructions<br>
+		<input form="vendorForm" type="checkbox" name="showDescriptionOfGoods" {% if Config.showDescriptionOfGoods %} checked {% endif %}/>Description Of Goods<br>
+		<input form="vendorForm" type="checkbox" name="showTruckingCompany" {% if Config.showTruckingCompany %} checked {% endif %}/>Trucking Company<br>
+	</td>
+	<td>
+		<input form="vendorForm" type="checkbox" name="showNumberOfPackages" {% if Config.showNumberOfPackages %} checked {% endif %}/>Number Of Packages<br>
+		<input form="vendorForm" type="checkbox" name="showTypeOfTruck" {% if Config.showTypeOfTruck %} checked {% endif %}/>Type of Truck<br>
+		<input form="vendorForm" type="checkbox" name="showTrackingNumber" {% if Config.showTrackingNumber %} checked {% endif %}/>Tracking Number<br>
+		<input form="vendorForm" type="checkbox" name="showWeightOfLoad" {% if Config.showWeightOfLoad %} checked {% endif %}/>Weight of Load<br>
+		<input form="vendorForm" type="checkbox" name="showVendorNotes" {% if Config.showVendorNotes %} checked {% endif %}/>Vendor Notes<br>
+		<input form="vendorForm" type="checkbox" name="showDeliveryDate" {% if Config.showDeliveryDate %} checked {% endif %}/>Delivery Date<br>
+		<input form="vendorForm" type="checkbox" name="showDateLoaded" {% if Config.showDateLoaded %} checked {% endif %}/>Date Loaded<br>
+	</td>
+	<td valign="top">
+		<b>Items to Attach for Vendor</b><br>
+		<input form="vendorForm" type="checkbox" name="attachBOL" {% if Config.attachBOL %} checked {% endif %}/>BOL<br>
+		<input form="vendorForm" type="checkbox" name="attachPackingList" {% if Config.attachPackingList %} checked {% endif %}/>Packing List<br>
+		<input form="vendorForm" type="checkbox" name="attachPhotos" {% if Config.attachPhotos %} checked {% endif %}/>Photos<br>
+		<input form="vendorForm" type="checkbox" name="attachMap" {% if Config.attachMap %} checked {% endif %}/>Map<br>
+	</td>
+</tr>
+<tr>
+	<td>
+	</td>
+	<td>
+		<br><input form="vendorForm" type="submit" value="Update"/>
+	</td>
+	<td>
+	</td>
+</tr>
+<table>
+</body>
+</html>

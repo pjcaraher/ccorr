@@ -11,6 +11,11 @@ userJobs = db.Table('UserJob',
        	db.Column('job_id', db.Integer, db.ForeignKey('Job.id'))
 )
 
+vendorJobs = db.Table('VendorJob',
+       	db.Column('vendor_id', db.Integer, db.ForeignKey('Vendor.id')),
+       	db.Column('job_id', db.Integer, db.ForeignKey('Job.id'))
+)
+
 class User(db.Model):
 	__tablename__ = 'User'
 	id = db.Column(db.Integer, primary_key=True)
@@ -20,6 +25,7 @@ class User(db.Model):
 	hashPassword = db.Column(db.String(64))
 	passwordRequiresReset = db.Column(db.Boolean)
 	permissionId = db.Column(db.Integer, db.ForeignKey('Permission.id'))
+	vendorId = db.Column(db.Integer, db.ForeignKey('Vendor.id'))
 	shipments = db.relationship('Shipment', backref='user')
 	jobs = db.relationship('Job' ,
                                   secondary=userJobs,
@@ -42,7 +48,6 @@ class User(db.Model):
 			returnDict['permissionId'] = str(self.permissionId)
 		returnDict['passwordRequiresReset'] = str(self.passwordRequiresReset)
 	
-		print "PJC user is " + str(returnDict)
 		return returnDict
 
 	def json(self):
@@ -100,52 +105,55 @@ class Permission(db.Model):
 	
 		return returnDict
 
-class Job(db.Model):
-	__tablename__ = 'Job'
+class Vendor(db.Model):
+	__tablename__ = 'Vendor'
 	id = db.Column(db.Integer, primary_key=True)
-	name = db.Column(db.String(64))
-	number = db.Column(db.String(64))
-	pmName = db.Column(db.String(64))
-	address = db.Column(db.String(128))
-	instructions = db.Column(db.String(1024))
-	shipments = db.relationship('Shipment', backref='job')
+	name = db.Column(db.String(32))
+	contact = db.Column(db.String(32))
+	phone = db.Column(db.String(32))
+	emailList = db.Column(db.String(256))
+	jobs = db.relationship('Job' ,
+                                  secondary=vendorJobs,
+                                  backref=db.backref('vendors', lazy=True),
+                                  lazy='subquery')
 
 	def __repr__(self):
-		return '<Job %r>' % self.name
+		return '<Vendor %r>' % self.name
 
-	def vendors(self):
-		userIds = []
-		vendors = []
-		result = db.session.connection().execute("Select user_id from UserJob, User where User.id = UserJob.user_id and User.permissionId = 4 and UserJob.job_id = " + str(self.id))
-		for row in result :
-			userIds.append(row[0])
-		if len(userIds) > 0 :
-			vendors = db.session.query(User).filter(User.id.in_(userIds)).all()
-		return vendors
-
-	def configForVendor(self,vendor):
-		vendorConfig = db.session.query(VendorJobConfig).filter_by(jobId=self.id).filter_by(vendorId=vendor.id).first()
-		return vendorConfig
+	def users(self):
+		users = []
+		query = db.session.query(User).filter_by(vendorId=self.id)
+		for user in query :
+			users.append(user)
+		return users
 
 	def asDict(self):
 		returnDict = {}
 		returnDict['id'] = str(self.id)
 		returnDict['name'] = str(self.name)
+		returnDict['contact'] = str(self.contact)
+		returnDict['phone'] = str(self.phone)
+		returnDict['emailList'] = str(self.emailList)
 	
 		return returnDict
 
-	def json(self):
-		returnDict = self.asDict()
-		return json.dumps(returnDict)
+	def belongsToJob(self, job):
+		belongsToJob = False
 
-class VendorJobConfig(db.Model):
-	__tablename__ = 'VendorJobConfig'
+		for _job in self.jobs:
+			if _job.id == job.id :
+				belongsToJob = True
+				break
+
+		return belongsToJob
+
+class Job(db.Model):
+	__tablename__ = 'Job'
 	id = db.Column(db.Integer, primary_key=True)
-	jobId = db.Column(db.Integer, db.ForeignKey('Job.id'))
-	vendorId = db.Column(db.Integer, db.ForeignKey('User.id'))
-	contact = db.Column(db.String(64))
-	phone = db.Column(db.String(32))
-	emailList = db.Column(db.String(256))
+	name = db.Column(db.String(64))
+	number = db.Column(db.String(64))
+	address = db.Column(db.String(128))
+	instructions = db.Column(db.String(1024))
 	showDeliveryNumber = db.Column(db.Boolean)
 	showContactName = db.Column(db.Boolean)
 	showContactNumber = db.Column(db.Boolean)
@@ -164,13 +172,30 @@ class VendorJobConfig(db.Model):
 	attachPackingList = db.Column(db.Boolean)
 	attachPhotos = db.Column(db.Boolean)
 	attachMap = db.Column(db.Boolean)
+	shipments = db.relationship('Shipment', backref='job')
+
+	def __repr__(self):
+		return '<Job %r>' % self.name
+
+	def vendorList(self):
+		# userIds = []
+		# vendors = []
+		# result = db.session.connection().execute("Select user_id from UserJob, User where User.id = UserJob.user_id and User.permissionId = 4 and UserJob.job_id = " + str(self.id))
+		# for row in result :
+			# userIds.append(row[0])
+		# if len(userIds) > 0 :
+			# result2 = db.session.query(User).filter(User.id.in_(userIds)).all()
+			# for row in result2 :
+				# vendors.append(row)
+		vendorList = []
+		for vendor in self.vendors :
+			vendorList.append(vendor)
+		return vendorList
 
 	def asDict(self):
 		returnDict = {}
 		returnDict['id'] = str(self.id)
-		returnDict['contact'] = self.contact
-		returnDict['phone'] = self.phone
-		returnDict['emailList'] = self.emailList
+		returnDict['name'] = str(self.name)
 		returnDict['showDeliveryNumber'] = self.showDeliveryNumber
 		returnDict['showContactName'] = self.showContactName
 		returnDict['showContactNumber'] = self.showContactNumber
@@ -191,10 +216,6 @@ class VendorJobConfig(db.Model):
 		returnDict['attachMap'] = self.attachMap
 	
 		return returnDict
-
-	def vendor(self):
-		vendor = db.session.query(User).filter_by(id=self.vendorId).first()
-		return vendor
 
 	def json(self):
 		returnDict = self.asDict()

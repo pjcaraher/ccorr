@@ -1,0 +1,108 @@
+<html>
+<head>
+</head>
+
+<body>
+<a href="http://localhost:8888/logout">logout</a><br>
+<a href="http://localhost:8888/mainPage">Main Page</a><br>
+<h1 style="color:red;"">{{ warning }}</h1>
+<table>
+<form id="vendorForm" action="http://localhost:8888/updateVendor" method="POST">
+<tr>
+	<th width="20"></th>
+	<th>New Vendor</th>
+</tr>
+<tr>
+	<td>Name: </td>
+	<td valign="top">
+		<input type="text" name="name" value="{{ Vendor.name }}"/><br>
+	</td>
+	<td></td>
+</tr>
+<tr>
+	<td>Contact: </td>
+	<td valign="top">
+		<input type="text" name="contact" value="{{ Vendor.contact }}"/><br>
+	</td>
+	<td></td>
+</tr>
+<tr>
+	<td>Phone: </td>
+	<td valign="top">
+		<input type="text" name="phone" value="{{ Vendor.phone }}"/><br>
+	</td>
+	<td></td>
+</tr>
+<tr>
+	<td>email List: </td>
+	<td valign="top">
+		<input type="text" name="emailList" value="{{ Vendor.emailList }}"/><br>
+	</td>
+	<td></td>
+</tr>
+<tr>
+	<td valign="top">
+	Jobs:
+	</td>
+	<td valign="top">
+		{% for Job in Jobs %}
+			<input type="checkbox" id="jobId_{{ Job.id }}" name="jobId_{{ Job.id }}" value="{{ Job.id }}" 
+											{% if Vendor.belongsToJob(Job) %} 
+												checked 
+											{% endif %} /> {{ Job.name }} 
+			<br>
+		{% endfor %}
+	</td>
+	<td>
+	</td>
+</tr>
+<tr>
+	<td>
+	</td>
+	<td>
+		<input type="hidden" name="vendorId" value="{{ Vendor.id }}"/><br>
+		<br><input type="submit" value="Update"/>
+	</td>
+	<td>
+	</td>
+</tr>
+</form>
+
+{% if Vendor.users()|length > 0 %}
+<tr>
+<td colspan=3><br></td>
+</tr>
+<tr>
+	<td valign="top">
+		Users
+	</td>
+	<td>
+		{% for User in Vendor.users() %}
+		{{ User.firstName }} {{ User.lastName }} {{ User.email }} <a href="http://localhost:8888/removeVendorUser?vendorId={{ Vendor.id }}&userId={{ User.id}}">Remove</a></br>
+		{% endfor %}
+	</td>
+	<td>
+	</td>
+</tr>
+<tr>
+<td colspan=3><br></td>
+</tr>
+{% endif %}
+<tr>
+	<td valign="top">
+		New User
+	</td>
+	<td valign="top">
+		<form id="vendorUserForm" action="http://localhost:8888/createVendorUser" method="POST">
+			<input type="hidden" name="vendorId" value="{{ Vendor.id }}"/>
+			First Name : <input type="text" name="firstName"/><br>
+			Last Name : <input type="text" name="lastName"/><br>
+			Email : <input type="text" name="email"/><br>
+			<br><input type="submit" value="Add"/>
+		</form>
+	</td>
+	<td>
+	</td>
+</tr>
+</body>
+</html>

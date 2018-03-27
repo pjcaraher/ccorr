@@ -32,35 +32,25 @@
 		</li>
 		{% endfor %}
 	</ul>
-{% if User.hasPermission(3) %}
+ {% if User.hasPermission(3) %}
 <h1>New Delivery</h1>
-     {% if Job.vendors()| length > 0 %}
-	{% for vendor in Job.vendors() %}
-	New Delivery for {{ vendor.name() }}
+     {% if Job.vendorList()|length > 0 %}
+	{% for vendor in Job.vendorList() %}
+	New Delivery for {{ vendor.name }}
 	<form action="http://localhost:8888/newShipment" method="POST">
 		<input type="hidden" name="vendorId" value="{{ vendor.id}}"/>
 		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
 		<input type="submit" value="Create"/>
 	</form>
 	{% endfor %}
-<h1>Update Vendor</h1>
-	{% for vendor in Job.vendors() %}
-	Edit Vendor {{ vendor.name() }} 
-	<form action="http://localhost:8888/editVendor" method="POST"> 
-		<input type="hidden" name="jobId" value="{{ Job.id}}"/> 
-		<input type="hidden" name="vendorId" value="{{ vendor.id}}"/> 
-		<input type="submit" value="Update"/> 
-	</form>
-	{% endfor %}
      {% else %}
-Vendors are required for Deliveries<br>
-No Vendors exist for this Job.<br>
-You need to <a href="http://localhost:8888/newUser">Create a new Vendor</a>
-{% endif %}
+	Vendors are required for Deliveries<br>
+	No Vendors exist for this Job.<br>
+     {% endif %}
  {% elif User.hasPermission(4) %}
 	<h1>New Delivery</h1>
 	New Delivery <form action="http://localhost:8888/newShipment" method="POST">
-		<input type="hidden" name="vendorId" value="{{ User.id}}"/>
+		<input type="hidden" name="vendorId" value="{{ User.vendorId}}"/>
 		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
 		<input type="submit" value="Create"/>
 	</form>

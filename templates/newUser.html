@@ -19,10 +19,14 @@
 			email : <input type="text" name="email" value=""/><br>
 			FirstName : <input type="text" name="firstName" value=""/><br>
 			LastName : <input type="text" name="lastName" value=""/><br>
-			Permission : <select name="permissionId" size="2">
-				<option value="2">Project Manager</option>
-				<option selected="selected" value="3">Field Staff</option>
-			</select>
+			{% if UserPermission == 1 %}
+				Permission : <select name="permissionId" size="2">
+					<option value="2">Project Manager</option>
+					<option selected="selected" value="3">Field Staff</option>
+				</select>
+			{% else %}
+				<input type="hidden" name="permissionId" value="3"/>
+			{% endif %}
 			<br>
 			Select Jobs for User: 
 			{% for Job in Jobs %}

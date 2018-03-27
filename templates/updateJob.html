@@ -1,0 +1,65 @@
+<html>
+<head>
+</head>
+
+<body>
+<a href="http://localhost:8888/logout">logout</a>
+<br>
+<a href="http://localhost:8888/mainPage">Main Page</a>
+<br>
+<h1 style="color:red;"">{{ warning }}</h1>
+<br>
+{% if User.hasPermission(1) %}
+<h1>Update Job</h1>
+	<form id="jobForm" action="http://localhost:8888/updateJob" method="POST">
+		<input type="hidden" name="jobId" value="{{ Job.id }}"/><br>
+		Name: <input type="text" name="name" value="{{ Job.name }}"/><br>
+		Number: <input type="text" name="number" value="{{ Job.number }}"/><br>
+		Address: <textarea rows="4" cols="75" name="address" form="jobForm">{{ Job.address }}</textarea><br>
+		Instructions: <textarea rows="6" cols="75" name="instructions" form="jobForm">{{ Job.instructions }}</textarea><br>
+	</form>
+<table>
+
+
+<tr>
+	<td></td>
+	<td>
+		<b>Fields to display for the Vendor</b><br>
+		<input form="jobForm" type="checkbox" name="showDeliveryNumber" {% if Job.showDeliveryNumber %} checked {% endif %}/>Delivery Number<br>
+		<input form="jobForm" type="checkbox" name="showContactName" {% if Job.showContactName %} checked {% endif %}/>Contact Name<br>
+		<input form="jobForm" type="checkbox" name="showContactNumber" {% if Job.showContactNumber %} checked {% endif %}/>Contact Number<br>
+		<input form="jobForm" type="checkbox" name="showBOLNumber" {% if Job.showBOLNumber %} checked {% endif %}/>BOL Number<br>
+		<input form="jobForm" type="checkbox" name="showSpecialInstructions" {% if Job.showSpecialInstructions %} checked {% endif %}/>Special Instructions<br>
+		<input form="jobForm" type="checkbox" name="showDescriptionOfGoods" {% if Job.showDescriptionOfGoods %} checked {% endif %}/>Description Of Goods<br>
+		<input form="jobForm" type="checkbox" name="showTruckingCompany" {% if Job.showTruckingCompany %} checked {% endif %}/>Trucking Company<br>
+	</td>
+	<td>
+		<input form="jobForm" type="checkbox" name="showNumberOfPackages" {% if Job.showNumberOfPackages %} checked {% endif %}/>Number Of Packages<br>
+		<input form="jobForm" type="checkbox" name="showTypeOfTruck" {% if Job.showTypeOfTruck %} checked {% endif %}/>Type of Truck<br>
+		<input form="jobForm" type="checkbox" name="showTrackingNumber" {% if Job.showTrackingNumber %} checked {% endif %}/>Tracking Number<br>
+		<input form="jobForm" type="checkbox" name="showWeightOfLoad" {% if Job.showWeightOfLoad %} checked {% endif %}/>Weight of Load<br>
+		<input form="jobForm" type="checkbox" name="showVendorNotes" {% if Job.showVendorNotes %} checked {% endif %}/>Vendor Notes<br>
+		<input form="jobForm" type="checkbox" name="showDeliveryDate" {% if Job.showDeliveryDate %} checked {% endif %}/>Delivery Date<br>
+		<input form="jobForm" type="checkbox" name="showDateLoaded" {% if Job.showDateLoaded %} checked {% endif %}/>Date Loaded<br>
+	</td>
+	<td valign="top">
+		<b>Items to Attach for Vendor</b><br>
+		<input form="jobForm" type="checkbox" name="attachBOL" {% if Job.attachBOL %} checked {% endif %}/>BOL<br>
+		<input form="jobForm" type="checkbox" name="attachPackingList" {% if Job.attachPackingList %} checked {% endif %}/>Packing List<br>
+		<input form="jobForm" type="checkbox" name="attachPhotos" {% if Job.attachPhotos %} checked {% endif %}/>Photos<br>
+		<input form="jobForm" type="checkbox" name="attachMap" {% if Job.attachMap %} checked {% endif %}/>Map<br>
+	</td>
+</tr>
+<tr>
+	<td>
+	</td>
+	<td>
+		<br><input form="jobForm" type="submit" value="Update"/>
+	</td>
+	<td>
+	</td>
+</tr>
+<table>
+{% endif %}
+</body>
+</html>

@@ -247,40 +247,40 @@ Vendor : {{ Vendor.name() }}<br>
 <option value="AM" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%p") == "AM" %}selected{% endif %}{% endif %}>AM</option>
 <option value="PM" {% if Shipment.arrivalDate %}{% if Shipment.arrivalDate.strftime("%p") == "PM" %}selected{% endif %}{% endif %}>PM</option>
 				</select></br>
-{% if Config.showDescriptionOfGoods %}
+{% if Job.showDescriptionOfGoods %}
 Description : {% if Shipment.description %}{{ Shipment.description }}{% endif %}<br>
 {% endif %}
-{% if Config.showContactName %}
+{% if Job.showContactName %}
 ADD CONTACT NAME<br>
 {% endif %}
-{% if Config.showContactNumber %}
+{% if Job.showContactNumber %}
 ADD CONTACT NUMBER<br>
 {% endif %}
-{% if Config.showDeliveryNumber %}
+{% if Job.showDeliveryNumber %}
 Delivery Number : {% if Shipment.deliveryNumber %}{{ Shipment.deliveryNumber }}{% endif %}<br>
 {% endif %}
-{% if Config.showBOLNumber %}
+{% if Job.showBOLNumber %}
 BOL Number : {% if Shipment.bolNumber %}{{ Shipment.bolNumber }}{% endif %}<br>
 {% endif %}
-{% if Config.showNumberOfPackages %}
+{% if Job.showNumberOfPackages %}
 Number of Packages : {% if Shipment.numberOfPackages %}{{ Shipment.numberOfPackages }}{% endif %}<br>
 {% endif %}
-{% if Config.showTypeOfTruck %}
+{% if Job.showTypeOfTruck %}
 Type of Truck : {% if Shipment.truckType %}{{ Shipment.truckType }}{% endif %}<br>
 {% endif %}
-{% if Config.showWeightOfLoad %}
+{% if Job.showWeightOfLoad %}
 Weight of Load : {% if Shipment.weight %}{{ Shipment.weight }}{% endif %}<br>
 {% endif %}
-{% if Config.showTruckingCompany %}
+{% if Job.showTruckingCompany %}
 Trucking Company : {% if Shipment.truckingCompany %}{{ Shipment.truckingCompany }}{% endif %}<br>
 {% endif %}
-{% if Config.showSpecialInstructions %}
+{% if Job.showSpecialInstructions %}
 Instructions : {% if Shipment.specialInstructions %}{{ Shipment.specialInstructions }}{% endif %}<br>
 {% endif %}
-{% if Config.showTrackingNumber %}
+{% if Job.showTrackingNumber %}
 Tracking Number : {% if Shipment.trackingNumber %}{{ Shipment.trackingNumber }}{% endif %}<br>
 {% endif %}
-{% if Config.showVendorNotes %}
+{% if Job.showVendorNotes %}
 Notes : {% if Shipment.vendorNotes %}{{ Shipment.vendorNotes }}{% endif %}<br>
 {% endif %}
 

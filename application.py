@@ -685,7 +685,7 @@ def create_vendor_user():
     		WarningMessage = "User " + str(email) + " is already assigned to another Vendor"
     	else :
     		WarningMessage = "User " + user.email + " successfully assigned to Vendor"
-    elif email and email.length() > 0 :
+    elif email and len(email) > 0 :
     	user = User()
         db.session.add(user)
     	user.email = email

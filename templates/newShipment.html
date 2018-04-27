@@ -267,6 +267,12 @@ Number of Packages : <input type="text" name="numberOfPackages" value="{% if Shi
 {% if Job.showTypeOfTruck %}
 Type of Truck : <input type="text" name="truckType" value="{% if Shipment.truckType %}{{ Shipment.truckType }}{% endif %}"/><br>
 {% endif %}
+{% if Job.showDriverName %}
+Driver Name : <input type="text" name="driverName" value="{% if Shipment.driverName %}{{ Shipment.driverName }}{% endif %}"/><br>
+{% endif %}
+{% if Job.showDriverPhone %}
+Driver Phone : <input type="text" name="driverPhone" value="{% if Shipment.driverPhone %}{{ Shipment.driverPhone }}{% endif %}"/><br>
+{% endif %}
 {% if Job.showWeightOfLoad %}
 Weight of Load : <input type="text" name="weight" value="{% if Shipment.weight %}{{ Shipment.weight }}{% endif %}"/><br>
 {% endif %}

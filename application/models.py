@@ -163,6 +163,8 @@ class Job(db.Model):
 	showTruckingCompany = db.Column(db.Boolean)
 	showNumberOfPackages = db.Column(db.Boolean)
 	showTypeOfTruck = db.Column(db.Boolean)
+	showDriverName = db.Column(db.Boolean)
+	showDriverPhone = db.Column(db.Boolean)
 	showTrackingNumber = db.Column(db.Boolean)
 	showWeightOfLoad = db.Column(db.Boolean)
 	showVendorNotes = db.Column(db.Boolean)
@@ -239,6 +241,8 @@ class Shipment(db.Model):
 	vendorNotes = db.Column(db.String(256))
 	jobId = db.Column(db.Integer, db.ForeignKey('Job.id'))
 	vendorId = db.Column(db.Integer, db.ForeignKey('User.id'))
+	driverName = db.Column(db.String(64))
+	driverPhone = db.Column(db.String(64))
 	photos = db.relationship('ShipmentPhoto', backref='shipment')
 
 	def __repr__(self):

@@ -16,6 +16,11 @@ vendorJobs = db.Table('VendorJob',
        	db.Column('job_id', db.Integer, db.ForeignKey('Job.id'))
 )
 
+shipmentMaps = db.Table('ShipmentMap',
+       	db.Column('shipment_id', db.Integer, db.ForeignKey('Shipment.id')),
+       	db.Column('jobmap_id', db.Integer, db.ForeignKey('JobMap.id'))
+)
+
 class User(db.Model):
 	__tablename__ = 'User'
 	id = db.Column(db.Integer, primary_key=True)
@@ -36,7 +41,7 @@ class User(db.Model):
 		return '<User %r %r>' % (self.firstName, self.lastName)
 
 	def name(self):
-		return self.firstName
+		return self.firstName + " " + self.lastName
 
 	def asDict(self):
 		returnDict = {}
@@ -49,6 +54,9 @@ class User(db.Model):
 		returnDict['passwordRequiresReset'] = str(self.passwordRequiresReset)
 	
 		return returnDict
+
+	def hasPermissionToSeeAllComments(self):
+		return self.permissionId < 4
 
 	def json(self):
 		returnDict = self.asDict()
@@ -244,6 +252,7 @@ class Shipment(db.Model):
 	driverName = db.Column(db.String(64))
 	driverPhone = db.Column(db.String(64))
 	photos = db.relationship('ShipmentPhoto', backref='shipment')
+	comments = db.relationship('ShipmentComment', backref='shipment')
 
 	def __repr__(self):
 		return '<Shipment %r>' % self.id
@@ -251,6 +260,9 @@ class Shipment(db.Model):
 	def vendor(self):
 		vendor = db.session.query(User).filter_by(id=self.vendorId).first()
 		return vendor
+
+	def reversedComments(self):
+		return list(reversed(self.comments))
 
 	# First return the arrived Shipments, the most recent at top.
 	# Second, return the expected Shipments, the most recent at top.
@@ -311,3 +323,79 @@ class ShipmentPhoto(db.Model):
 		returnDict = self.asDict()
 		return json.dumps(returnDict)
 
+
+class ShipmentComment(db.Model):
+	__tablename__ = 'ShipmentComment'
+	id = db.Column(db.Integer, primary_key=True)
+	shipmentId = db.Column(db.Integer, db.ForeignKey('Shipment.id'))
+	commentDate = db.Column(db.DateTime)
+	comment = db.Column(db.String(1024))
+	userId = db.Column(db.Integer, db.ForeignKey('User.id'))
+
+	def __repr__(self):
+		return '<ShipmentComment %r>' % self.id
+
+	def user(self):
+		user = db.session.query(User).filter_by(id=self.userId).first()
+		return user
+
+	def asDict(self):
+		returnDict = {}
+		returnDict['id'] = str(self.id)
+		returnDict['commentDate'] = str(self.commentDate)
+	
+		return returnDict
+
+	def json(self):
+		returnDict = self.asDict()
+		return json.dumps(returnDict)
+
+class Map(db.Model):
+	__tablename__ = 'Map'
+	id = db.Column(db.Integer, primary_key=True)
+	s3Key = db.Column(db.String(32), unique=True)
+
+	def __repr__(self):
+		return '<Map %r>' % self.id
+
+	def asDict(self):
+		returnDict = {}
+		returnDict['id'] = str(self.id)
+		returnDict['s3Key'] = str(self.s3Key)
+	
+		return returnDict
+
+	def json(self):
+		returnDict = self.asDict()
+		return json.dumps(returnDict)
+
+class JobMap(db.Model):
+	__tablename__ = 'JobMap'
+	id = db.Column(db.Integer, primary_key=True)
+	jobId = db.Column(db.Integer, db.ForeignKey('Job.id'))
+	mapId = db.Column(db.Integer, db.ForeignKey('Map.id'))
+	name = db.Column(db.String(32))
+
+	def __repr__(self):
+		return '<JobMap %r>' % self.id
+
+	def job(self):
+		job = db.session.query(Job).filter_by(id=self.jobId).first()
+		return job
+
+	def map(self):
+		map = db.session.query(Map).filter_by(id=self.mapId).first()
+		return map
+
+	def asDict(self):
+		returnDict = {}
+		returnDict['id'] = str(self.id)
+		returnDict['jobId'] = str(self.jobId)
+		returnDict['mapId'] = str(self.mapId)
+		returnDict['name'] = str(self.name)
+	
+		return returnDict
+
+	def json(self):
+		returnDict = self.asDict()
+		return json.dumps(returnDict)

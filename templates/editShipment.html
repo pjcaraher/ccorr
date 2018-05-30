@@ -289,19 +289,36 @@ Tracking Number : {% if Shipment.trackingNumber %}{{ Shipment.trackingNumber }}{
 {% if Job.showVendorNotes %}
 Notes : {% if Shipment.vendorNotes %}{{ Shipment.vendorNotes }}{% endif %}<br>
 {% endif %}
-
-
+Comments:<br>
+<textarea name="comment" cols="40" rows="5"></textarea><br>
 		<input type="submit" value="Save"/>
 	</form>
 	<form action="http://localhost:8888/cancelEditShipment" method="POST">
 		<input type="submit" value="Cancel"/>
 	</form>
 <br>
-{% for Photo in Photos %}
-<img src="{{ Photo.src() }}" alt="{{ Photo.id }}" style="width:304px;height:228px;">
-<br>
-{{ Photo.photoDate.strftime("%-m/%d %-I:%M %p") }}
-<br>
+<table>
+<tr>
+<th>Date</th><th width="50"></th><th>User</th>
+</tr>
+{% for Comment in Shipment.reversedComments() %}
+	{% if User.hasPermissionToSeeAllComments() or Comment.user().permissionId == 4 %}
+	<tr>
+	<td>{{ Comment.commentDate }}</td><td></td><td>{{ Comment.user().name() }}</td>
+	</tr>
+	<tr>
+	<td colspan="3">{{ Comment.comment }}</td>
+	</tr>
+	{% endif %}
 {% endfor %}
+</table>
+{% if User.permissionId < 4 %}
+	{% for Photo in Photos %}
+		<img src="{{ Photo.src() }}" alt="{{ Photo.id }}" style="width:304px;height:228px;">
+		<br>
+		{{ Photo.photoDate.strftime("%-m/%d %-I:%M %p") }}
+		<br>
+	{% endfor %}
+{% endif %}
 </body>
 </html>

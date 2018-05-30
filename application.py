@@ -10,7 +10,7 @@ from datetime import datetime
 
 from flask import Flask, request, session, flash, url_for, redirect, \
      render_template, abort, send_from_directory, Response
-from application.models import User, Job, Shipment, ShipmentPhoto, Vendor
+from application.models import User, Job, Shipment, ShipmentPhoto, ShipmentComment, Vendor
 from application import db
 from application import apUtils
 from flask.ext.mail import Mail
@@ -234,6 +234,8 @@ def update_jobConfig_from_form(job, form) :
     job.showSpecialInstructions = form_bool_for_key(form,'showSpecialInstructions')
     job.showDescriptionOfGoods = form_bool_for_key(form,'showDescriptionOfGoods')
     job.showTruckingCompany = form_bool_for_key(form,'showTruckingCompany')
+    job.showDriverName = form_bool_for_key(form,'showDriverName')
+    job.showDriverPhone = form_bool_for_key(form,'showDriverPhone')
     job.showNumberOfPackages = form_bool_for_key(form,'showNumberOfPackages')
     job.showTypeOfTruck = form_bool_for_key(form,'showTypeOfTruck')
     job.showTrackingNumber = form_bool_for_key(form,'showTrackingNumber')
@@ -293,6 +295,23 @@ def save_shipment(shipment, request):
     shippedDate = date_with_prefix('shipped_', request.form)
     expectedDate = date_with_prefix('expected_', request.form)
     arrivalDate = date_with_prefix('arrival_', request.form)
+    comment = None
+
+    if 'comment' in request.form.keys() :
+    	if len(request.form['comment']) > 0 :
+    		userDict = session['user']
+    		if userDict:
+    			user = user_for_id(userDict['id'])
+    		if user :
+    			comment = request.form['comment']
+    			shipmentComment = ShipmentComment()
+                	shipmentComment.shipmentId = shipment.id
+                	shipmentComment.comment = comment
+                	shipmentComment.commentDate = datetime.now()
+                	shipmentComment.userId = user.id
+                	db.session.add(shipmentComment)
+    		else :
+                	print "Error adding Comment.   There is no logged in User."
 
     shipment.shippedDate = shippedDate
     shipment.expectedDate = expectedDate
@@ -828,8 +847,13 @@ def edit_shipment():
     shipment = shipment_for_id(shipmentId)
     job = job_for_id(shipment.jobId)
     vendor = user_for_id(shipment.vendorId)
+    userDict = session['user']
+    user = None
 
-    return render_template('editShipment.html', Vendor=vendor, Job=job, Shipment=shipment, Photos=shipment.photos)
+    if userDict:
+    	user = user_for_id(userDict['id'])
+
+    return render_template('editShipment.html', User=user, Vendor=vendor, Job=job, Shipment=shipment, Photos=shipment.photos)
 
 @application.route('/createShipment',methods=['POST'])
 def create_shipment():
@@ -1002,6 +1026,50 @@ def mobile_edit_shipment() :
 
     return Response(json.dumps(retVal),  mimetype='application/json')
 
+@application.route('/mPostComment',methods=['POST'])
+def mobile_post_comment() :
+    dict = json.loads(str(request.data))
+    access_token = None
+    user = None
+    error = None
+    status = ERR_CALL_FAILED
+    retVal = {}
+
+    try :
+    	access_token = dict['access_token']
+    	user = user_for_jwt(access_token)
+    	if user :
+    		# Update the access_token
+    		retVal['access_token'] = jwt_for_user(user)
+    		shipmentId = dict['shipmentId']
+    		shipment = shipment_for_id(shipmentId)
+    		if shipment :
+                	shipmentComment = ShipmentComment()
+                        shipmentComment.shipmentId = shipment.id
+                        shipmentComment.comment = dict['comment']
+                        shipmentComment.commentDate = datetime.now()
+                        shipmentComment.userId = user.id
+                        try :
+                        	db.session.add(shipmentComment)
+                                db.session.commit()
+                                # Synch up the Shipment object.
+                                shipment = shipment_for_id(shipment.id)
+                                retVal['id'] = shipmentComment.id
+                                status = ERR_NONE
+                        except Exception as ex:
+                                db.session.rollback()
+                                print 'Unable to save ShipmentComment [%s]' % str(ex)
+    	else :
+    		status = ERR_NO_USER
+    		error = "No user defined"
+    except Exception as ex :
+    	error = str(ex)
+    	status = ERR_NO_USER
+
+    retVal['status'] = status
+    retVal['error'] = error
+
+    return Response(json.dumps(retVal),  mimetype='application/json')
 @application.route('/mPostPhoto',methods=['POST'])
 def mobile_post_photo() :
     dict = json.loads(str(request.data))

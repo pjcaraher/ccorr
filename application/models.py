@@ -1,9 +1,12 @@
 from application import db
 import json
+import os
 import hashlib
 import random
 import string
 import base64
+import boto3
+import botocore
 from validate_email import validate_email
 
 userJobs = db.Table('UserJob',
@@ -183,6 +186,7 @@ class Job(db.Model):
 	attachPhotos = db.Column(db.Boolean)
 	attachMap = db.Column(db.Boolean)
 	shipments = db.relationship('Shipment', backref='job')
+	maps = db.relationship('JobMap', backref='job')
 
 	def __repr__(self):
 		return '<Job %r>' % self.name
@@ -350,31 +354,13 @@ class ShipmentComment(db.Model):
 		returnDict = self.asDict()
 		return json.dumps(returnDict)
 
-class Map(db.Model):
-	__tablename__ = 'Map'
-	id = db.Column(db.Integer, primary_key=True)
-	s3Key = db.Column(db.String(32), unique=True)
-
-	def __repr__(self):
-		return '<Map %r>' % self.id
-
-	def asDict(self):
-		returnDict = {}
-		returnDict['id'] = str(self.id)
-		returnDict['s3Key'] = str(self.s3Key)
-	
-		return returnDict
-
-	def json(self):
-		returnDict = self.asDict()
-		return json.dumps(returnDict)
-
 class JobMap(db.Model):
 	__tablename__ = 'JobMap'
 	id = db.Column(db.Integer, primary_key=True)
 	jobId = db.Column(db.Integer, db.ForeignKey('Job.id'))
-	mapId = db.Column(db.Integer, db.ForeignKey('Map.id'))
-	name = db.Column(db.String(32))
+	s3Key = db.Column(db.String(64), unique=True)
+	name = db.Column(db.String(64))
+	type = db.Column(db.String(16))
 
 	def __repr__(self):
 		return '<JobMap %r>' % self.id
@@ -383,16 +369,21 @@ class JobMap(db.Model):
 		job = db.session.query(Job).filter_by(id=self.jobId).first()
 		return job
 
-	def map(self):
-		map = db.session.query(Map).filter_by(id=self.mapId).first()
-		return map
+	def image_url(self):
+		s3 = boto3.resource('s3')
+		bucketName = os.environ['S3BUCKET']
+		key = s3.Bucket(bucketName).get_key(self.s3Key)
+		url = key.generate_url(expires_in=86400)
+
+		return url
 
 	def asDict(self):
 		returnDict = {}
 		returnDict['id'] = str(self.id)
 		returnDict['jobId'] = str(self.jobId)
-		returnDict['mapId'] = str(self.mapId)
+		returnDict['s3Key'] = str(self.s3Key)
 		returnDict['name'] = str(self.name)
+		returnDict['type'] = str(self.type)
 	
 		return returnDict
 

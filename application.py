@@ -4,13 +4,17 @@ import json
 import jwt
 import re
 import jwt
+import boto3
+import botocore
 import base64
+import hashlib
 import tempfile
 from datetime import datetime
+from werkzeug. utils import secure_filename
 
 from flask import Flask, request, session, flash, url_for, redirect, \
      render_template, abort, send_from_directory, Response
-from application.models import User, Job, Shipment, ShipmentPhoto, ShipmentComment, Vendor
+from application.models import User, Job, Shipment, ShipmentPhoto, ShipmentComment, Vendor, JobMap
 from application import db
 from application import apUtils
 from flask.ext.mail import Mail
@@ -29,6 +33,8 @@ application.config['MAIL_USERNAME'] = 'aeroengineer@yandex.com'
 application.config['MAIL_PASSWORD'] = 'yd082893!'
 
 mail = Mail(application)
+
+application.config['UPLOAD_FOLDER'] = '/tmp'
 
 AllJobs = []
 AllVendors = []
@@ -85,6 +91,23 @@ def job_for_id(jobId) :
     	print 'Exception fetching job for id [' + str(jobId) + '] = ' + str(ex)
 
     return job
+
+def map_for_id(mapId) :
+    map = None
+
+    try :
+    	map = db.session.query(JobMap).filter_by(id=mapId).first()
+    	# Sometimes the new Object did not make it in to the Session.
+    	if None == map :
+                db.session.expire_all()
+                db.session.commit()
+                map = db.session.query(JobMap).filter_by(id=mapId).first()
+    except Exception as ex :
+        db.session.rollback()
+    	map = None
+    	print 'Exception fetching map for id [' + str(mapId) + '] = ' + str(ex)
+
+    return map
 
 def vendor_for_id(vendorId) :
     vendor = None
@@ -213,6 +236,26 @@ def jobs_from_form(form) :
 
     return jobs
 
+def mapIds_from_form(form) :
+    mapIds = []
+
+    for key in form.keys() :
+    	if key.startswith("mapId_") :
+    		mapId = key[6:]
+    		mapIds.append(mapId)
+
+    return mapIds
+
+def maps_from_form(form) :
+    mapIds = mapIds_from_form(form)
+    maps = []
+
+    for mapId in mapIds:
+    	map = map_for_id(mapId)
+    	maps.append(map)
+
+    return maps
+
 def form_bool_for_key(form, key) :
     torf = False
 
@@ -324,6 +367,27 @@ def save_shipment(shipment, request):
         print 'Unable to save Shipment [%s]' % str(ex)
 
     return render_job_page()
+
+def save_job_map(mapName, s3Key, type, job) :
+    global WarningMessage
+    map = JobMap()
+    map.name = mapName
+    map.s3Key = s3Key
+    map.type = type
+    map.jobId = job.id
+
+    db.session.add(map)
+    try :
+        db.session.commit()
+    	WarningMessage = map.name + " was successfully created"
+    except Exception as ex:
+        db.session.rollback()
+    	WarningMessage = "Unable to create new Job " + str(ex.message)
+        print 'Unable to create Job [%s]' % str(ex)
+
+    return map.id
+
+@application.route('/updateJob',methods=['POST'])
 
 def render_jobs_page(user=None):
     global AllJobs
@@ -1219,6 +1283,63 @@ def mobile_delete_shipment_photo():
     retVal['error'] = error
 
     return Response(json.dumps(retVal),  mimetype='application/json')
+
+@application.route("/upload/<inputFilename>", methods=["POST", "PUT"])
+def assign_map_to_job(inputFilename) :
+    job = job_for_id(session['jobId'])
+    file = request.files['file']
+    fileExtension = None
+
+    if file.filename:
+    	# See if we have a file extension
+    	fileParts = file.filename.split('.')
+    	if len(fileParts) > 1 :
+    		fileExtension = fileParts.pop()
+
+    if file.filename:
+    	s3Key = upload_map_file(file, fileExtension)
+    	mapId = save_job_map(file.filename, s3Key, fileExtension, job)
+    else :
+    	print "no file name"
+
+    userDict = session['user']
+    user = None
+
+    if userDict:
+    	user = user_for_id(userDict['id'])
+
+    return render_template("updateJob.html", User=user, Job=job, warning=WarningMessage)
+
+def upload_map_file(fileStorage, fileExtension) :
+    # Create a hash key and store to S3
+    hashName = hashlib.md5(fileStorage.filename).hexdigest() + '.' + fileExtension
+    bucketName = os.environ['S3BUCKET']
+    print 'PJC bucketName is ' + str(bucketName)
+    print 'PJC hashName is ' + str(hashName)
+
+    s3 = boto3.resource('s3')
+    success = False
+    global WarningMessage
+
+    try:
+    	s3.Object(bucketName, hashName).load()
+    except botocore.exceptions.ClientError as e:
+    	if e.response['Error']['Code'] == "404":
+    		# The object does not exist.
+    		fileFullPath = os.path.join(application.config['UPLOAD_FOLDER'], fileStorage.filename)
+    		fileStorage.save(fileFullPath)
+    		data = open(fileFullPath, 'rb')
+    		result = s3.Bucket(bucketName).put_object(Key=hashName, Body=data)
+    		success = True
+    	else:
+    		# Something else has gone wrong.
+    		WarningMessage = "Error saving file."
+    		print 'Error Saving File ' + str(e)
+    except Exception as ex :
+    	WarningMessage = "Error saving file."
+    	print "Exception while saving file " + s3Key + " to S3 Bucket: " + str(ex)
+
+    return hashName
 
 if __name__ == "__main__":
 	application.run(debug=True,host='0.0.0.0',port=8888)

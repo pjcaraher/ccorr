@@ -61,7 +61,21 @@
 	<td>
 	</td>
 </tr>
-<table>
+	<br><h1>Maps</h1>
+	<ul>
+	{% for Map in Job.maps %}
+		<li>{{ Map.name }}
+			<img src="https://s3-us-west-2.amazonaws.com/ccorrdev.mustangdm.com/{{ Map.s3Key }}" width="100"/>
+		</li>
+	{% endfor %}
+	</ul>
+	{% if User.hasPermission(3) %}
+    	<h1>Upload new Map</h1>
+    	<form id="jobMapForm" action="http://localhost:8888/upload/map" method="POST" enctype=multipart/form-data>
+      		<input type=file name=file>
+      		<input type=submit value=Upload>
+    	</form>
+	{% endif %}
 {% endif %}
 </body>
 </html>

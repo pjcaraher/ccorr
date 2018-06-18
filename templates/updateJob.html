@@ -65,7 +65,7 @@
 	<ul>
 	{% for Map in Job.maps %}
 		<li>{{ Map.name }}
-			<img src="https://s3-us-west-2.amazonaws.com/ccorrdev.mustangdm.com/{{ Map.s3Key }}" width="100"/>
+			<img src="{{ Map.image_url() }}" width="100"/>
 		</li>
 	{% endfor %}
 	</ul>

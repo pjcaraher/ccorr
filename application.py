@@ -331,6 +331,10 @@ def update_shipment_from_form(shipment, form) :
     	shipment.trackingNumber = stringForShipmentKey("trackingNumber", form)
     if "vendorNotes" in form.keys() :
     	shipment.vendorNotes = stringForShipmentKey("vendorNotes", form)
+    if "driverName" in form.keys() :
+    	shipment.driverName = stringForShipmentKey("driverName", form)
+    if "driverPhone" in form.keys() :
+    	shipment.driverPhone = stringForShipmentKey("driverPhone", form)
 
     return
 
@@ -338,7 +342,10 @@ def save_shipment(shipment, request):
     shippedDate = date_with_prefix('shipped_', request.form)
     expectedDate = date_with_prefix('expected_', request.form)
     arrivalDate = date_with_prefix('arrival_', request.form)
+    maps = maps_from_form(request.form)
     comment = None
+
+    shipment.maps = maps
 
     if 'comment' in request.form.keys() :
     	if len(request.form['comment']) > 0 :
@@ -798,7 +805,7 @@ def create_vendor_user():
 # def update_vendor():
 #     global WarningMessage
 #     vendorId = request.form['vendorId']
-#     vendor = user_for_id(vendorId)
+#     vendor = vendor_for_id(vendorId)
 # 
 #     try :
 #         db.session.commit()
@@ -900,7 +907,7 @@ def new_shipment():
     shipment = Shipment()
     shipment.jobId = jobId
     shipment.vendorId = vendorId
-    vendor = user_for_id(vendorId)
+    vendor = vendor_for_id(vendorId)
     job = job_for_id(jobId)
 
     return render_template('newShipment.html', Shipment=shipment, Vendor=vendor, Job=job)
@@ -910,7 +917,7 @@ def edit_shipment():
     shipmentId = request.form['shipmentId']
     shipment = shipment_for_id(shipmentId)
     job = job_for_id(shipment.jobId)
-    vendor = user_for_id(shipment.vendorId)
+    vendor = vendor_for_id(shipment.vendorId)
     userDict = session['user']
     user = None
 
@@ -940,8 +947,18 @@ def cancel_edit_shipment() :
 def update_shipment():
     shipmentId = request.form['shipmentId']
     shipment = shipment_for_id(shipmentId)
+    save_shipment(shipment, request)
 
-    return save_shipment(shipment, request)
+    print "PJC Shipment.expecteDate = " + str(shipment.expectedDate)
+    vendor = vendor_for_id(shipment.vendorId)
+    job = job_for_id(shipment.jobId)
+    userDict = session['user']
+    user = None
+
+    if userDict:
+    	user = user_for_id(userDict['id'])
+
+    return render_template('editShipment.html', User=user, Vendor=vendor, Job=job, Shipment=shipment, Photos=shipment.photos)
 
 @application.route('/mLoginUser',methods=['POST'])
 def mobile_login_user():
@@ -1311,8 +1328,21 @@ def assign_map_to_job(inputFilename) :
     return render_template("updateJob.html", User=user, Job=job, warning=WarningMessage)
 
 def upload_map_file(fileStorage, fileExtension) :
+    # Store the file for reading
+    fileFullPath = os.path.join(application.config['UPLOAD_FOLDER'], fileStorage.filename)
+    fileStorage.save(fileFullPath)
+
     # Create a hash key and store to S3
-    hashName = hashlib.md5(fileStorage.filename).hexdigest() + '.' + fileExtension
+    BLOCKSIZE = 65536
+    hasher = hashlib.md5()
+    dataForHash = open(fileFullPath, 'rb')
+    buf = dataForHash.read(BLOCKSIZE)
+    while len(buf) > 0:
+        hasher.update(buf)
+        print 'PJC read more for Hash'
+        # buf = fileStorage.read(BLOCKSIZE)
+        buf = dataForHash.read(BLOCKSIZE)
+    hashName = 'maps/' + hasher.hexdigest() + '.' + fileExtension
     bucketName = os.environ['S3BUCKET']
     print 'PJC bucketName is ' + str(bucketName)
     print 'PJC hashName is ' + str(hashName)
@@ -1325,12 +1355,11 @@ def upload_map_file(fileStorage, fileExtension) :
     	s3.Object(bucketName, hashName).load()
     except botocore.exceptions.ClientError as e:
     	if e.response['Error']['Code'] == "404":
+    		print "PJC SAVE THE MAP!"
     		# The object does not exist.
-    		fileFullPath = os.path.join(application.config['UPLOAD_FOLDER'], fileStorage.filename)
-    		fileStorage.save(fileFullPath)
     		data = open(fileFullPath, 'rb')
     		result = s3.Bucket(bucketName).put_object(Key=hashName, Body=data)
-    		success = True
+    		data.close()
     	else:
     		# Something else has gone wrong.
     		WarningMessage = "Error saving file."
@@ -1339,6 +1368,7 @@ def upload_map_file(fileStorage, fileExtension) :
     	WarningMessage = "Error saving file."
     	print "Exception while saving file " + s3Key + " to S3 Bucket: " + str(ex)
 
+    os.remove(fileFullPath)
     return hashName
 
 if __name__ == "__main__":

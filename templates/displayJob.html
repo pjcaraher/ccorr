@@ -14,7 +14,7 @@
 	<ul>
 		{% for shipment in OpenShipments %}
 		<li>
-		Delivery from {{ shipment.vendor().name() }} expected {{ shipment.expectedDate }} 
+		Delivery from {{ shipment.vendor.name }} expected {{ shipment.expectedDate }} 
 		<br><i>{{ shipment.description }}</i>
 		<form action="http://localhost:8888/editShipment" method="POST"> <input type="hidden" name="shipmentId" value="{{ shipment.id}}"/> <input type="submit" value="Edit"/>
 			</form>
@@ -25,7 +25,7 @@
 	<ul>
 		{% for shipment in CompletedShipments %}
 		<li>
-		Delivery from {{ shipment.vendor().name() }} arrived {{ shipment.arrivalDate }} 
+		Delivery from {{ shipment.vendor.name }} arrived {{ shipment.arrivalDate }} 
 		<br><i>{{ shipment.description }}</i>
 		<form action="http://localhost:8888/editShipment" method="POST"> <input type="hidden" name="shipmentId" value="{{ shipment.id}}"/> <input type="submit" value="Edit"/>
 			</form>
@@ -36,7 +36,7 @@
 <h1>New Delivery</h1>
      {% if Job.vendorList()|length > 0 %}
 	{% for vendor in Job.vendorList() %}
-	New Delivery for {{ vendor.name }}
+	New Delivery for {{ vendor.name }} 
 	<form action="http://localhost:8888/newShipment" method="POST">
 		<input type="hidden" name="vendorId" value="{{ vendor.id}}"/>
 		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
@@ -56,11 +56,12 @@
 	</form>
  {% endif %}
 {% endif %}
+{% if User.permissionId < 4 %}
 	<br><h1>Maps</h1>
 	<ul>
 	{% for Map in Job.maps %}
 		<li>{{ Map.name }}</li>
-			<img src="https://s3-us-west-2.amazonaws.com/ccorrdev.mustangdm.com/{{ Map.s3Key }}" width="100"/>
+			<img src="{{ Map.image_url() }}" width="100"/>
 	{% endfor %}
 	</ul>
 	{% if User.hasPermission(3) %}
@@ -70,6 +71,7 @@
       		<input type=submit value=Upload>
     	</form>
 	{% endif %}
+{% endif %}
 
 </body>
 </html>

@@ -34,7 +34,6 @@ class User(db.Model):
 	passwordRequiresReset = db.Column(db.Boolean)
 	permissionId = db.Column(db.Integer, db.ForeignKey('Permission.id'))
 	vendorId = db.Column(db.Integer, db.ForeignKey('Vendor.id'))
-	shipments = db.relationship('Shipment', backref='user')
 	jobs = db.relationship('Job' ,
                                   secondary=userJobs,
                                   backref=db.backref('users', lazy=True),
@@ -123,6 +122,7 @@ class Vendor(db.Model):
 	contact = db.Column(db.String(32))
 	phone = db.Column(db.String(32))
 	emailList = db.Column(db.String(256))
+	shipments = db.relationship('Shipment', backref='vendor')
 	jobs = db.relationship('Job' ,
                                   secondary=vendorJobs,
                                   backref=db.backref('vendors', lazy=True),
@@ -252,11 +252,15 @@ class Shipment(db.Model):
 	trackingNumber = db.Column(db.String(64))
 	vendorNotes = db.Column(db.String(256))
 	jobId = db.Column(db.Integer, db.ForeignKey('Job.id'))
-	vendorId = db.Column(db.Integer, db.ForeignKey('User.id'))
+	vendorId = db.Column(db.Integer, db.ForeignKey('Vendor.id'))
 	driverName = db.Column(db.String(64))
 	driverPhone = db.Column(db.String(64))
 	photos = db.relationship('ShipmentPhoto', backref='shipment')
 	comments = db.relationship('ShipmentComment', backref='shipment')
+	maps = db.relationship('JobMap' ,
+                                  secondary=shipmentMaps,
+                                  backref=db.backref('shipments', lazy=True),
+                                  lazy='subquery')
 
 	def __repr__(self):
 		return '<Shipment %r>' % self.id
@@ -264,6 +268,14 @@ class Shipment(db.Model):
 	def vendor(self):
 		vendor = db.session.query(User).filter_by(id=self.vendorId).first()
 		return vendor
+
+	def hasMap(self, map):
+		hasMap = False
+		for _map in self.maps :
+			if _map.id == map.id :
+				hasMap = True
+				break
+		return hasMap
 
 	def reversedComments(self):
 		return list(reversed(self.comments))
@@ -327,7 +339,6 @@ class ShipmentPhoto(db.Model):
 		returnDict = self.asDict()
 		return json.dumps(returnDict)
 
-
 class ShipmentComment(db.Model):
 	__tablename__ = 'ShipmentComment'
 	id = db.Column(db.Integer, primary_key=True)
@@ -358,8 +369,8 @@ class JobMap(db.Model):
 	__tablename__ = 'JobMap'
 	id = db.Column(db.Integer, primary_key=True)
 	jobId = db.Column(db.Integer, db.ForeignKey('Job.id'))
-	s3Key = db.Column(db.String(64), unique=True)
-	name = db.Column(db.String(64))
+	s3Key = db.Column(db.String(64))
+	name = db.Column(db.String(256))
 	type = db.Column(db.String(16))
 
 	def __repr__(self):
@@ -370,10 +381,7 @@ class JobMap(db.Model):
 		return job
 
 	def image_url(self):
-		s3 = boto3.resource('s3')
-		bucketName = os.environ['S3BUCKET']
-		key = s3.Bucket(bucketName).get_key(self.s3Key)
-		url = key.generate_url(expires_in=86400)
+		url = os.environ['CLOUDFRONTURL'] + "/" + self.s3Key
 
 		return url
 

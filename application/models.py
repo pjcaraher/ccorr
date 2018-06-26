@@ -250,7 +250,7 @@ class Shipment(db.Model):
 	bolNumber = db.Column(db.String(64))
 	specialInstructions = db.Column(db.String(256))
 	trackingNumber = db.Column(db.String(64))
-	vendorNotes = db.Column(db.String(256))
+	vendorNotes = db.Column(db.String(1024))
 	jobId = db.Column(db.Integer, db.ForeignKey('Job.id'))
 	vendorId = db.Column(db.Integer, db.ForeignKey('Vendor.id'))
 	driverName = db.Column(db.String(64))
@@ -318,20 +318,23 @@ class ShipmentPhoto(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	shipmentId = db.Column(db.Integer, db.ForeignKey('Shipment.id'))
 	photoDate = db.Column(db.DateTime)
-	image = db.Column(db.LargeBinary)
+	s3Key = db.Column(db.String(64))
 
 	def __repr__(self):
 		return '<ShipmentPhoto %r>' % self.id
 
-	def src(self):
-		return '/static/images/shipmentPhoto.' + str(self.id) + '.jpg'
+	def image_url(self):
+		url = os.environ['CLOUDFRONTURL'] + "/" + self.s3Key
+
+		return url
 
 	def asDict(self):
 		returnDict = {}
 		returnDict['id'] = str(self.id)
 		returnDict['photoDate'] = str(self.photoDate)
 		# print 'PJC base64 encoding image'
-		returnDict['image'] = base64.b64encode(self.image)
+		returnDict['s3Key'] = self.s3Key
+		returnDict['image_url'] = self.image_url()
 	
 		return returnDict
 
@@ -372,6 +375,7 @@ class JobMap(db.Model):
 	s3Key = db.Column(db.String(64))
 	name = db.Column(db.String(256))
 	type = db.Column(db.String(16))
+	deleted = db.Column(db.Boolean)
 
 	def __repr__(self):
 		return '<JobMap %r>' % self.id

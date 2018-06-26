@@ -155,10 +155,6 @@ def shipment_photo_for_id(shipmentPhotoId) :
 
     return shipmentPhoto
 
-def uri_for_shipment_photo_id(shipmentPhotoId) :
-    imageFilename = os.path.dirname(os.path.realpath(__file__)) + IMAGE_DIR + "shipmentPhoto." + str(shipmentPhotoId) + ".jpg"
-    return imageFilename
-
 def jwt_for_user(user) :
     payload = {}
     payload['userId'] = str(user.id)
@@ -394,8 +390,6 @@ def save_job_map(mapName, s3Key, type, job) :
 
     return map.id
 
-@application.route('/updateJob',methods=['POST'])
-
 def render_jobs_page(user=None):
     global AllJobs
     jobs = []
@@ -629,7 +623,9 @@ def create_job():
         db.session.commit()
     	AllJobs = db.session.query(Job).all()
     	WarningMessage = job.name + " was successfully created"
+    	WarningMessage = str(job.id) + " was successfully created"
         templateName = "updateJob.html"
+    	session['jobId'] = job.id
     except Exception as ex:
         db.session.rollback()
         templateName = "newJob.html"
@@ -644,27 +640,34 @@ def update_job():
     global AllJobs
     jobId = request.form['jobId']
     job = job_for_id(jobId)
-    job.name = request.form['name']
-    job.number = request.form['number']
-    job.address = request.form['address']
-    job.instructions = request.form['instructions']
+    if 'name' in request.form.keys() :
+    	job.name = request.form['name']
+    if 'number' in request.form.keys() :
+    	job.number = request.form['number']
+    if 'address' in request.form.keys() :
+    	job.address = request.form['address']
+    if 'instructions' in request.form.keys() :
+    	job.instructions = request.form['instructions']
     userDict = session['user']
     user = None
+    maps = maps_from_form(request.form)
 
-    update_jobConfig_from_form(job, request.form)
+    # Put this on hold until we get the navigation set.
+    # update_jobConfig_from_form(job, request.form)
+
+    for map in maps :
+    	map.deleted = True
 
     if userDict:
     	user = user_for_id(userDict['id'])
 
-    db.session.add(job)
     try :
         db.session.commit()
-    	AllJobs = db.session.query(Job).all()
     	WarningMessage = job.name + " was successfully updated"
     except Exception as ex:
         db.session.rollback()
     	WarningMessage = "Unable to update Job " + str(ex.message)
-        print 'Unable to create Job [%s]' % str(ex)
+        print 'Unable to update Job [%s]' % str(ex)
 
     return render_template("updateJob.html", User=user, Job=job, warning=WarningMessage)
 
@@ -947,6 +950,7 @@ def cancel_edit_shipment() :
 def update_shipment():
     shipmentId = request.form['shipmentId']
     shipment = shipment_for_id(shipmentId)
+    update_shipment_from_form(shipment, request.form)
     save_shipment(shipment, request)
 
     print "PJC Shipment.expecteDate = " + str(shipment.expectedDate)
@@ -1089,6 +1093,7 @@ def mobile_edit_shipment() :
     			shipment.description = dict['description']
     			try :
     				db.session.commit()
+    				db.session.refresh(shipment)
     				status = ERR_NONE
     			except Exception as ex :
     				db.session().rollback()
@@ -1151,6 +1156,7 @@ def mobile_post_comment() :
     retVal['error'] = error
 
     return Response(json.dumps(retVal),  mimetype='application/json')
+
 @application.route('/mPostPhoto',methods=['POST'])
 def mobile_post_photo() :
     dict = json.loads(str(request.data))
@@ -1174,36 +1180,58 @@ def mobile_post_photo() :
                                 error = "No photo was submitted."
                         else :
                                 image_64_decode = base64.decodestring(image_64_encode)
-                                shipmentPhoto = ShipmentPhoto()
-                                shipmentPhoto.shipment = shipment
-                                shipmentPhoto.image = image_64_decode
-                                shipmentPhoto.photoDate = datetime.now()
-                                try :
-                                	db.session.add(shipmentPhoto)
-                                	db.session.commit()
-                                	# Synch up the Shipment object.
-                                	shipment = shipment_for_id(shipment.id)
-                                	retVal['id'] = shipmentPhoto.id
-                                	imageFilename = uri_for_shipment_photo_id(shipmentPhoto.id)
-                                	file = open(imageFilename, 'wb') # create a writable image and write the decoding result
-                                	file.write(image_64_decode)
-                                	file.close()
-                                        status = ERR_NONE
-                                except Exception as ex:
-                                	db.session.rollback()
-                                	print 'Unable to save ShipmentPhoto [%s]' % str(ex)
 
-                                # tmpFilename = '/tmp/' + next(tempfile._get_candidate_names())
-                                # try :
-                                        # image_64_decode = base64.decodestring(image_64_encode)
-                               		# file = open(imageFilename, 'wb') # create a writable image and write the decoding result
-                               		# file.write(image_64_decode)
-                               		# file.close()
-                                        # os.remove(tmpFilename)
-                                        # status = ERR_NONE
-                                # except Exception as ex :
-                                        # print "Post Photo exception " + str(ex)
-                                        # error = "Unable to decode photo data."
+                                hasher = hashlib.md5()
+                                hasher.update(image_64_decode)
+    				hashName = 'photos/' + hasher.hexdigest() + '.jpg'
+
+    				s3 = boto3.resource('s3')
+    				bucketName = os.environ['S3BUCKET']
+    				success = False
+
+    				try:
+    					s3.Object(bucketName, hashName).load()
+    					success = True
+    				except botocore.exceptions.ClientError as e:
+    					if e.response['Error']['Code'] == "404":
+    						# The object does not exist.
+    						try :
+    							result = s3.Bucket(bucketName).put_object(Key=hashName, Body=image_64_decode)
+    							# Response Syntax for put_object
+    							# {
+    							# 	'Expiration': 'string',
+    							# 	'ETag': 'string',
+    							# 	'ServerSideEncryption': 'AES256'|'aws:kms',
+    							# 	'VersionId': 'string',
+    							# 	'SSECustomerAlgorithm': 'string',
+    							# 	'SSECustomerKeyMD5': 'string',
+    							# 	'SSEKMSKeyId': 'string',
+    							# 	'RequestCharged': 'requester'
+    							# }
+    							success = True
+    						except Exception as putObjectEx :
+    							print "Exception while saving photo to S3 Bucket: " + str(putObjectEx)
+    				except Exception as ex :
+    					print "Exception while loading photo from S3 Bucket: " + str(ex)
+
+    				if success:
+    					shipmentPhoto = ShipmentPhoto()
+    					shipmentPhoto.shipment = shipment
+    					shipmentPhoto.s3Key = hashName
+    					shipmentPhoto.photoDate = datetime.now()
+    					try :
+    						db.session.add(shipmentPhoto)
+    						db.session.commit()
+    						# Synch up the Shipment object.
+    						shipment = shipment_for_id(shipment.id)
+    						db.session.refresh(shipment)
+    						status = ERR_NONE
+    					except Exception as ex:
+    						db.session.rollback()
+    						print 'Unable to save ShipmentPhoto [%s]' % str(ex)
+    					else:
+    						# Something else has gone wrong.
+    						print 'Error Saving Shipment ' + str(e)
     	else :
     		status = ERR_NO_USER
     		error = "No user defined"
@@ -1243,10 +1271,6 @@ def mobile_fetch_photos_for_shipment():
     			photos = []
     			for photo in shipment.photos :
     				photoDict = photo.asDict()
-    				imageFilename = uri_for_shipment_photo_id(photo.id)
-    				with open(imageFilename, "rb") as image_file:
-    					encoded_string = base64.b64encode(image_file.read())
-    					photoDict['image'] = encoded_string
     				photos.append(photoDict)
     			retVal['photos'] = photos
     			status = ERR_NONE
@@ -1304,6 +1328,7 @@ def mobile_delete_shipment_photo():
 @application.route("/upload/<inputFilename>", methods=["POST", "PUT"])
 def assign_map_to_job(inputFilename) :
     job = job_for_id(session['jobId'])
+    mapName = request.form['mapName']
     file = request.files['file']
     fileExtension = None
 
@@ -1314,8 +1339,10 @@ def assign_map_to_job(inputFilename) :
     		fileExtension = fileParts.pop()
 
     if file.filename:
+    	if len(mapName) <= 0 :
+    		mapName = file.filename
     	s3Key = upload_map_file(file, fileExtension)
-    	mapId = save_job_map(file.filename, s3Key, fileExtension, job)
+    	mapId = save_job_map(mapName, s3Key, fileExtension, job)
     else :
     	print "no file name"
 
@@ -1339,13 +1366,10 @@ def upload_map_file(fileStorage, fileExtension) :
     buf = dataForHash.read(BLOCKSIZE)
     while len(buf) > 0:
         hasher.update(buf)
-        print 'PJC read more for Hash'
-        # buf = fileStorage.read(BLOCKSIZE)
         buf = dataForHash.read(BLOCKSIZE)
+    dataForHash.close()
     hashName = 'maps/' + hasher.hexdigest() + '.' + fileExtension
     bucketName = os.environ['S3BUCKET']
-    print 'PJC bucketName is ' + str(bucketName)
-    print 'PJC hashName is ' + str(hashName)
 
     s3 = boto3.resource('s3')
     success = False
@@ -1355,7 +1379,6 @@ def upload_map_file(fileStorage, fileExtension) :
     	s3.Object(bucketName, hashName).load()
     except botocore.exceptions.ClientError as e:
     	if e.response['Error']['Code'] == "404":
-    		print "PJC SAVE THE MAP!"
     		# The object does not exist.
     		data = open(fileFullPath, 'rb')
     		result = s3.Bucket(bucketName).put_object(Key=hashName, Body=data)

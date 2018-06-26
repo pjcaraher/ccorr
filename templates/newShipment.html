@@ -9,7 +9,7 @@
         <input type="submit" value="Back"/>
 </form>
 <h1>New Delivery</h1>
-	<form action="http://localhost:8888/createShipment" method="POST">
+	<form id="shipmentForm" action="http://localhost:8888/createShipment" method="POST">
 		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
 		<input type="hidden" name="vendorId" value="{{ Vendor.id}}"/>
 		Shipped Date: <select name="shipped_month">
@@ -286,7 +286,7 @@ Instructions : <input type="text" name="specialInstructions" value="{% if Shipme
 Tracking Number : <input type="text" name="trackingNumber" value="{% if Shipment.trackingNumber %}{{ Shipment.trackingNumber }}{% endif %}"/><br>
 {% endif %}
 {% if Job.showVendorNotes %}
-Notes : <input type="text" name="vendorNotes" value="{% if Shipment.vendorNotes %}{{ Shipment.vendorNotes }}{% endif %}"/><br>
+Notes : <textarea form="shipmentForm" name="vendorNotes" id="vendorNotes" rows="5" cols="35" wrap="soft" value="{{ Shipment.vendorNotes }}"></textarea>
 {% endif %}
 
 		<input type="submit" value="Save"/>

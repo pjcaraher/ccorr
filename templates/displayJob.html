@@ -58,16 +58,26 @@
 {% endif %}
 {% if User.permissionId < 4 %}
 	<br><h1>Maps</h1>
+	<form id="jobForm" action="http://localhost:8888/updateJob" method="POST">
+		<input type="hidden" name="jobId" value="{{ Job.id }}"/><br>
 	<ul>
 	{% for Map in Job.maps %}
-		<li>{{ Map.name }}</li>
+		{% if not Map.deleted %}
+		<li>{{ Map.name }}
 			<img src="{{ Map.image_url() }}" width="100"/>
+			<input type="checkbox" id="mapId_{{ Map.id }}" name="mapId_{{ Map.id }}" value="{{ Map.id }}"/> Delete Map
+		</li>
+		{% endif %}
 	{% endfor %}
 	</ul>
+      		<input type=submit value=Save>
+    	</form>
+
 	{% if User.hasPermission(3) %}
     	<h1>Upload new Map</h1>
     	<form id="jobMapForm" action="http://localhost:8888/upload/map" method="POST" enctype=multipart/form-data>
       		<input type=file name=file>
+      		Name: <input type="text" name="mapName"/>
       		<input type=submit value=Upload>
     	</form>
 	{% endif %}

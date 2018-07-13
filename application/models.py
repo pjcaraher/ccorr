@@ -82,6 +82,17 @@ class User(db.Model):
 				torf = True
 		return torf
 
+	def hasJob(self, job) :
+		torf = False
+		if 1 >= self.permissionId :
+			torf = True
+		else :
+			for _job in self.jobs :
+				if _job.id == job.id :
+					torf = True
+					break
+		return torf
+
 	@staticmethod
 	def tmpPassword() :
 		tmpPass = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))

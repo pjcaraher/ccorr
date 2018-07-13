@@ -46,8 +46,10 @@
 		<td width="30"></td>
 		<td align="center">
 		{% for Job in Jobs %}
-                	<a href="http://localhost:8888/selectJob?jobId={{ Job.id }}">{{ Job.name }}</a>
-			<br>
+			{% if User.hasJob(Job) %}
+                		<a href="http://localhost:8888/selectJob?jobId={{ Job.id }}">{{ Job.name }}</a>
+				<br>
+			{% endif %}
 		{% endfor %}
 		</td>
 		<td width="30"></td>

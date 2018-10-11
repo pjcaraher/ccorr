@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<script>
+function openNav(job) {
+    document.getElementById("mySidenav").style.width = "1250px";
+    document.getElementById("main").style.marginRight = "1250px";
+    document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    if (job) {
+    	document.getElementById('jobForm').action = "http://localhost:8888/updateJob";
+    	document.getElementById("jobId").value = job.id;
+    	document.getElementById("saveButton").text = "Update";
+    	document.getElementById("name").value = job.name;
+    	document.getElementById("number").value = job.number;
+    	document.getElementById("address").value = job.address;
+    	document.getElementById("instructions").value = job.instructions;
+    	document.getElementById("showDeliveryNumber").checked = ("TRUE" == job.showDeliveryNumber.toUpperCase());
+    	document.getElementById("showContactName").checked = ("TRUE" == job.showContactName.toUpperCase());
+    	document.getElementById("showContactNumber").checked = ("TRUE" == job.showContactNumber.toUpperCase());
+    	document.getElementById("showBOLNumber").checked = ("TRUE" == job.showBOLNumber.toUpperCase());
+    	document.getElementById("showSpecialInstructions").checked = ("TRUE" == job.showSpecialInstructions.toUpperCase());
+    	document.getElementById("showDescriptionOfGoods").checked = ("TRUE" == job.showDescriptionOfGoods.toUpperCase());
+    	document.getElementById("showTruckingCompany").checked = ("TRUE" == job.showTruckingCompany.toUpperCase());
+    	document.getElementById("showNumberOfPackages").checked = ("TRUE" == job.showNumberOfPackages.toUpperCase());
+    	document.getElementById("showTypeOfTruck").checked = ("TRUE" == job.showTypeOfTruck.toUpperCase());
+    	document.getElementById("showDriverName").checked = ("TRUE" == job.showDriverName.toUpperCase());
+    	document.getElementById("showDriverPhone").checked = ("TRUE" == job.showDriverPhone.toUpperCase());
+    	document.getElementById("showTrackingNumber").checked = ("TRUE" == job.showTrackingNumber.toUpperCase());
+    	document.getElementById("showWeightOfLoad").checked = ("TRUE" == job.showWeightOfLoad.toUpperCase());
+    	document.getElementById("showVendorNotes").checked = ("TRUE" == job.showVendorNotes.toUpperCase());
+    	document.getElementById("showDeliveryDate").checked = ("TRUE" == job.showDeliveryDate.toUpperCase());
+    	document.getElementById("showDateLoaded").checked = ("TRUE" == job.showDateLoaded.toUpperCase());
+    	document.getElementById("attachBOL").checked = ("TRUE" == job.attachBOL.toUpperCase());
+    	document.getElementById("attachPackingList").checked = ("TRUE" == job.attachPackingList.toUpperCase());
+    	document.getElementById("attachPhotos").checked = ("TRUE" == job.attachPhotos.toUpperCase());
+    	document.getElementById("attachMap").checked = ("TRUE" == job.attachMap.toUpperCase());
+    }
+    else {
+    	document.getElementById('jobForm').action = "http://localhost:8888/createJob";
+    	document.getElementById("saveButton").text = "Create New Job";
+    	document.getElementById("name").value = "";
+    	document.getElementById("number").value = "";
+    	document.getElementById("address").value = "";
+    	document.getElementById("instructions").value = "";
+    	document.getElementById("showDeliveryNumber").checked = true;
+    	document.getElementById("showContactName").checked = true;
+    	document.getElementById("showContactNumber").checked = true;
+    	document.getElementById("showBOLNumber").checked = true;
+    	document.getElementById("showSpecialInstructions").checked = true;
+    	document.getElementById("showDescriptionOfGoods").checked = true;
+    	document.getElementById("showTruckingCompany").checked = true;
+    	document.getElementById("showNumberOfPackages").checked = true;
+    	document.getElementById("showTypeOfTruck").checked = true;
+    	document.getElementById("showDriverName").checked = true;
+    	document.getElementById("showDriverPhone").checked = true;
+    	document.getElementById("showTrackingNumber").checked = true;
+    	document.getElementById("showWeightOfLoad").checked = true;
+    	document.getElementById("showVendorNotes").checked = true;
+    	document.getElementById("showDeliveryDate").checked = true;
+    	document.getElementById("showDateLoaded").checked = true;
+    	document.getElementById("attachBOL").checked = true;
+    	document.getElementById("attachPackingList").checked = true;
+    	document.getElementById("attachPhotos").checked = true;
+    	document.getElementById("attachMap").checked = true;
+    }
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginRight= "0";
+    document.body.style.backgroundColor = "white";
+}
+</script>
+
+
+<div id="mySidenav"  class="sidenav">
+  <form id="jobForm" action="http://localhost:8888/updateJob" method="POST">
+  <div class="containerleft containereditjobs">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <h2>Create/Edit Jobs</h2>
+    <input type="hidden" id="jobId" name="jobId"/>
+    <label for="JobName">Job Name</label>
+    <input id="name" name="name">
+    <label for="JobNumber">Number</label>
+    <input id="number" name="number">
+    <label for="JobAddress">Address</label>
+    <textarea id="address" name="address"></textarea>
+    <label for="JobInstructions">Instructions</label>
+    <textarea contenteditable="true" id="instructions" name="instructions"></textarea>
+    <div class="bttnright bttnrightbottom">
+      <a class="bttn bttn2" onclick="closeNav()">Cancel</a>
+      <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('jobForm').submit();">Create New Job</a>
+    </div>
+  </div>
+
+  <div class="containerright">
+    <h4>Fields to display for the Vendor</h4>
+    <label class="checkboxcontainer">Delivery Number
+      <input type="checkbox" checked="checked" id="showDeliveryNumber" name="showDeliveryNumber">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Contact Name
+      <input type="checkbox" checked="checked" id="showContactName" name="showContactName">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Contact Number
+      <input type="checkbox" checked="checked" id="showContactNumber" name="showContactNumber">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">BOL Number
+      <input type="checkbox" checked="checked" id="showBOLNumber" name="showBOLNumber">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Special Instructions
+      <input type="checkbox" checked="checked" id="showSpecialInstructions" name="showSpecialInstructions">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Description of Goods
+      <input type="checkbox" checked="checked" id="showDescriptionOfGoods" name="showDescriptionOfGoods">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Trucking Company
+      <input type="checkbox" checked="checked" id="showTruckingCompany" name="showTruckingCompany">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Number of Packages
+      <input type="checkbox" checked="checked" id="showNumberOfPackages" name="showNumberOfPackages">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Type of Truck
+      <input type="checkbox" checked="checked" id="showTypeOfTruck" name="showTypeOfTruck">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Driver Name
+      <input type="checkbox" checked="checked" id="showDriverName" name="showDriverName">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Driver Phone
+      <input type="checkbox" checked="checked" id="showDriverPhone" name="showDriverPhone">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Tracking Number
+      <input type="checkbox" checked="checked" id="showTrackingNumber" name="showTrackingNumber">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Weight of Load
+      <input type="checkbox" checked="checked" id="showWeightOfLoad" name="showWeightOfLoad">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Vendor Notes
+      <input type="checkbox" checked="checked" id="showVendorNotes" name="showVendorNotes">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Delivery Date
+      <input type="checkbox" checked="checked" id="showDeliveryDate" name="showDeliveryDate">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Date Loaded
+      <input type="checkbox" checked="checked" id="showDateLoaded" name="showDateLoaded">
+      <span class="checkmark"></span>
+    </label>
+  </div>
+
+  <div class="containerright_middlecolumn">
+    <h4>Items to attach for Vendor</h4>
+    <label class="checkboxcontainer">BOL
+      <input type="checkbox" checked="checked" id="attachBOL" name="attachBOL">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Packing List
+      <input type="checkbox" checked="checked" id="attachPackingList" name="attachPackingList">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Photos
+      <input type="checkbox" checked="checked" id="attachPhotos" name="attachPhotos">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Map
+      <input type="checkbox" checked="checked" id="attachMap" name="attachMap">
+      <span class="checkmark"></span>
+    </label>
+
+  </div>
+  </form>
+</div>
+
+<div class="containerleft containerjobs" id="main">
+  <h1>Jobs</h1>
+
+  {% if User.hasPermission(2) %}
+  <div class="bttnright bttnabovetable">
+    <a class="bttn" onclick="openNav()">Create New Job</a>
+  </div>
+  {% endif %}
+
+  <h3>Active Jobs</h3>
+    <main>
+      <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+        <table class="jobs">
+	{% for Job in Jobs %}
+        	<tr>
+    			<td>{{ Job.name }}</td>   
+    			<td><a class="bttn" href="http://localhost:8888/selectJob?jobId={{ Job.id }}">Open</a></td>   
+			{% if User.hasPermission(2) %}
+    				<td><a class="bttn" onclick="openNav({{ Job.asStringDict() }})">Config</a></td>   
+			{% endif %}
+        	</tr>
+	{% endfor %}
+        </table>
+      </div>
+    </main>
+
+
+  <h3>Closed Jobs</h3>
+    <main>
+      <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+        <table class="jobs">
+	{% for Job in ClosedJobs %}
+        	<tr>
+            		<td>Job {{ Job.name }}</td>   
+        	</tr>
+	{% endfor %}
+        </table>
+      </div>
+    </main>
+  </div>
+
+</div>  
+{% endblock %}

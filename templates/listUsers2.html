@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<script>
+function isJobIdInList(jobId, list) {
+    var jobIds = list.split(",");
+    var isInList = false;
+    var arrayLength = jobIds.length;
+    for (var i = 0; i < arrayLength; i++) {
+        if (jobIds[i] == parseInt(jobId)) {
+                isInList = true;
+                break;
+        }
+    }
+
+    return isInList;
+}
+
+function userHasPermission(level, user) {
+    var hasPermission = false;
+    var permissionId = parseInt(user.permissionId);
+
+    if (permissionId == level) {
+    	hasPermission = true;
+    }
+	
+    return hasPermission;
+}
+
+function openNav(user) {
+    document.getElementById("mySidenav").style.width = "600px";
+    document.getElementById("main").style.marginRight = "600px";
+    document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    if (user) {
+        document.getElementById("userId").value = user.id;
+        document.getElementById('userForm').action = "http://localhost:8888/updateUser";
+        document.getElementById("saveButton").text = "Update";
+        document.getElementById('FirstName').value = user.firstName;
+        document.getElementById('LastName').value = user.lastName;
+        document.getElementById('Email').value = user.email;
+        document.getElementById('pm_role').checked = userHasPermission(2,user);
+        document.getElementById('fs_role').checked = userHasPermission(3,user);
+	{% for Job in Jobs %}
+        	document.getElementById("jobId_{{ Job.id }}").checked = isJobIdInList({{ Job.id}}, user.jobIds);
+	{% endfor %}
+    } else {
+        document.getElementById('userForm').action = "http://localhost:8888/createUser";
+        document.getElementById("saveButton").text = "Create New User";
+        document.getElementById('FirstName').value = "";
+        document.getElementById('LastName').value = "";
+        document.getElementById('Email').value = "";
+        document.getElementById('pm_role').checked = false;
+        document.getElementById('fs_role').checked = true;
+	{% for Job in Jobs %}
+        	document.getElementById("jobId_{{ Job.id }}").checked = false;
+	{% endfor %}
+    }
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginRight= "0";
+    document.body.style.backgroundColor = "white";
+}
+</script>
+
+<div id="mySidenav"  class="sidenav">
+  <form id="userForm" action="http://localhost:8888/updateUser" method="POST">
+  <input type="hidden" id="userId" name="userId"/>
+  <div class="containerleft containernewuser">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <h2>Create New User</h2>
+    <label for="FirstName">First Name</label>
+    <input id="FirstName" name="firstName">
+    <label for="LastName">Last Name</label>
+    <input id="LastName" name="lastName">
+    <label for="Email">Email</label>
+    <input id="Email" name="email">
+    
+    <h4>Role</h4>
+    <label class="checkboxcontainer">Project Manager
+      <input type="radio" name="permissionId" id="pm_role" value="2">
+      <span class="checkmark"></span>
+    </label>
+    <label class="checkboxcontainer">Field Staff
+      <input type="radio" name="permissionId" id="fs_role" value="3">
+      <span class="checkmark"></span>
+    </label>
+
+    <h4>Jobs</h4>
+    {% for Job in Jobs %}
+    	<label class="checkboxcontainer">{{ Job.name }}
+      		<input type="checkbox" id="jobId_{{ Job.id }}" name="jobId_{{ Job.id }}">
+      		<span class="checkmark"></span>
+    	</label>
+    {% endfor %}
+
+    <div class="bttnright bttnrightbottom">
+      <a class="bttn bttn2" onclick="closeNav()">Cancel</a>
+      <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('userForm').submit();">Create New User</a>
+    </div>
+  </div>
+
+  </form>
+</div>
+
+
+
+<div class="containerleft containerusers" id="main">
+  <h1>Users</h1>
+
+  {% if User.hasPermission(2) %}
+  <div class="bttnright bttnabovetable">
+    <a class="bttn" onclick="openNav()">Create New User</a>
+  </div>
+  {% endif %}
+
+  <h3>Users</h3>
+    <main>
+    <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+      <table class="users nohover">
+        <tr>
+          <th>Users</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th></th>
+        </tr>
+        {% for User in Users %}
+        <tr>
+          <td>{{ User.firstName }} {{ User.lastName }}</td>
+          <td>{{ User.email }}</td>
+          <td>{{ User.permissionName()}} </td>   
+          <td> <a class="bttn" onclick="openNav({{ User.asStringDict() }})">Edit</a> </td>   
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </main>
+
+  </div>
+
+</div>
+{% endblock %}

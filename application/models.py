@@ -1,5 +1,6 @@
 from application import db
 import json
+import config
 import os
 import hashlib
 import random
@@ -53,7 +54,21 @@ class User(db.Model):
 		returnDict['lastName'] = str(self.lastName)
 		if self.permissionId :
 			returnDict['permissionId'] = str(self.permissionId)
+
+		jobIds = []
+		for job in self.jobs:
+			jobIds.append(job.id)
+		returnDict['jobIds'] = ','.join(str(e) for e in jobIds)
 		returnDict['passwordRequiresReset'] = str(self.passwordRequiresReset)
+		returnDict['permissionName'] = self.permissionName()
+	
+		return returnDict
+
+	def asStringDict(self):
+		returnDict = self.asDict()
+
+		for k, v in returnDict.items():
+			returnDict[k] = str(v)
 	
 		return returnDict
 
@@ -81,6 +96,19 @@ class User(db.Model):
 			if self.permissionId <= permission :
 				torf = True
 		return torf
+
+	def permissionName(self) :
+		permissionName = "Unkown"
+		if self.permissionId == config.PERMISSION_ADMIN :
+			permissionName = "Admin"
+		elif self.permissionId == config.PERMISSION_PM :
+			permissionName = "Project Manager"
+		elif self.permissionId == config.PERMISSION_FS :
+			permissionName = "Field Staff"
+		elif self.permissionId == config.PERMISSION_VENDOR :
+			permissionName = "Vendor"
+
+		return permissionName
 
 	def hasJob(self, job) :
 		torf = False
@@ -156,6 +184,11 @@ class Vendor(db.Model):
 		returnDict['contact'] = str(self.contact)
 		returnDict['phone'] = str(self.phone)
 		returnDict['emailList'] = str(self.emailList)
+
+		jobIds = []
+		for job in self.jobs:
+			jobIds.append(job.id)
+		returnDict['jobIds'] = ','.join(str(e) for e in jobIds)
 	
 		return returnDict
 
@@ -221,6 +254,9 @@ class Job(db.Model):
 		returnDict = {}
 		returnDict['id'] = str(self.id)
 		returnDict['name'] = str(self.name)
+		returnDict['number'] = str(self.number)
+		returnDict['address'] = str(self.address)
+		returnDict['instructions'] = str(self.instructions)
 		returnDict['showDeliveryNumber'] = self.showDeliveryNumber
 		returnDict['showContactName'] = self.showContactName
 		returnDict['showContactNumber'] = self.showContactNumber
@@ -230,6 +266,8 @@ class Job(db.Model):
 		returnDict['showTruckingCompany'] = self.showTruckingCompany
 		returnDict['showNumberOfPackages'] = self.showNumberOfPackages
 		returnDict['showTypeOfTruck'] = self.showTypeOfTruck
+		returnDict['showDriverName'] = self.showDriverName
+		returnDict['showDriverPhone'] = self.showDriverPhone
 		returnDict['showTrackingNumber'] = self.showTrackingNumber
 		returnDict['showWeightOfLoad'] = self.showWeightOfLoad
 		returnDict['showVendorNotes'] = self.showVendorNotes
@@ -239,6 +277,14 @@ class Job(db.Model):
 		returnDict['attachPackingList'] = self.attachPackingList
 		returnDict['attachPhotos'] = self.attachPhotos
 		returnDict['attachMap'] = self.attachMap
+	
+		return returnDict
+
+	def asStringDict(self):
+		returnDict = self.asDict()
+
+		for k, v in returnDict.items():
+			returnDict[k] = str(v)
 	
 		return returnDict
 
@@ -314,10 +360,37 @@ class Shipment(db.Model):
 		returnDict = {}
 		returnDict['id'] = str(self.id)
 		returnDict['description'] = str(self.description)
-		returnDict['expectedDate'] = str(self.expectedDate)
-		returnDict['arrivalDate'] = str(self.arrivalDate)
-		returnDict['shippedDate'] = str(self.shippedDate)
-	
+		if self.expectedDate :
+			returnDict['expectedDate'] = str(self.expectedDate)
+		if self.arrivalDate :
+			returnDict['arrivalDate'] = str(self.arrivalDate)
+		if self.shippedDate :
+			returnDict['shippedDate'] = str(self.shippedDate)
+		if self.truckingCompany :
+			returnDict['truckingCompany'] = str(self.truckingCompany)
+		if self.truckType :
+			returnDict['truckType'] = str(self.truckType)
+		if self.weight :
+			returnDict['weight'] = str(self.weight)
+		if self.numberOfPackages :
+			returnDict['numberOfPackages'] = str(self.numberOfPackages)
+		if self.deliveryNumber :
+			returnDict['deliveryNumber'] = str(self.deliveryNumber)
+		if self.bolNumber :
+			returnDict['bolNumber'] = str(self.bolNumber)
+		if self.specialInstructions :
+			returnDict['specialInstructions'] = str(self.specialInstructions)
+		if self.trackingNumber :
+			returnDict['trackingNumber'] = str(self.trackingNumber)
+		if self.vendorNotes :
+			returnDict['vendorNotes'] = str(self.vendorNotes)
+		if self.driverName :
+			returnDict['driverName'] = str(self.driverName)
+		if self.driverPhone :
+			returnDict['driverPhone'] = str(self.driverPhone)
+		returnDict['jobId'] = str(self.jobId)
+		returnDict['vendorId'] = str(self.vendorId)
+
 		return returnDict
 
 	def json(self):

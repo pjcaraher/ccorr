@@ -89,11 +89,17 @@ div.containerright_middlecolumn {
 /* all of these below control the width of the slideout window containters, which are slightly differnet on pages */
 
 .containerjobs {
-	max-width: 400px !important;
+	max-width: 500px !important;
 }
 
 .containereditjobs {
-	max-width:440px !important;
+	max-width:450px !important;
+	float: left;
+	padding-top: 40px !important;
+}
+
+.containereditdelivery {
+	max-width:550px !important;
 	float: left;
 	padding-top: 40px !important;
 }

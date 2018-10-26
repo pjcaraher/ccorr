@@ -101,8 +101,7 @@ function closeNav() {
         <table class="jobs">
           {% for Vendor in Vendors %}
           	<tr>
-            		<td>{{ Vendor.name }}</td>   
-            		<td><a class="bttn" onclick="openNav({{ Vendor.asDict() }})">Open</a></td>
+            		<td><a onclick="openNav({{ Vendor.asDict() }})">{{ Vendor.name }}</a></td>
           	</tr>
           {% endfor %}
         </table>

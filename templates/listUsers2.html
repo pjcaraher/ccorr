@@ -130,7 +130,9 @@ function closeNav() {
           <td>{{ User.firstName }} {{ User.lastName }}</td>
           <td>{{ User.email }}</td>
           <td>{{ User.permissionName()}} </td>   
-          <td> <a class="bttn" onclick="openNav({{ User.asStringDict() }})">Edit</a> </td>   
+          <td> <a onclick="openNav({{ User.asStringDict() }})">
+          	<img width="50" src="/static/images/pencil.svg">
+          </a> </td>   
         </tr>
         {% endfor %}
       </table>

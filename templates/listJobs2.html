@@ -84,9 +84,9 @@ function closeNav() {
     <label for="JobNumber">Number</label>
     <input id="number" name="number">
     <label for="JobAddress">Address</label>
-    <textarea id="address" name="address"></textarea>
+    <input id="address" name="address">
     <label for="JobInstructions">Instructions</label>
-    <textarea contenteditable="true" id="instructions" name="instructions"></textarea>
+    <input contenteditable="true" id="instructions" name="instructions">
     <div class="bttnright bttnrightbottom">
       <a class="bttn bttn2" onclick="closeNav()">Cancel</a>
       <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('jobForm').submit();">Create New Job</a>
@@ -199,31 +199,16 @@ function closeNav() {
         <table class="jobs">
 	{% for Job in Jobs %}
         	<tr>
-    			<td>{{ Job.name }}</td>   
-    			<td><a class="bttn" href="http://localhost:8888/selectJob?jobId={{ Job.id }}">Open</a></td>   
+    			<td><a href="http://localhost:8888/selectJob?jobId={{ Job.id }}">{{ Job.name }}</a></td>   
+    			<td><a href="http://localhost:8888/selectJob?jobId={{ Job.id }}">Open</a></td>   
 			{% if User.hasPermission(2) %}
-    				<td><a class="bttn" onclick="openNav({{ Job.asStringDict() }})">Config</a></td>   
+    				<td><a onclick="openNav({{ Job.asStringDict() }})">Config</a></td>   
 			{% endif %}
         	</tr>
 	{% endfor %}
         </table>
       </div>
     </main>
-
-
-  <h3>Closed Jobs</h3>
-    <main>
-      <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
-        <table class="jobs">
-	{% for Job in ClosedJobs %}
-        	<tr>
-            		<td>Job {{ Job.name }}</td>   
-        	</tr>
-	{% endfor %}
-        </table>
-      </div>
-    </main>
-  </div>
 
 </div>  
 {% endblock %}

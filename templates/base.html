@@ -1,7 +1,7 @@
 <head>
     <link rel="shortcut icon" href="" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=1;" />
+    <meta http-equiv="Content-Type" content="text/html, charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=1" />
 
     
     <title>Crown Corr</title>
@@ -31,7 +31,9 @@
 <ul class="nav">
     <img src="/static/images/ic_crown_corr.svg" class="navicon">
     <li><a href="http://localhost:8888/mainPage">Jobs</a></li>
-    <li><a href="http://localhost:8888/listVendors">Vendors</a></li>
+    {% if User.permissionId != 4 %}
+    	<li><a href="http://localhost:8888/listVendors">Vendors</a></li>
+    {% endif %}
     <li><a href="http://localhost:8888/listUsers">Users</a></li>
     <li>Settings</li>   
     <li><a href="http://localhost:8888/logout">Logout</a></li>   

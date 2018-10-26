@@ -756,14 +756,15 @@ def new_user():
     userDict = session['user']
     currentPermission = int(userDict['permissionId'])
     
-    return render_template('newUser.html', UserPermission=currentPermission, Jobs=AllJobs, warning=WarningMessage)
+    return render_template('newUser.html', UserPermission=currentPermission, User=userDict, Jobs=AllJobs, warning=WarningMessage)
 
 @application.route('/newVendor',methods=['GET'])
 def new_vendor():
     global WarningMessage
     global AllJobs
+    userDict = session['user']
     
-    return render_template('newVendor.html', Jobs=AllJobs, warning=WarningMessage)
+    return render_template('newVendor.html', Jobs=AllJobs, User=userDict, warning=WarningMessage)
 
 @application.route('/editVendor',methods=['GET'])
 def edit_vendor():
@@ -771,16 +772,18 @@ def edit_vendor():
     global AllJobs
     vendorId = request.args.get('vendorId', 0, type=int)
     vendor = vendor_for_id(vendorId)
+    userDict = session['user']
     
-    return render_template('editVendor.html', Vendor=vendor, Jobs=AllJobs, warning=WarningMessage)
+    return render_template('editVendor.html', Vendor=vendor, User=userDict, Jobs=AllJobs, warning=WarningMessage)
 
 @application.route('/listVendors',methods=['GET'])
 def list_vendors():
     global WarningMessage
     global AllJobs
     vendors = db.session.query(Vendor).all()
+    userDict = session['user']
     
-    return render_template('listVendors2.html', Jobs=AllJobs, Vendors=vendors, warning=WarningMessage)
+    return render_template('listVendors2.html', Jobs=AllJobs, User=userDict, Vendors=vendors, warning=WarningMessage)
 
 @application.route('/createVendor',methods=['POST'])
 def create_vendor():
@@ -799,6 +802,7 @@ def update_vendor():
 def save_vendor_from_form(vendor, action, form):
     global WarningMessage
     global AllJobs
+    userDict = session['user']
     vendor.name = str(form['name'])
     vendor.contact = str(form['contact'])
     vendor.contact = str(form['contact'])
@@ -817,7 +821,7 @@ def save_vendor_from_form(vendor, action, form):
         print str(ex)
     	WarningMessage = "Unable to " + str(action) + " Vendor " + str(vendor.name) + " " + str(ex.message)
 
-    return render_template('listVendors2.html', Vendors=vendors, Jobs=AllJobs, warning=WarningMessage)
+    return render_template('listVendors2.html', Vendors=vendors, User=userDict, Jobs=AllJobs, warning=WarningMessage)
 
 @application.route('/removeVendorUser',methods=['GET'])
 def remove_vendor_user():
@@ -826,6 +830,7 @@ def remove_vendor_user():
     vendorId = request.args.get('vendorId', 0, type=int)
     vendor = vendor_for_id(vendorId)
     userId = request.args.get('userId', 0, type=int)
+    userDict = session['user']
 
     users = vendor.users()
     for user in users :
@@ -841,12 +846,13 @@ def remove_vendor_user():
         print str(ex)
     	WarningMessage = "Unable to " + str(action) + " Vendor " + str(vendor.name) + " " + str(ex.message)
     
-    return render_template('editVendor.html', Vendor=vendor, Jobs=AllJobs, warning=WarningMessage)
+    return render_template('editVendor.html', Vendor=vendor, User=userDict, Jobs=AllJobs, warning=WarningMessage)
 
 @application.route('/createVendorUser',methods=['POST'])
 def create_vendor_user():
     global WarningMessage
     global AllJobs
+    userDict = session['user']
     vendorId = int(request.form['vendorId'])
     vendor = vendor_for_id(vendorId)
     email = str(request.form['email'])
@@ -882,7 +888,7 @@ def create_vendor_user():
         	print str(ex)
     		WarningMessage = "Unable to create new user for Vendor"
     
-    return render_template('editVendor.html', Vendor=vendor, Jobs=AllJobs, warning=WarningMessage)
+    return render_template('editVendor.html', Vendor=vendor, User=userDict, Jobs=AllJobs, warning=WarningMessage)
 
 # @application.route('/updateVendorConfig',methods=['POST'])
 # def update_vendor():

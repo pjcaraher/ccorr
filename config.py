@@ -11,8 +11,6 @@ SQLALCHEMY_POOL_RECYCLE = 280
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'dsaf0897sfdg45sfdgfdsaqzdf98sdf0a'
 
-print "************************ HELLO PJ *******************"
-
 PERMISSION_ADMIN = 1
 PERMISSION_PM = 2
 PERMISSION_FS = 3

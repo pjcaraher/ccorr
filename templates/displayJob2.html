@@ -62,8 +62,8 @@ function setDateValues(prefix, dateValue) {
 }
 
 function openNav(vendor, delivery) {
-    document.getElementById("mySidenav").style.width = "890px";
-    document.getElementById("main").style.marginRight = "890px";
+    document.getElementById("mySidenav").style.width = "700px";
+    document.getElementById("main").style.marginRight = "700px";
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     if (delivery) {
     	setDateValues("shipped_", delivery.shippedDate);
@@ -88,8 +88,6 @@ function openNav(vendor, delivery) {
     }
     else {
     	document.getElementById('deliveryForm').action = "http://localhost:8888/createShipment";
-    	alert("Vendor is " + vendor);
-    	alert(vendor.id);
     	document.getElementById("vendorId").value = vendor.id;
     	document.getElementById("VendorLabel").innerHTML = vendor.name;
     	document.getElementById("saveButton").text = "Create New Delivery";
@@ -130,7 +128,7 @@ function closeMapNav() {
 
 <div id="mySidenav"  class="sidenav">
   <form id="deliveryForm" action="http://localhost:8888/updateShipment" method="POST">
-  <div class="containerleft containereditjobs">
+  <div class="containerleft containereditdelivery">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <h2>Create/Edit Delivery</h2>
     <input type="hidden" id="jobId" name="jobId" value="{{ Job.id }}" />
@@ -139,6 +137,7 @@ function closeMapNav() {
   <br>
     <label id="VendorLabel">Vendor</label>
     <br>
+{% if Job.showDateLoaded %}
     <label for="ShippedDate">Shipped</label>
     <select id="shipped_month" name="shipped_month">
     	<option value="None">None</option>
@@ -217,6 +216,7 @@ function closeMapNav() {
     	<option value="AM">AM</option>
     	<option value="PM">PM</option>
     </select> <br>
+{% endif %}
     <label for="ExpectedDate">Expected</label>
     <select id="expected_month" name="expected_month">
     	<option value="None">None</option>
@@ -295,6 +295,7 @@ function closeMapNav() {
     	<option value="AM">AM</option>
     	<option value="PM">PM</option>
     </select></br>
+{% if Job.showDeliveryDate %}
     <label for="ArrivalDate">Arrival</label>
     <select id="arrival_month" name="arrival_month">
     	<option value="None">None</option>
@@ -373,30 +374,52 @@ function closeMapNav() {
     	<option value="AM">AM</option>
     	<option value="PM">PM</option>
     </select></br>
+{% endif %}
 
-
+{% if Job.showDescriptionOfGoods %}
     <label id="DescriptionLabel">Description</label>
     <input name="description" id="description"/>
+{% endif %}
+{% if Job.showDeliveryNumber %}
     <label id="DeliveryNumberLabel">Delivery Number</label>
     <input name="deliveryNumber" id="deliveryNumber"/>
+{% endif %}
+{% if Job.showNumberOfPackages %}
     <label id="NumberOfPackagesLabel">Number of Packages</label>
     <input name="numberOfPackages" id="numberOfPackages"/>
+{% endif %}
+{% if Job.showTypeOfTruck %}
     <label id="TruckTypeLabel">Truck Type</label>
     <input name="truckType" id="truckType"/>
+{% endif %}
+{% if Job.showWeightOfLoad %}
     <label id="WeightLabel">Weight</label>
     <input name="weight" id="weight"/>
+{% endif %}
+{% if Job.showTruckingCompany %}
     <label id="TruckingCompanyLabel">Trucking Company</label>
     <input name="truckingCompany" id="truckingCompany"/>
+{% endif %}
+{% if Job.showSpecialInstructions %}
     <label id="SpecialInstructionsLabel">Special Instructions</label>
     <input name="specialInstructions" id="specialInstructions"/>
+{% endif %}
+{% if Job.showTrackingNumber %}
     <label id="TrackingNumberLabel">Tracking Number</label>
     <input name="trackingNumber" id="trackingNumber"/>
+{% endif %}
+{% if Job.showDriverName %}
     <label id="DriverNameLabel">Driver Name</label>
     <input name="driverName" id="driverName"/>
+{% endif %}
+{% if Job.showDriverPhone %}
     <label id="DriverPhoneLabel">Driver Phone</label>
     <input name="driverPhone" id="driverPhone"/>
+{% endif %}
+{% if Job.showVendorNotes %}
     <label id="VendorNotesLabel">Vendor Notes</label>
     <textarea name="vendorNotes" id="vendorNotes"></textarea>
+{% endif %}
     <div class="bttnright bttnrightbottom">
       <a class="bttn bttn2" onclick="closeNav()">Cancel</a>
       <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('deliveryForm').submit();">Create New Delivery</a>
@@ -423,35 +446,51 @@ function closeMapNav() {
 
 <div class="containerleft containerjobs" id="main">
   <h1>{{ Job.name }}</h1>
-  </div>
 
   <h3>Open Deliveries</h3>
-    <main>
+      <main>
       <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
         <table class="jobs">
 	{% for Shipment in OpenShipments %}
         	<tr>
-    			<td><a class="bttn" onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">Delivery from</a></td>
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">
 			{% if Shipment.expectedDate %}
-				<td>{{ Shipment.vendor.name }} Expected</td>   
-				<td>{{ Shipment.expectedDate.strftime("%m/%d/%Y %I:%M %p") }}</td>
+				{% if User.permissionId != 4 %}
+					{{ Shipment.vendor.name }} 
+				{% endif %}
+				Expected
+    				</a></td>
+    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">
+				{{ Shipment.expectedDate.strftime("%m/%d/%Y %I:%M %p") }}
+    				</a></td>
 			{% else %}
-				<td>{{ Shipment.vendor.name }} Shipped</td>   
-				<td>{{ Shipment.shippedDate.strftime("%m/%d/%Y %I:%M %p") }}</td>
+				{% if User.permissionId != 4 %}
+					{{ Shipment.vendor.name }} 
+				{% endif %}
+				Shipped
+    				</a></td>
+    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">
+				{{ Shipment.shippedDate.strftime("%m/%d/%Y %I:%M %p") }}
+    				</a></td>
 			{% endif %}
         	</tr>
 	{% endfor %}
 	{% for Shipment in CompletedShipments %}
         	<tr>
-    			<td><a class="bttn" onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">Delivery from</a></td>
-			<td>{{ Shipment.vendor.name }} Arrived </td>   
-			<td>{{ Shipment.arrivalDate.strftime("%m/%d/%Y %I:%M %p") }}</td>
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">
+    			{% if User.permissionId != 4 %}
+				{{ Shipment.vendor.name }} 
+			{% endif %}
+			Arrived 
+    			</a></td>
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">
+			{{ Shipment.arrivalDate.strftime("%m/%d/%Y %I:%M %p") }}
+    			</a></td>
         	</tr>
 	{% endfor %}
         </table>
       </div>
-    </main>
-</div>
+      </main>
 
 {% if User.permissionId == 4 %}
 <div class="bttnright bttnabovetable">
@@ -464,22 +503,22 @@ function closeMapNav() {
 
 {% endif %}
 {% if User.permissionId < 4 %}
-<div class="containerleft containerjobs" id="main">
 
-  <h3>New Delivery</h3>
+  <h3>Create New Delivery</h3>
   <main>
      <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
       <table class="jobs">
       {% for Vendor in Job.vendors %}
-      	<tr>		
-		<td>Delivery from</td>
-		<td><a class="bttn" onclick="openNav({{ Vendor.asDict() }},null)">{{ Vendor.name }}</a></td>
+      <tr>		
+		<td>New Delivery from</td>
+		<td><a onclick="openNav({{ Vendor.asDict() }},null)">
+			{{ Vendor.name }}
+		</a></td>
       	</tr>
       {% endfor %}
       </table>
      </div>
   </main>
-</div>
 
 <div class="bttnright bttnabovetable">
     <a class="bttn" onclick="openMapNav()">New Map</a>

@@ -393,6 +393,27 @@ class Shipment(db.Model):
 
 		return returnDict
 
+	def asStringDict(self):
+		returnDict = self.asDict()
+		reversedComments = self.reversedComments()
+		commentArray = []
+		photoArray = []
+
+		for k, v in returnDict.items():
+			returnDict[k] = str(v)
+
+		for comment in reversedComments :
+			commentArray.append(comment.asStringDict())
+
+		returnDict['reversedComments'] = commentArray
+	
+		for photo in self.photos :
+			photoArray.append(photo.asStringDict())
+
+		returnDict['photos'] = photoArray
+	
+		return returnDict
+
 	def json(self):
 		returnDict = self.asDict()
 		return json.dumps(returnDict)
@@ -422,6 +443,16 @@ class ShipmentPhoto(db.Model):
 	
 		return returnDict
 
+	def asStringDict(self):
+		returnDict = self.asDict()
+
+		for k, v in returnDict.items():
+			returnDict[k] = str(v)
+
+		returnDict['photoDate'] = self.photoDate.strftime("%-m/%d %-I:%M %p")
+	
+		return returnDict
+
 	def json(self):
 		returnDict = self.asDict()
 		return json.dumps(returnDict)
@@ -444,7 +475,18 @@ class ShipmentComment(db.Model):
 	def asDict(self):
 		returnDict = {}
 		returnDict['id'] = str(self.id)
+		returnDict['comment'] = str(self.comment)
 		returnDict['commentDate'] = str(self.commentDate)
+	
+		return returnDict
+
+	def asStringDict(self):
+		returnDict = self.asDict()
+
+		for k, v in returnDict.items():
+			returnDict[k] = str(v)
+
+		returnDict['userName'] = str(self.user().name())
 	
 		return returnDict
 

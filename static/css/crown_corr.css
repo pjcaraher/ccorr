@@ -443,6 +443,10 @@ td {
   text-indent: -0.5em;
 }
 
+.toptd {
+  vertical-align: top;
+}
+
 table th {
   vertical-align: bottom;
   font-weight: 400;

@@ -2,6 +2,53 @@
 
 {% block container %}
 <script>
+function clearTable(tableId) {
+    var table = document.getElementById(tableId);
+    if (table) {
+    	var tableHeaderRowCount = 1;
+    	var rowCount = table.rows.length;
+    	for (var i = tableHeaderRowCount; i < rowCount; i++) {
+    		table.deleteRow(tableHeaderRowCount);
+    	}
+    }
+    return table;
+}
+
+function addCommentToTable(table, comment) {
+    var firstRow = table.insertRow(table.rows.length);
+    var cell1  = firstRow.insertCell(0);
+    var cell2  = firstRow.insertCell(1);
+    var cell3  = firstRow.insertCell(2);
+
+    var dateText  = document.createTextNode(comment.commentDate);
+    var nameText  = document.createTextNode(comment.userName);
+    cell1.appendChild(dateText);
+    cell3.appendChild(nameText);
+
+    var secondRow = table.insertRow(table.rows.length);
+    var commentCell  = secondRow.insertCell(0);
+    var commentText  = document.createTextNode(comment.comment);
+    commentCell.colSpan = "3";
+    commentCell.appendChild(commentText);
+}
+
+function addPhotoToTable(table, photo) {
+    var firstRow = table.insertRow(table.rows.length);
+    var cell1  = firstRow.insertCell(0);
+    var cell2  = firstRow.insertCell(1);
+
+    var mImg = document.createElement("img");
+    mImg.setAttribute('src', photo.image_url);
+    mImg.setAttribute('alt', photo.id);
+    mImg.setAttribute('width', "304px");
+    mImg.setAttribute('height', "228px");
+    cell1.appendChild(mImg);
+
+    var timeText  = document.createTextNode(photo.photoDate);
+    cell2.appendChild(timeText);
+    cell2.setAttribute('class', "toptd");
+}
+
 function elementStringValue(value) {
 	var stringValue = "";
 	if (value) {
@@ -65,6 +112,9 @@ function openNav(vendor, delivery) {
     document.getElementById("mySidenav").style.width = "700px";
     document.getElementById("main").style.marginRight = "700px";
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    var commentTable = clearTable('commentTable');
+    var photoTable = clearTable('photoTable');
+
     if (delivery) {
     	setDateValues("shipped_", delivery.shippedDate);
     	setDateValues("expected_", delivery.expectedDate);
@@ -85,6 +135,18 @@ function openNav(vendor, delivery) {
     	document.getElementById("driverName").value = elementStringValue(delivery.driverName);
     	document.getElementById("driverPhone").value = elementStringValue(delivery.driverPhone);
     	document.getElementById("vendorNotes").value = elementStringValue(delivery.vendorNotes);
+
+    	var index;
+    	for (index = 0; index < delivery.reversedComments.length; index++) { 
+    		var comment = delivery.reversedComments[index];
+    		addCommentToTable(commentTable, comment);
+    	}
+    	if (photoTable) {
+    		for (index = 0; index < delivery.photos.length; index++) { 
+    			var photo = delivery.photos[index];
+    			addPhotoToTable(photoTable, photo);
+    		}
+    	}
     }
     else {
     	document.getElementById('deliveryForm').action = "http://localhost:8888/createShipment";
@@ -103,6 +165,8 @@ function openNav(vendor, delivery) {
     	document.getElementById("driverPhone").value = "";
     	document.getElementById("vendorNotes").value = "";
     }
+
+
 }
 
 function closeNav() {
@@ -420,6 +484,18 @@ function closeMapNav() {
     <label id="VendorNotesLabel">Vendor Notes</label>
     <textarea name="vendorNotes" id="vendorNotes"></textarea>
 {% endif %}
+<table id="commentTable">
+	<tr>
+		<th colspan="3">Comments</th>
+	</tr>
+</table>
+{% if User.permissionId < 4 %}
+<table id="photoTable">
+	<tr>
+		<th colspan="2">Photos</th>
+	</tr>
+</table>
+{% endif %}
     <div class="bttnright bttnrightbottom">
       <a class="bttn bttn2" onclick="closeNav()">Cancel</a>
       <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('deliveryForm').submit();">Create New Delivery</a>
@@ -453,14 +529,14 @@ function closeMapNav() {
         <table class="jobs">
 	{% for Shipment in OpenShipments %}
         	<tr>
-    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }})">
 			{% if Shipment.expectedDate %}
 				{% if User.permissionId != 4 %}
 					{{ Shipment.vendor.name }} 
 				{% endif %}
 				Expected
     				</a></td>
-    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">
+    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }})">
 				{{ Shipment.expectedDate.strftime("%m/%d/%Y %I:%M %p") }}
     				</a></td>
 			{% else %}
@@ -469,7 +545,7 @@ function closeMapNav() {
 				{% endif %}
 				Shipped
     				</a></td>
-    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">
+    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }})">
 				{{ Shipment.shippedDate.strftime("%m/%d/%Y %I:%M %p") }}
     				</a></td>
 			{% endif %}
@@ -477,13 +553,13 @@ function closeMapNav() {
 	{% endfor %}
 	{% for Shipment in CompletedShipments %}
         	<tr>
-    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }})">
     			{% if User.permissionId != 4 %}
 				{{ Shipment.vendor.name }} 
 			{% endif %}
 			Arrived 
     			</a></td>
-    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asDict() }})">
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }})">
 			{{ Shipment.arrivalDate.strftime("%m/%d/%Y %I:%M %p") }}
     			</a></td>
         	</tr>

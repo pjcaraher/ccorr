@@ -108,12 +108,14 @@ function setDateValues(prefix, dateValue) {
 	}
 }
 
-function openNav(vendor, delivery) {
+function openNav(vendor, delivery, defaultInstructions) {
     document.getElementById("mySidenav").style.width = "700px";
     document.getElementById("main").style.marginRight = "700px";
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     var commentTable = clearTable('commentTable');
     var photoTable = clearTable('photoTable');
+    alert('defaultInstructions is');
+    alert(defaultInstructions);
 
     if (delivery) {
     	setDateValues("shipped_", delivery.shippedDate);
@@ -159,7 +161,7 @@ function openNav(vendor, delivery) {
     	document.getElementById("truckType").value = "";
     	document.getElementById("weight").value = "";
     	document.getElementById("truckingCompany").value = "";
-    	document.getElementById("specialInstructions").value = "";
+    	document.getElementById("specialInstructions").value = defaultInstructions;
     	document.getElementById("trackingNumber").value = "";
     	document.getElementById("driverName").value = "";
     	document.getElementById("driverPhone").value = "";
@@ -529,14 +531,14 @@ function closeMapNav() {
         <table class="jobs">
 	{% for Shipment in OpenShipments %}
         	<tr>
-    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }})">
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
 			{% if Shipment.expectedDate %}
 				{% if User.permissionId != 4 %}
 					{{ Shipment.vendor.name }} 
 				{% endif %}
 				Expected
     				</a></td>
-    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }})">
+    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
 				{{ Shipment.expectedDate.strftime("%m/%d/%Y %I:%M %p") }}
     				</a></td>
 			{% else %}
@@ -545,7 +547,7 @@ function closeMapNav() {
 				{% endif %}
 				Shipped
     				</a></td>
-    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }})">
+    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
 				{{ Shipment.shippedDate.strftime("%m/%d/%Y %I:%M %p") }}
     				</a></td>
 			{% endif %}
@@ -553,13 +555,13 @@ function closeMapNav() {
 	{% endfor %}
 	{% for Shipment in CompletedShipments %}
         	<tr>
-    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }})">
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
     			{% if User.permissionId != 4 %}
 				{{ Shipment.vendor.name }} 
 			{% endif %}
 			Arrived 
     			</a></td>
-    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }})">
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
 			{{ Shipment.arrivalDate.strftime("%m/%d/%Y %I:%M %p") }}
     			</a></td>
         	</tr>
@@ -572,7 +574,7 @@ function closeMapNav() {
 <div class="bttnright bttnabovetable">
     {% for Vendor in Job.vendors %}
 	{% if Vendor.id == User.vendorId %}
-   		<a class="bttn" onclick="openNav({{ Vendor.asDict() }},null)">New Delivery</a>
+   		<a class="bttn" onclick="openNav({{ Vendor.asDict() }},null,Job.instructions }}')">New Delivery</a>
 	{% endif %}
     {% endfor %}
 </div>
@@ -587,7 +589,7 @@ function closeMapNav() {
       {% for Vendor in Job.vendors %}
       <tr>		
 		<td>New Delivery from</td>
-		<td><a onclick="openNav({{ Vendor.asDict() }},null)">
+		<td><a onclick="openNav({{ Vendor.asDict() }},null,'{{ Job.instructions }}')">
 			{{ Vendor.name }}
 		</a></td>
       	</tr>

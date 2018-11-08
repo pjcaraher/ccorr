@@ -114,8 +114,6 @@ function openNav(vendor, delivery, defaultInstructions) {
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     var commentTable = clearTable('commentTable');
     var photoTable = clearTable('photoTable');
-    alert('defaultInstructions is');
-    alert(defaultInstructions);
 
     if (delivery) {
     	setDateValues("shipped_", delivery.shippedDate);
@@ -524,6 +522,25 @@ function closeMapNav() {
 
 <div class="containerleft containerjobs" id="main">
   <h1>{{ Job.name }}</h1>
+{% if User.permissionId < 4 %}
+
+  <h3>Create New Delivery</h3>
+  <main>
+     <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+      <table class="jobs">
+      {% for Vendor in Job.vendors %}
+      <tr>		
+		<td>New Delivery from</td>
+		<td><a onclick="openNav({{ Vendor.asDict() }},null,'{{ Job.instructions }}')">
+			{{ Vendor.name }}
+		</a></td>
+      	</tr>
+      {% endfor %}
+      </table>
+     </div>
+  </main>
+{% endif %}
+
 
   <h3>Open Deliveries</h3>
       <main>
@@ -553,6 +570,13 @@ function closeMapNav() {
 			{% endif %}
         	</tr>
 	{% endfor %}
+        </table>
+      </div>
+      </main>
+  <h3>Completed Deliveries</h3>
+      <main>
+      <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+        <table class="jobs">
 	{% for Shipment in CompletedShipments %}
         	<tr>
     			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
@@ -570,34 +594,7 @@ function closeMapNav() {
       </div>
       </main>
 
-{% if User.permissionId == 4 %}
-<div class="bttnright bttnabovetable">
-    {% for Vendor in Job.vendors %}
-	{% if Vendor.id == User.vendorId %}
-   		<a class="bttn" onclick="openNav({{ Vendor.asDict() }},null,Job.instructions }}')">New Delivery</a>
-	{% endif %}
-    {% endfor %}
-</div>
-
-{% endif %}
 {% if User.permissionId < 4 %}
-
-  <h3>Create New Delivery</h3>
-  <main>
-     <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
-      <table class="jobs">
-      {% for Vendor in Job.vendors %}
-      <tr>		
-		<td>New Delivery from</td>
-		<td><a onclick="openNav({{ Vendor.asDict() }},null,'{{ Job.instructions }}')">
-			{{ Vendor.name }}
-		</a></td>
-      	</tr>
-      {% endfor %}
-      </table>
-     </div>
-  </main>
-
 <div class="bttnright bttnabovetable">
     <a class="bttn" onclick="openMapNav()">New Map</a>
 </div>
@@ -624,6 +621,18 @@ function closeMapNav() {
 
 </div>
 </main>
+{% endif %}
+
+
+{% if User.permissionId == 4 %}
+<div class="bttnright bttnabovetable">
+    {% for Vendor in Job.vendors %}
+	{% if Vendor.id == User.vendorId %}
+   		<a class="bttn" onclick="openNav({{ Vendor.asDict() }},null,Job.instructions }}')">New Delivery</a>
+	{% endif %}
+    {% endfor %}
+</div>
+
 {% endif %}
 
 </div>

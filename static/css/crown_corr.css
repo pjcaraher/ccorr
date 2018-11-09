@@ -104,6 +104,12 @@ div.containerright_middlecolumn {
 	padding-top: 40px !important;
 }
 
+.containeruploadphoto {
+	max-width:600px !important;
+	float: left;
+	padding-top: 10px !important;
+}
+
 .containervendors {
 	max-width: 600px !important;
 }
@@ -530,7 +536,6 @@ textarea {
 	padding: 10px 10px 0 10px;
 	margin: 0 0 30px 0;
 	box-sizing:border-box;
-	max-width: 450px;
 }
 
 label {

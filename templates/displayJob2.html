@@ -114,6 +114,7 @@ function openNav(vendor, delivery, defaultInstructions) {
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     var commentTable = clearTable('commentTable');
     var photoTable = clearTable('photoTable');
+    var photoUploadDiv = document.getElementById('photoUploadDiv');
 
     if (delivery) {
     	setDateValues("shipped_", delivery.shippedDate);
@@ -135,6 +136,9 @@ function openNav(vendor, delivery, defaultInstructions) {
     	document.getElementById("driverName").value = elementStringValue(delivery.driverName);
     	document.getElementById("driverPhone").value = elementStringValue(delivery.driverPhone);
     	document.getElementById("vendorNotes").value = elementStringValue(delivery.vendorNotes);
+
+    	document.getElementById("photoShipmentId").value = delivery.id.toString();
+    	photoUploadDiv.style.visibility = 'visible';
 
     	var index;
     	for (index = 0; index < delivery.reversedComments.length; index++) { 
@@ -164,6 +168,8 @@ function openNav(vendor, delivery, defaultInstructions) {
     	document.getElementById("driverName").value = "";
     	document.getElementById("driverPhone").value = "";
     	document.getElementById("vendorNotes").value = "";
+
+    	photoUploadDiv.style.visibility = 'hidden';
     }
 
 
@@ -481,29 +487,41 @@ function closeMapNav() {
     <input name="driverPhone" id="driverPhone"/>
 {% endif %}
 {% if Job.showVendorNotes %}
-    <label id="VendorNotesLabel">Vendor Notes</label>
+    <label id="VendorNotesLabel">Vendor Notes</label></br>
     <textarea name="vendorNotes" id="vendorNotes"></textarea>
 {% endif %}
+<label id="NewCommentLabel">New Comment:</label></br>
+<textarea name="comment" cols="40" rows="5"></textarea>
+<br>
+
 <table id="commentTable">
 	<tr>
 		<th colspan="3">Comments</th>
 	</tr>
 </table>
-{% if User.permissionId < 4 %}
+
+
 <table id="photoTable">
 	<tr>
 		<th colspan="2">Photos</th>
 	</tr>
 </table>
-{% endif %}
-    <div class="bttnright bttnrightbottom">
+
+<div class="bttnright bttnrightbottom">
       <a class="bttn bttn2" onclick="closeNav()">Cancel</a>
       <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('deliveryForm').submit();">Create New Delivery</a>
-    </div>
-  </div>
-  </form>
-  <br>
-  <br>
+</div>
+</form> <!-- Close the main form -->
+</div>
+	<div id="photoUploadDiv" class="containerleft containeruploadphoto">
+		<label id="NewPhotoLabel">New Photo:</label></br>
+    		<form id="uploadPhotoForm" action="http://localhost:8888/uploadPhoto" method="POST" enctype=multipart/form-data>
+    			<input type=file name=file>
+    			<input type="hidden" id="photoShipmentId" name="shipmentId"/>
+    			<a class="bttn bttn2 bttnsmall" onclick="closeNav()">Cancel</a>
+    			<a class="bttn bttn2 bttnsmall" onclick="document.getElementById('uploadPhotoForm').submit();">Save</a>
+    		</form>
+	</div>
 </div>
 
 <div id="myMapSidenav"  class="sidenav">

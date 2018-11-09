@@ -12,7 +12,10 @@ function openNav(job) {
     	document.getElementById("saveButton").text = "Update";
     	document.getElementById("name").value = job.name;
     	document.getElementById("number").value = job.number;
-    	document.getElementById("address").value = job.address;
+    	document.getElementById("street").value = job.street;
+    	document.getElementById("city").value = job.city;
+    	document.getElementById("state").value = job.state;
+    	document.getElementById("zip").value = job.zip;
     	document.getElementById("instructions").value = job.instructions;
     	document.getElementById("showDeliveryNumber").checked = ("TRUE" == job.showDeliveryNumber.toUpperCase());
     	document.getElementById("showContactName").checked = ("TRUE" == job.showContactName.toUpperCase());
@@ -40,7 +43,10 @@ function openNav(job) {
     	document.getElementById("saveButton").text = "Create New Job";
     	document.getElementById("name").value = "";
     	document.getElementById("number").value = "";
-    	document.getElementById("address").value = "";
+    	document.getElementById("street").value = "";
+    	document.getElementById("city").value = "";
+    	document.getElementById("state").value = "";
+    	document.getElementById("zip").value = "";
     	document.getElementById("instructions").value = "";
     	document.getElementById("showDeliveryNumber").checked = true;
     	document.getElementById("showContactName").checked = true;
@@ -83,8 +89,14 @@ function closeNav() {
     <input id="name" name="name">
     <label for="JobNumber">Number</label>
     <input id="number" name="number">
-    <label for="JobAddress">Address</label>
-    <input id="address" name="address">
+    <label for="JobStreet">Street</label>
+    <input id="street" name="street">
+    <label for="JobCity">City</label>
+    <input id="city" name="city">
+    <label for="JobState">State</label>
+    <input id="state" name="state">
+    <label for="JobZip">Zip</label>
+    <input id="zip" name="zip">
     <label for="JobInstructions">Instructions</label>
     <input contenteditable="true" id="instructions" name="instructions">
     <div class="bttnright bttnrightbottom">

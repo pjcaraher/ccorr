@@ -207,7 +207,10 @@ class Job(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(64))
 	number = db.Column(db.String(64))
-	address = db.Column(db.String(128))
+	street = db.Column(db.String(128))
+	city = db.Column(db.String(64))
+	state = db.Column(db.String(5))
+	zip = db.Column(db.String(10))
 	instructions = db.Column(db.String(1024))
 	showDeliveryNumber = db.Column(db.Boolean)
 	showContactName = db.Column(db.Boolean)
@@ -255,7 +258,10 @@ class Job(db.Model):
 		returnDict['id'] = str(self.id)
 		returnDict['name'] = str(self.name)
 		returnDict['number'] = str(self.number)
-		returnDict['address'] = str(self.address)
+		returnDict['street'] = str(self.street)
+		returnDict['city'] = str(self.city)
+		returnDict['state'] = str(self.state)
+		returnDict['zip'] = str(self.zip)
 		returnDict['instructions'] = str(self.instructions)
 		returnDict['showDeliveryNumber'] = self.showDeliveryNumber
 		returnDict['showContactName'] = self.showContactName

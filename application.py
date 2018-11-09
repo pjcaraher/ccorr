@@ -45,6 +45,7 @@ MobileTTL = 60 * 60
 ERR_NONE = 100
 ERR_NO_USER = 101
 ERR_CALL_FAILED = 102
+ERR_NO_SHIPMENT = 103
 
 IMAGE_DIR = "/static/images/"
 
@@ -676,7 +677,10 @@ def create_job():
     job = Job()
     job.name = request.form['name']
     job.number = request.form['number']
-    job.address = request.form['address']
+    job.street = request.form['street']
+    job.city = request.form['city']
+    job.state = request.form['state']
+    job.zip = request.form['zip']
     job.instructions = request.form['instructions']
     userDict = session['user']
     user = None
@@ -716,8 +720,14 @@ def update_job():
     	job.name = request.form['name']
     if 'number' in request.form.keys() :
     	job.number = request.form['number']
-    if 'address' in request.form.keys() :
-    	job.address = request.form['address']
+    if 'street' in request.form.keys() :
+    	job.street = request.form['street']
+    if 'city' in request.form.keys() :
+    	job.city = request.form['city']
+    if 'state' in request.form.keys() :
+    	job.state = request.form['state']
+    if 'zip' in request.form.keys() :
+    	job.zip = request.form['zip']
     if 'instructions' in request.form.keys() :
     	job.instructions = request.form['instructions']
     userDict = session['user']
@@ -1530,6 +1540,9 @@ def assign_map_to_job(inputFilename) :
     return render_job_page()
 
 def upload_map_file(fileStorage, fileExtension) :
+    return upload_s3_file(fileStorage, 'maps/', fileExtension)
+
+def upload_s3_file(fileStorage, bucket, fileExtension) :
     # Store the file for reading
     fileFullPath = os.path.join(application.config['UPLOAD_FOLDER'], fileStorage.filename)
     fileStorage.save(fileFullPath)
@@ -1543,7 +1556,7 @@ def upload_map_file(fileStorage, fileExtension) :
         hasher.update(buf)
         buf = dataForHash.read(BLOCKSIZE)
     dataForHash.close()
-    hashName = 'maps/' + hasher.hexdigest() + '.' + fileExtension
+    hashName = bucket + hasher.hexdigest() + '.' + fileExtension
     bucketName = os.environ['S3BUCKET']
 
     s3 = boto3.resource('s3')
@@ -1564,10 +1577,71 @@ def upload_map_file(fileStorage, fileExtension) :
     		print 'Error Saving File ' + str(e)
     except Exception as ex :
     	WarningMessage = "Error saving file."
-    	print "Exception while saving file " + s3Key + " to S3 Bucket: " + str(ex)
+    	print "Exception while saving file " + hashName + " to S3 Bucket: " + str(ex)
 
     os.remove(fileFullPath)
     return hashName
+
+@application.route("/uploadPhoto", methods=["POST", "PUT"])
+def assign_photo_to_shipment() :
+    global WarningMessage
+    shipmentId = request.form['shipmentId']
+    shipment = shipment_for_id(shipmentId)
+    file = request.files['file']
+    retVal = {}
+
+    if file :
+    	s3Key = upload_photo_file(file)
+    	retVal = save_shipment_photo(s3Key, shipment)
+    else :
+    	retVal['status'] = ERR_NONE
+    	print "no file name"
+
+    if ERR_NONE == retVal['status'] :
+    	WarningMessage = "Error saving photo"
+    else :
+    	WarningMessage = "Successfully uploaded photo"
+
+    return render_job_page()
+
+def upload_photo_file(fileStorage) :
+    return upload_s3_file(fileStorage, 'photos/', 'jpg')
+
+def save_shipment_photo(hashName, shipment) :
+    status = ERR_NONE
+    error = ""
+    retVal = {}
+
+    try :
+    	if shipment :
+    		shipmentPhoto = ShipmentPhoto()
+    		shipmentPhoto.shipment = shipment
+    		shipmentPhoto.s3Key = hashName
+    		shipmentPhoto.photoDate = datetime.now()
+    		try :
+    			db.session.add(shipmentPhoto)
+    			db.session.commit()
+    			# Synch up the Shipment object.
+    			shipment = shipment_for_id(shipment.id)
+    			db.session.refresh(shipment)
+    			status = ERR_NONE
+    		except Exception as ex:
+    			db.session.rollback()
+    			print 'Unable to save ShipmentPhoto [%s]' % str(ex)
+    		else:
+    			# Something else has gone wrong.
+    			print 'Error Saving Shipment ' + str(e)
+    	else :
+    		status = ERR_NO_SHIPMENT
+    		error = "No shipment defined"
+    except Exception as ex :
+    	error = str(ex)
+    	status = ERR_NO_SHIPMENT
+
+    retVal['status'] = status
+    retVal['error'] = error
+
+    return retVal
 
 if __name__ == "__main__":
 	application.run(debug=True,host='0.0.0.0',port=8888)

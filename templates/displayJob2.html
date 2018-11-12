@@ -653,7 +653,7 @@ function closeMapNav() {
 <div class="bttnright bttnabovetable">
     {% for Vendor in Job.vendors %}
 	{% if Vendor.id == User.vendorId %}
-   		<a class="bttn" onclick="openNav({{ Vendor.asDict() }},null,Job.instructions }}')">New Delivery</a>
+		<a class="bttn" onclick="openNav({{ Vendor.asDict() }},null,'{{ Job.instructions }}')">New Delivery</a>
 	{% endif %}
     {% endfor %}
 </div>

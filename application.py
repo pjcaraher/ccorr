@@ -1126,6 +1126,22 @@ def update_shipment():
 
     return save_shipment(shipment, request)
 
+@application.route('/printShipment',methods=['GET'])
+def print_shipment() :
+    shipmentId = request.args.get('shipmentId', 0, type=int)
+    shipment = None
+    vendor = None
+    job = None
+
+    if shipmentId :
+    	shipment = shipment_for_id(shipmentId)
+
+    if shipment :
+    	vendor = vendor_for_id(shipment.vendorId)
+    	job = job_for_id(shipment.jobId)
+
+    return render_template('printShipment.html', Shipment=shipment, Vendor=vendor, Job=job)
+
 @application.route('/mLoginUser',methods=['POST'])
 def mobile_login_user():
     dict = json.loads(str(request.data))

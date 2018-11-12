@@ -115,6 +115,7 @@ function openNav(vendor, delivery, defaultInstructions) {
     var commentTable = clearTable('commentTable');
     var photoTable = clearTable('photoTable');
     var photoUploadDiv = document.getElementById('photoUploadDiv');
+    var printButtonAnchor = document.getElementById('PrintButton');
 
     if (delivery) {
     	setDateValues("shipped_", delivery.shippedDate);
@@ -139,6 +140,9 @@ function openNav(vendor, delivery, defaultInstructions) {
 
     	document.getElementById("photoShipmentId").value = delivery.id.toString();
     	photoUploadDiv.style.visibility = 'visible';
+
+	printButtonAnchor.setAttribute("href", "http://localhost:8888/printShipment?shipmentId=" + delivery.id);
+    	printButtonAnchor.style.visibility = 'visible';
 
     	var index;
     	for (index = 0; index < delivery.reversedComments.length; index++) { 
@@ -170,6 +174,8 @@ function openNav(vendor, delivery, defaultInstructions) {
     	document.getElementById("vendorNotes").value = "";
 
     	photoUploadDiv.style.visibility = 'hidden';
+	printButtonAnchor.removeAttribute('href');
+    	printButtonAnchor.style.visibility = 'hidden';
     }
 
 
@@ -206,6 +212,7 @@ function closeMapNav() {
     <input type="hidden" id="vendorId" name="vendorId"/>
   <br>
     <label id="VendorLabel">Vendor</label>
+    <a id="PrintButton" class="bttn bttnright" href="#" target="_blank">Print</a>
     <br>
 {% if Job.showDateLoaded %}
     <label for="ShippedDate">Shipped</label>

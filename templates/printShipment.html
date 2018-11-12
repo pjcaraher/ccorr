@@ -82,7 +82,7 @@
 	</tr>
 	{% for Photo in Shipment.photos %}
 	<tr>
-		<td><img src="{{ Photo.image_url }}" width="304px" height="228px"</td>
+		<td><img src="{{ Photo.image_url() }}" width="304px" height="228px"</td>
 		<td valign="top">{{ Photo.photoDate }}</td>
 	</tr>
 	{% endfor %}

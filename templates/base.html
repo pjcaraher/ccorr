@@ -32,13 +32,13 @@
 
 <ul class="nav">
     <img src="/static/images/ic_crown_corr.svg" class="navicon">
-    <li><a href="http://localhost:8888/mainPage">Jobs</a></li>
+    <li><a href="http://{{ config.BASEURL }}/mainPage">Jobs</a></li>
     {% if User.permissionId != 4 %}
-    	<li><a href="http://localhost:8888/listVendors">Vendors</a></li>
+    	<li><a href="http://{{ config.BASEURL }}/listVendors">Vendors</a></li>
     {% endif %}
-    <li><a href="http://localhost:8888/listUsers">Users</a></li>
+    <li><a href="http://{{ config.BASEURL }}/listUsers">Users</a></li>
     <li>Settings</li>   
-    <li><a href="http://localhost:8888/logout">Logout</a></li>   
+    <li><a href="http://{{ config.BASEURL }}/logout">Logout</a></li>   
 </ul>
 	{% if warning %}
 	<div>

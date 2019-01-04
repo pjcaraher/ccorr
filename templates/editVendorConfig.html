@@ -3,14 +3,14 @@
 </head>
 
 <body>
-<a href="http://localhost:8888/logout">logout</a>
+<a href="http://{{ config.BASEURL }}/logout">logout</a>
 <br><h1 style="color:red;"">{{ warning }}</h1>
-<form action="http://localhost:8888/selectJob" method="POST">
+<form action="http://{{ config.BASEURL }}/selectJob" method="POST">
 	<input type="hidden" name="jobId" value="{{ Config.jobId}}"/>
 	<br><input type="submit" value="Return to Job"/>
 </form>
 <h1>Edit Vendor</h1>
-	<form id="vendorForm" action="http://localhost:8888/updateVendorConfig" method="POST">
+	<form id="vendorForm" action="http://{{ config.BASEURL }}/updateVendorConfig" method="POST">
 		<input type="hidden" name="vendorId" value="{{ Vendor.id}}"/>
 		<input type="hidden" name="vendorConfigId" value="{{ Config.id}}"/>
 		<input type="hidden" name="jobId" value="{{ Config.jobId}}"/>

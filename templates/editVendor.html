@@ -3,11 +3,11 @@
 </head>
 
 <body>
-<a href="http://localhost:8888/logout">logout</a><br>
-<a href="http://localhost:8888/mainPage">Main Page</a><br>
+<a href="http://{{ config.BASEURL }}/logout">logout</a><br>
+<a href="http://{{ config.BASEURL }}/mainPage">Main Page</a><br>
 <h1 style="color:red;"">{{ warning }}</h1>
 <table>
-<form id="vendorForm" action="http://localhost:8888/updateVendor" method="POST">
+<form id="vendorForm" action="http://{{ config.BASEURL }}/updateVendor" method="POST">
 <tr>
 	<th width="20"></th>
 	<th>New Vendor</th>
@@ -78,7 +78,7 @@
 	</td>
 	<td>
 		{% for User in Vendor.users() %}
-		{{ User.firstName }} {{ User.lastName }} {{ User.email }} <a href="http://localhost:8888/removeVendorUser?vendorId={{ Vendor.id }}&userId={{ User.id}}">Remove</a></br>
+		{{ User.firstName }} {{ User.lastName }} {{ User.email }} <a href="http://{{ config.BASEURL }}/removeVendorUser?vendorId={{ Vendor.id }}&userId={{ User.id}}">Remove</a></br>
 		{% endfor %}
 	</td>
 	<td>
@@ -93,7 +93,7 @@
 		New User
 	</td>
 	<td valign="top">
-		<form id="vendorUserForm" action="http://localhost:8888/createVendorUser" method="POST">
+		<form id="vendorUserForm" action="http://{{ config.BASEURL }}/createVendorUser" method="POST">
 			<input type="hidden" name="vendorId" value="{{ Vendor.id }}"/>
 			First Name : <input type="text" name="firstName"/><br>
 			Last Name : <input type="text" name="lastName"/><br>

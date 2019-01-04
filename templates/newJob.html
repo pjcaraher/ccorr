@@ -3,15 +3,15 @@
 </head>
 
 <body>
-<a href="http://localhost:8888/logout">logout</a>
+<a href="http://{{ config.BASEURL }}/logout">logout</a>
 <br>
-<a href="http://localhost:8888/mainPage">Main Page</a>
+<a href="http://{{ config.BASEURL }}/mainPage">Main Page</a>
 <br>
 <h1 style="color:red;"">{{ warning }}</h1>
 <br>
 {% if User.hasPermission(1) %}
 <h1>Create Job</h1>
-	<form id="jobForm" action="http://localhost:8888/createJob" method="POST">
+	<form id="jobForm" action="http://{{ config.BASEURL }}/createJob" method="POST">
 		Name: <input type="text" name="name" value=""/><br>
 		Number: <input type="text" name="number" value=""/><br>
 		Address: <textarea rows="4" cols="75" name="address" form="jobForm"></textarea><br>

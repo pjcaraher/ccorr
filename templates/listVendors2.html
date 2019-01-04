@@ -22,7 +22,7 @@ function openNav(vendor) {
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     if (vendor) {
         document.getElementById("vendorId").value = vendor.id;
-        document.getElementById('vendorForm').action = "http://localhost:8888/updateVendor";
+        document.getElementById('vendorForm').action = "http://{{ config.BASEURL }}/updateVendor";
         document.getElementById("saveButton").text = "Update";
         document.getElementById('name').value = vendor.name;
         document.getElementById('contact').value = vendor.contact;
@@ -32,7 +32,7 @@ function openNav(vendor) {
         	document.getElementById("jobId_{{ Job.id }}").checked = isJobIdInList({{ Job.id}}, vendor.jobIds)
 	{% endfor %}
     } else {
-        document.getElementById('vendorForm').action = "http://localhost:8888/createVendor";
+        document.getElementById('vendorForm').action = "http://{{ config.BASEURL }}/createVendor";
         document.getElementById("saveButton").text = "Create New Vendor";
         document.getElementById('name').value = "";
         document.getElementById('contact').value = "";
@@ -53,7 +53,7 @@ function closeNav() {
 
 
 <div id="mySidenav"  class="sidenav"> 
-  <form id="vendorForm" action="http://localhost:8888/updateVendor" method="POST">
+  <form id="vendorForm" action="http://{{ config.BASEURL }}/updateVendor" method="POST">
   <div class="containerleft containereditvendors">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <h2>Create/Edit Vendor</h2>

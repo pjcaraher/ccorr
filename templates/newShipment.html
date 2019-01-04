@@ -3,13 +3,13 @@
 </head>
 
 <body>
-<a href="http://localhost:8888/logout">logout</a>
-<br><form action="http://localhost:8888/selectJob" method="POST">
+<a href="http://{{ config.BASEURL }}/logout">logout</a>
+<br><form action="http://{{ config.BASEURL }}/selectJob" method="POST">
 	<input type="hidden" name="jobId" value="{{ Job.id}}"/>
         <input type="submit" value="Back"/>
 </form>
 <h1>New Delivery</h1>
-	<form id="shipmentForm" action="http://localhost:8888/createShipment" method="POST">
+	<form id="shipmentForm" action="http://{{ config.BASEURL }}/createShipment" method="POST">
 		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
 		<input type="hidden" name="vendorId" value="{{ Vendor.id}}"/>
 		Shipped Date: <select name="shipped_month">
@@ -291,7 +291,7 @@ Notes : <textarea form="shipmentForm" name="vendorNotes" id="vendorNotes" rows="
 
 		<input type="submit" value="Save"/>
 	</form>
-	<form action="http://localhost:8888/cancelEditShipment" method="POST">
+	<form action="http://{{ config.BASEURL }}/cancelEditShipment" method="POST">
 		<input type="submit" value="Cancel"/>
 	</form>
 </body>

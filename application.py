@@ -33,6 +33,7 @@ application.config['MAIL_PORT'] = 465
 application.config['MAIL_USE_SSL'] = True 
 application.config['MAIL_USERNAME'] = 'aeroengineer@yandex.com'
 application.config['MAIL_PASSWORD'] = 'yd082893!'
+application.config['BASEURL'] = os.environ.get('BASEURL')
 
 mail = Mail(application)
 

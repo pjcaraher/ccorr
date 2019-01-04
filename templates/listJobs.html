@@ -27,7 +27,7 @@ function closeNav() {
       <table>
 	{% for Job in Jobs %}
         	<tr>
-          		<td><a href="http://localhost:8888/selectJob?jobId={{ Job.id}}">{{ Job.name }}</a></td>
+          		<td><a href="http://{{ config.BASEURL }}/selectJob?jobId={{ Job.id}}">{{ Job.name }}</a></td>
           		<td><a href="#" class="menu-toggle">Toggle</a></td>
         	</tr>
 	{% endfor %}

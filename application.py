@@ -287,6 +287,11 @@ def users_visible_to_user(user, job) :
 
     return users
 
+def parse_password(password):
+    minPasswordSize = 4
+    if len(password) < minPasswordSize :
+	raise Exception("Passwords must be at least " + str(minPasswordSize) + " characters long")
+
 def vendorJobConfig_from_form(form) :
     config = VendorJobConfig()
     return update_JobConfig_from_form(config, form)
@@ -561,6 +566,8 @@ def before_request() :
     	elif request.endpoint == 'new_user' :
     		pass
     	elif request.endpoint == 'create_user' :
+    		pass
+    	elif request.endpoint == 'new_user_reset' :
     		pass
     	else :
     		return render_template('loginUser.html', warning=WarningMessage)
@@ -1052,7 +1059,13 @@ def reset_password():
     	oldPassword = request.form['oldPassword']
     	if user.passwordsMatch(oldPassword) :
     		password = request.form['password']
-    		user.setPassword(password)
+    		try :
+    			parse_password(password)
+    			user.setPassword(password)
+    		except Exception as ex:
+    			WarningMessage = str(ex)
+    			return render_template('resetPassword.html', user=user.asDict(), oldPassword=oldPassword, warning=WarningMessage)
+
     		user.passwordRequiresReset = False
     		try :
     			db.session.commit()
@@ -1069,6 +1082,27 @@ def reset_password():
     		return render_template('resetPassword.html', user=user.asDict(), warning=WarningMessage)
     else :
     	WarningMessage = "Failed to update user"
+    	session['user'] = None
+    	return render_template('loginUser.html', warning=WarningMessage)
+
+@application.route('/newUserReset',methods=['GET'])
+def new_user_reset():
+    global WarningMessage
+    # http://site/newUserReset?userId=1&temp=password
+    userId = request.args.get('userId', 0, type=int)
+    tmpPassword = request.args.get('temp', 0, type=str)
+
+    user = user_for_id(userId)
+    if user :
+    	if user.passwordsMatch(tmpPassword) :
+    		session['user'] = user.asDict()
+    		return render_template('resetPassword.html', user=user.asDict(), oldPassword=tmpPassword, warning=WarningMessage)
+    	else :
+    		WarningMessage = "Temporary Password has expired."
+    		session['user'] = None
+    		return render_template('loginUser.html', warning=WarningMessage)
+    else :
+    	# If there is no user in the URL then simply direct to the login page.
     	session['user'] = None
     	return render_template('loginUser.html', warning=WarningMessage)
 

@@ -118,25 +118,51 @@ function openNav(vendor, delivery, defaultInstructions) {
     var printButtonAnchor = document.getElementById('PrintButton');
 
     if (delivery) {
-    	setDateValues("shipped_", delivery.shippedDate);
+	{% if Job.showDateLoaded %}
+    		setDateValues("shipped_", delivery.shippedDate);
+	{% endif %}
     	setDateValues("expected_", delivery.expectedDate);
-    	setDateValues("arrival_", delivery.arrivalDate);
+	{% if Job.showDeliveryDate %}
+    		setDateValues("arrival_", delivery.arrivalDate);
+	{% endif %}
     	document.getElementById('deliveryForm').action = "http://{{ config.BASEURL }}/updateShipment";
     	document.getElementById("shipmentId").value = delivery.id.toString();
     	document.getElementById("saveButton").text = "Update Delivery";
     	document.getElementById("VendorLabel").innerHTML = vendor.name;
     	document.getElementById("vendorId").value = vendor.id;
-    	document.getElementById("description").value = elementStringValue(delivery.description);
-    	document.getElementById("deliveryNumber").value = elementStringValue(delivery.deliveryNumber);
-    	document.getElementById("numberOfPackages").value = elementStringValue(delivery.numberOfPackages);
-    	document.getElementById("truckType").value = elementStringValue(delivery.truckType);
-    	document.getElementById("weight").value = elementStringValue(delivery.weight);
-    	document.getElementById("truckingCompany").value = elementStringValue(delivery.truckingCompany);
-    	document.getElementById("specialInstructions").value = elementStringValue(delivery.specialInstructions);
-    	document.getElementById("trackingNumber").value = elementStringValue(delivery.trackingNumber);
-    	document.getElementById("driverName").value = elementStringValue(delivery.driverName);
-    	document.getElementById("driverPhone").value = elementStringValue(delivery.driverPhone);
-    	document.getElementById("vendorNotes").value = elementStringValue(delivery.vendorNotes);
+	{% if Job.showDescriptionOfGoods %}
+    		document.getElementById("description").value = elementStringValue(delivery.description);
+	{% endif %}
+	{% if Job.showDeliveryNumber %}
+    		document.getElementById("deliveryNumber").value = elementStringValue(delivery.deliveryNumber);
+	{% endif %}
+	{% if Job.showNumberOfPackages %}
+    		document.getElementById("numberOfPackages").value = elementStringValue(delivery.numberOfPackages);
+	{% endif %}
+	{% if Job.showTypeOfTruck %}
+    		document.getElementById("truckType").value = elementStringValue(delivery.truckType);
+	{% endif %}
+	{% if Job.showWeightOfLoad %}
+    		document.getElementById("weight").value = elementStringValue(delivery.weight);
+	{% endif %}
+	{% if Job.showTruckingCompany %}
+    		document.getElementById("truckingCompany").value = elementStringValue(delivery.truckingCompany);
+	{% endif %}
+	{% if Job.showSpecialInstructions %}
+    		document.getElementById("specialInstructions").value = elementStringValue(delivery.specialInstructions);
+	{% endif %}
+	{% if Job.showTrackingNumber %}
+    		document.getElementById("trackingNumber").value = elementStringValue(delivery.trackingNumber);
+	{% endif %}
+	{% if Job.showDriverName %}
+    		document.getElementById("driverName").value = elementStringValue(delivery.driverName);
+	{% endif %}
+	{% if Job.showDriverPhone %}
+    		document.getElementById("driverPhone").value = elementStringValue(delivery.driverPhone);
+	{% endif %}
+	{% if Job.showVendorNotes %}
+    		document.getElementById("vendorNotes").value = elementStringValue(delivery.vendorNotes);
+	{% endif %}
 
     	document.getElementById("photoShipmentId").value = delivery.id.toString();
     	photoUploadDiv.style.visibility = 'visible';
@@ -161,17 +187,39 @@ function openNav(vendor, delivery, defaultInstructions) {
     	document.getElementById("vendorId").value = vendor.id;
     	document.getElementById("VendorLabel").innerHTML = vendor.name;
     	document.getElementById("saveButton").text = "Create New Delivery";
-    	document.getElementById("description").value = "";
-    	document.getElementById("deliveryNumber").value = "";
-    	document.getElementById("numberOfPackages").value = "";
-    	document.getElementById("truckType").value = "";
-    	document.getElementById("weight").value = "";
-    	document.getElementById("truckingCompany").value = "";
-    	document.getElementById("specialInstructions").value = defaultInstructions;
-    	document.getElementById("trackingNumber").value = "";
-    	document.getElementById("driverName").value = "";
-    	document.getElementById("driverPhone").value = "";
-    	document.getElementById("vendorNotes").value = "";
+	{% if Job.showDescriptionOfGoods %}
+    		document.getElementById("description").value = "";
+	{% endif %}
+	{% if Job.showDeliveryNumber %}
+    		document.getElementById("deliveryNumber").value = "";
+	{% endif %}
+	{% if Job.showNumberOfPackages %}
+    		document.getElementById("numberOfPackages").value = "";
+	{% endif %}
+	{% if Job.showTypeOfTruck %}
+    		document.getElementById("truckType").value = "";
+	{% endif %}
+	{% if Job.showWeightOfLoad %}
+    		document.getElementById("weight").value = "";
+	{% endif %}
+	{% if Job.showTruckingCompany %}
+    		document.getElementById("truckingCompany").value = "";
+	{% endif %}
+	{% if Job.showSpecialInstructions %}
+    		document.getElementById("specialInstructions").value = defaultInstructions;
+	{% endif %}
+	{% if Job.showTrackingNumber %}
+    		document.getElementById("trackingNumber").value = "";
+	{% endif %}
+	{% if Job.showDriverName %}
+    		document.getElementById("driverName").value = "";
+	{% endif %}
+	{% if Job.showDriverPhone %}
+    		document.getElementById("driverPhone").value = "";
+	{% endif %}
+	{% if Job.showVendorNotes %}
+    		document.getElementById("vendorNotes").value = "";
+	{% endif %}
 
     	photoUploadDiv.style.visibility = 'hidden';
 	printButtonAnchor.removeAttribute('href');

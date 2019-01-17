@@ -189,7 +189,13 @@ class Vendor(db.Model):
 		for job in self.jobs:
 			jobIds.append(job.id)
 		returnDict['jobIds'] = ','.join(str(e) for e in jobIds)
+
+		users = []
+		for user in self.users():
+			users.append(user.asDict())
+		returnDict['users'] = str(users)
 	
+		print "PJC Vendor asDict is : " + str(returnDict)
 		return returnDict
 
 	def belongsToJob(self, job):

@@ -7,6 +7,7 @@ import re
 import jwt
 import boto3
 import botocore
+from botocore.exceptions import ClientError
 import base64
 import hashlib
 import tempfile
@@ -19,8 +20,6 @@ from flask import Flask, request, session, flash, url_for, redirect, \
 from application.models import User, Job, Shipment, ShipmentPhoto, ShipmentComment, Vendor, JobMap
 from application import db
 from application import apUtils
-from flask.ext.mail import Mail
-from flask.ext.mail import Message
 from threading import Thread
 
 application = Flask(__name__)
@@ -28,14 +27,8 @@ application = Flask(__name__)
 # application.debug=True
 application.secret_key = '3915408C-CFCC-47D4-86B4-E2A2819804B6'
 
-application.config['MAIL_SERVER'] = 'smtp.yandex.com'
-application.config['MAIL_PORT'] = 465
-application.config['MAIL_USE_SSL'] = True 
-application.config['MAIL_USERNAME'] = 'aeroengineer@yandex.com'
-application.config['MAIL_PASSWORD'] = 'yd082893!'
-application.config['BASEURL'] = os.environ.get('BASEURL')
-
-mail = Mail(application)
+# Used by the templates
+application.config['BASEURL'] = os.environ['BASEURL']
 
 application.config['UPLOAD_FOLDER'] = '/tmp'
 
@@ -520,6 +513,39 @@ def years_to_display() :
 
     return years
 
+def new_user_email_tmppass(user, tmpPassword) :
+    print 'PJC: Welcome to CrownCorr, Your temporary password is ' + tmpPassword
+
+    subject = "Welcome to the Crown Corr Delivery App"
+    recipient = user.email
+
+    if (user.permissionId == config.PERMISSION_FS) :
+	with open ("templates/new_fieldstaff_email.txt", "r") as myfile:
+		text=myfile.read()
+	text = text.replace("<MOBILEDOWNLOADURL>",os.environ['MOBILEDOWNLOADURL'])
+	text = text.replace("<USERID>",str(user.id))
+	text = text.replace("<PASSWORD>",tmpPassword)
+	with open ("templates/new_fieldstaff_email.html", "r") as myfile:
+		html=myfile.read()
+	html = html.replace("<MOBILEDOWNLOADURL>",os.environ['MOBILEDOWNLOADURL'])
+	html = html.replace("<USERID>",str(user.id))
+	html = html.replace("<PASSWORD>",tmpPassword)
+    	send_ses(recipient, subject, text, html)
+    else :
+    	print newUserURL
+	with open ("templates/new_webuser_email.txt", "r") as myfile:
+		text=myfile.read()
+	text = text.replace("<BASEURL>",os.environ['BASEURL'])
+	text = text.replace("<USERID>",str(user.id))
+	text = text.replace("<PASSWORD>",tmpPassword)
+	with open ("templates/new_webuser_email.html", "r") as myfile:
+		html=myfile.read()
+	html = html.replace("<BASEURL>",os.environ['BASEURL'])
+	html = html.replace("<USERID>",str(user.id))
+	html = html.replace("<PASSWORD>",tmpPassword)
+    	send_ses(recipient, subject, text, html)
+    return
+
 @application.before_first_request
 def startup() :
     # Fetch Jobs
@@ -650,11 +676,93 @@ def select_job_get():
     session['jobId'] = job.id
     return render_job_page()
 
-def send_email(recipients,subject,text) :
-    msg = Message(subject, sender='aeroengineer@yandex.com', recipients=recipients)
-    msg.body = text
-    thr = Thread(target=send_async_email, args=[application, msg]) 
-    thr.start()
+def send_ses(recipient, subject, text, html=None) :
+    # Replace sender@example.com with your "From" address.
+    # This address must be verified with Amazon SES.
+    SENDER = "info@mustangdm.com"
+
+    # Replace recipient@example.com with a "To" address. If your account 
+    # is still in the sandbox, this address must be verified.
+    RECIPIENT = recipient
+    if os.environ['EMAIL_SANDBOX'] == "TRUE" :
+    	RECIPIENT = "pj@mustangdm.com"
+
+    # Specify a configuration set. If you do not want to use a configuration
+    # set, comment the following variable, and the 
+    # ConfigurationSetName=CONFIGURATION_SET argument below.
+    CONFIGURATION_SET = "ConfigSet"
+
+    # If necessary, replace us-west-2 with the AWS Region you're using for Amazon SES.
+    AWS_REGION = "us-west-2"
+
+    # The subject line for the email.
+    SUBJECT = "Amazon SES Test (SDK for Python)"
+
+    # The email body for recipients with non-HTML email clients.
+    BODY_TEXT = text
+            
+    # The HTML body of the email.
+    BODY_HTML = html
+
+    # The character encoding for the email.
+    CHARSET = "UTF-8"
+
+    # Create a new SES resource and specify a region.
+    client = boto3.client('ses',region_name=AWS_REGION)
+    
+    MESSAGE = None
+
+    # Try to send the email.
+    try:
+        if BODY_HTML :
+            	MESSAGE={
+                	'Body': {
+                    		'Text': {
+                        		'Charset': CHARSET,
+                        		'Data': BODY_TEXT,
+                    		},
+                    		'Html': {
+                        		'Charset': CHARSET,
+                        		'Data': BODY_HTML,
+                    		}
+                	},
+                	'Subject': {
+                    		'Charset': CHARSET,
+                    		'Data': SUBJECT,
+                	},
+            	}
+        else :
+            	MESSAGE={
+                	'Body': {
+                    		'Text': {
+                        		'Charset': CHARSET,
+                        		'Data': BODY_TEXT,
+                    		}
+                	},
+                	'Subject': {
+                    		'Charset': CHARSET,
+                    		'Data': SUBJECT,
+                	},
+            	}
+
+        response = client.send_email(
+            Destination={
+                'ToAddresses': [
+                    RECIPIENT,
+                ],
+            },
+            Message=MESSAGE,
+            Source=SENDER
+            # If you are not using a configuration set, comment or delete the
+            # following line
+            # ConfigurationSetName=CONFIGURATION_SET,
+        )
+    # Display an error if something goes wrong.	
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+    else:
+        print("Email sent! Message ID:"),
+        print(response['MessageId'])
 
 def send_async_email(app, msg):
     try :
@@ -849,6 +957,7 @@ def remove_vendor_user():
     vendor = vendor_for_id(vendorId)
     userId = request.args.get('userId', 0, type=int)
     userDict = session['user']
+    vendors = db.session.query(Vendor).all()
 
     users = vendor.users()
     for user in users :
@@ -864,17 +973,19 @@ def remove_vendor_user():
         print str(ex)
     	WarningMessage = "Unable to " + str(action) + " Vendor " + str(vendor.name) + " " + str(ex.message)
     
-    return render_template('editVendor.html', Vendor=vendor, User=userDict, Jobs=AllJobs, warning=WarningMessage)
+    return render_template('listVendors2.html', Vendors=vendors, User=userDict, Jobs=AllJobs, warning=WarningMessage)
 
 @application.route('/createVendorUser',methods=['POST'])
 def create_vendor_user():
     global WarningMessage
     global AllJobs
+    tmpPassword = None
     userDict = session['user']
     vendorId = int(request.form['vendorId'])
     vendor = vendor_for_id(vendorId)
     email = str(request.form['email'])
     user = user_for_email(email)
+    vendors = db.session.query(Vendor).all()
 
     if user :
     	if user.vendorId and user.vendorId != vendorId :
@@ -901,12 +1012,13 @@ def create_vendor_user():
 
     	try :
         	db.session.commit()
+        	new_user_email_tmppass(user, tmpPassword)
     	except Exception as ex:
         	db.session.rollback()
         	print str(ex)
     		WarningMessage = "Unable to create new user for Vendor"
     
-    return render_template('editVendor.html', Vendor=vendor, User=userDict, Jobs=AllJobs, warning=WarningMessage)
+    return render_template('listVendors2.html', Vendors=vendors, User=userDict, Jobs=AllJobs, warning=WarningMessage)
 
 # @application.route('/updateVendorConfig',methods=['POST'])
 # def update_vendor():
@@ -1025,12 +1137,8 @@ def create_user():
     db.session.add(newUser)
     try :
         db.session.commit()
-    	# send_email([newUser.email],'Welcome to CrownCorr','Your temporary password is ' + tmpPassword)
-    	print 'PJC: Temporarily disabled email'
-    	print 'PJC: Welcome to CrownCorr, Your temporary password is ' + tmpPassword
     	WarningMessage = "User " + str(newUser.email) + " has been created.   Check your email inbox for a temporary password"
-    	# PJC - remove the line below after we re-enable email.
-    	WarningMessage = WarningMessage + "  Temporarily disabled email.   Temporary password is " + tmpPassword
+    	new_user_email_tmppass(newUser, tmpPassword)
     except Exception as ex:
         db.session.rollback()
     	print dir(ex)
@@ -1208,6 +1316,52 @@ def mobile_login_user():
     		status = ERR_NONE
     	else :
     		error = "Your password is incorrect."
+
+    retVal['status'] = status
+    retVal['error'] = error
+
+    return Response(json.dumps(retVal),  mimetype='application/json')
+
+@application.route('/mResetUserPassword',methods=['POST'])
+def mobile_reset_user_password():
+    dict = json.loads(str(request.data))
+    user = None
+    email = dict['email']
+    oldPassword = dict['oldPassword']
+    password = dict['password']
+    error = None
+    status = ERR_NO_USER
+    retVal = {}
+
+    try :
+    	user = db.session.query(User).filter_by(email=email.lower()).first()
+    	# Sometimes the new Object did not make it in to the Session.
+    	if None == user :
+                db.session.expire_all()
+                db.session.commit()
+                user = db.session.query(User).filter_by(email=email.lower()).first()
+    except Exception as ex :
+        db.session.rollback()
+    	print 'Exception fetching User id [' + str(email) + '] ' + str(ex)
+    	user = None
+
+    if None == user :
+    	error = "No user for email " + str(email)
+    else :
+    	if user.passwordsMatch(oldPassword) :
+    		try :
+    			parse_password(password)
+    			user.setPassword(password)
+    			user.passwordRequiresReset = False
+    			db.session.commit()
+    			retVal['access_token'] = jwt_for_user(user)
+    			retVal['user'] = str(user.asDict())
+    			status = ERR_NONE
+    		except Exception as ex:
+    			error = str(ex)
+    			print str(ex)
+    	else :
+    		error = "Password is incorrect."
 
     retVal['status'] = status
     retVal['error'] = error

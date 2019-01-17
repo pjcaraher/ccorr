@@ -1,5 +1,5 @@
 Welcome to the Crown Corr Delivery app
 
-Click the following to set your password.  https://<BASEURL>/newUserReset?userId=<USERID>&temp=<PASSWORD>
+Click the following to set your password.  <BASEURL>/newUserReset?userId=<USERID>&temp=<PASSWORD>
 
-After you have initially logged in and set up your password, bookmark https://<BASEURL> to return to the app.
+After you have initially logged in and set up your password, bookmark <BASEURL> to return to the app.

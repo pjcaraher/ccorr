@@ -7,7 +7,7 @@ function openNav(job) {
     document.getElementById("main").style.marginRight = "1250px";
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     if (job) {
-    	document.getElementById('jobForm').action = "http://{{ config.BASEURL }}/updateJob";
+    	document.getElementById('jobForm').action = "{{ config.BASEURL }}/updateJob";
     	document.getElementById("jobId").value = job.id;
     	document.getElementById("saveButton").text = "Update";
     	document.getElementById("name").value = job.name;
@@ -39,7 +39,7 @@ function openNav(job) {
     	document.getElementById("attachMap").checked = ("TRUE" == job.attachMap.toUpperCase());
     }
     else {
-    	document.getElementById('jobForm').action = "http://{{ config.BASEURL }}/createJob";
+    	document.getElementById('jobForm').action = "{{ config.BASEURL }}/createJob";
     	document.getElementById("saveButton").text = "Create New Job";
     	document.getElementById("name").value = "";
     	document.getElementById("number").value = "";
@@ -80,7 +80,7 @@ function closeNav() {
 
 
 <div id="mySidenav"  class="sidenav">
-  <form id="jobForm" action="http://{{ config.BASEURL }}/updateJob" method="POST">
+  <form id="jobForm" action="{{ config.BASEURL }}/updateJob" method="POST">
   <div class="containerleft containereditjobs">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <h2>Create/Edit Jobs</h2>
@@ -211,8 +211,8 @@ function closeNav() {
         <table class="jobs">
 	{% for Job in Jobs %}
         	<tr>
-    			<td><a href="http://{{ config.BASEURL }}/selectJob?jobId={{ Job.id }}">{{ Job.name }}</a></td>   
-    			<td><a href="http://{{ config.BASEURL }}/selectJob?jobId={{ Job.id }}">Open</a></td>   
+    			<td><a href="{{ config.BASEURL }}/selectJob?jobId={{ Job.id }}">{{ Job.name }}</a></td>   
+    			<td><a href="{{ config.BASEURL }}/selectJob?jobId={{ Job.id }}">Open</a></td>   
 			{% if User.hasPermission(2) %}
     				<td><a onclick="openNav({{ Job.asStringDict() }})">Config</a></td>   
 			{% endif %}

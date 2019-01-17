@@ -3,15 +3,15 @@
 </head>
 
 <body>
-<a href="http://{{ config.BASEURL }}/logout">logout</a>
+<a href="{{ config.BASEURL }}/logout">logout</a>
 <br>
-<a href="http://{{ config.BASEURL }}/mainPage">Main Page</a>
+<a href="{{ config.BASEURL }}/mainPage">Main Page</a>
 <br>
 <h1 style="color:red;"">{{ warning }}</h1>
 <br>
 {% if User.hasPermission(1) %}
 <h1>Update Job</h1>
-	<form id="jobForm" action="http://{{ config.BASEURL }}/updateJob" method="POST">
+	<form id="jobForm" action="{{ config.BASEURL }}/updateJob" method="POST">
 		<input type="hidden" name="jobId" value="{{ Job.id }}"/><br>
 		Name: <input type="text" name="name" value="{{ Job.name }}"/><br>
 		Number: <input type="text" name="number" value="{{ Job.number }}"/><br>
@@ -74,7 +74,7 @@
 	</ul>
 	{% if User.hasPermission(3) %}
     	<h1>Upload new Map</h1>
-    	<form id="jobMapForm" action="http://{{ config.BASEURL }}/upload/map" method="POST" enctype=multipart/form-data>
+    	<form id="jobMapForm" action="{{ config.BASEURL }}/upload/map" method="POST" enctype=multipart/form-data>
       		<input type=file name=file>
       		Name: <input type="text" name="mapName"/>
       		<input type=submit value=Upload>

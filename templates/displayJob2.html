@@ -125,7 +125,7 @@ function openNav(vendor, delivery, defaultInstructions) {
 	{% if Job.showDeliveryDate %}
     		setDateValues("arrival_", delivery.arrivalDate);
 	{% endif %}
-    	document.getElementById('deliveryForm').action = "http://{{ config.BASEURL }}/updateShipment";
+    	document.getElementById('deliveryForm').action = "{{ config.BASEURL }}/updateShipment";
     	document.getElementById("shipmentId").value = delivery.id.toString();
     	document.getElementById("saveButton").text = "Update Delivery";
     	document.getElementById("VendorLabel").innerHTML = vendor.name;
@@ -167,7 +167,7 @@ function openNav(vendor, delivery, defaultInstructions) {
     	document.getElementById("photoShipmentId").value = delivery.id.toString();
     	photoUploadDiv.style.visibility = 'visible';
 
-	printButtonAnchor.setAttribute("href", "http://{{ config.BASEURL }}/printShipment?shipmentId=" + delivery.id);
+	printButtonAnchor.setAttribute("href", "{{ config.BASEURL }}/printShipment?shipmentId=" + delivery.id);
     	printButtonAnchor.style.visibility = 'visible';
 
     	var index;
@@ -183,7 +183,7 @@ function openNav(vendor, delivery, defaultInstructions) {
     	}
     }
     else {
-    	document.getElementById('deliveryForm').action = "http://{{ config.BASEURL }}/createShipment";
+    	document.getElementById('deliveryForm').action = "{{ config.BASEURL }}/createShipment";
     	document.getElementById("vendorId").value = vendor.id;
     	document.getElementById("VendorLabel").innerHTML = vendor.name;
     	document.getElementById("saveButton").text = "Create New Delivery";
@@ -251,7 +251,7 @@ function closeMapNav() {
 
 
 <div id="mySidenav"  class="sidenav">
-  <form id="deliveryForm" action="http://{{ config.BASEURL }}/updateShipment" method="POST">
+  <form id="deliveryForm" action="{{ config.BASEURL }}/updateShipment" method="POST">
   <div class="containerleft containereditdelivery">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <h2>Create/Edit Delivery</h2>
@@ -570,7 +570,7 @@ function closeMapNav() {
 </div>
 	<div id="photoUploadDiv" class="containerleft containeruploadphoto">
 		<label id="NewPhotoLabel">New Photo:</label></br>
-    		<form id="uploadPhotoForm" action="http://{{ config.BASEURL }}/uploadPhoto" method="POST" enctype=multipart/form-data>
+    		<form id="uploadPhotoForm" action="{{ config.BASEURL }}/uploadPhoto" method="POST" enctype=multipart/form-data>
     			<input type=file name=file>
     			<input type="hidden" id="photoShipmentId" name="shipmentId"/>
     			<a class="bttn bttn2 bttnsmall" onclick="closeNav()">Cancel</a>
@@ -583,7 +583,7 @@ function closeMapNav() {
   <div class="containerleft containereditjobs">
     <a href="javascript:void(0)" class="closebtn" onclick="closeMapNav()">&times;</a>
     <h2>Create Map</h2>
-    <form id="createMapForm" action="http://{{ config.BASEURL }}/upload/map" method="POST" enctype=multipart/form-data>
+    <form id="createMapForm" action="{{ config.BASEURL }}/upload/map" method="POST" enctype=multipart/form-data>
     	<input type=file name=file>
     	<label id="MapName">Name</label>
     	<input name="mapName" id="mapName"/>
@@ -679,7 +679,7 @@ function closeMapNav() {
 {% for Map in Job.maps %}
 	{% if not Map.deleted %}
     	<div class="mapimagecell">
-       		<form action="http://{{ config.BASEURL }}/deleteMap" method="POST">
+       		<form action="{{ config.BASEURL }}/deleteMap" method="POST">
        		<input type="hidden" name="mapId" value="{{ Map.id}}"/>
     		<div class="bttnmapimage">
     			<a class="bttn bttn2 bttnsmall" onclick="$(this).closest('form').submit();">Delete</a>

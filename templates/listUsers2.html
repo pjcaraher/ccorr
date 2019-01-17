@@ -33,7 +33,7 @@ function openNav(user) {
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     if (user) {
         document.getElementById("userId").value = user.id;
-        document.getElementById('userForm').action = "http://{{ config.BASEURL }}/updateUser";
+        document.getElementById('userForm').action = "{{ config.BASEURL }}/updateUser";
         document.getElementById("saveButton").text = "Update";
         document.getElementById('FirstName').value = user.firstName;
         document.getElementById('LastName').value = user.lastName;
@@ -44,7 +44,7 @@ function openNav(user) {
         	document.getElementById("jobId_{{ Job.id }}").checked = isJobIdInList({{ Job.id}}, user.jobIds);
 	{% endfor %}
     } else {
-        document.getElementById('userForm').action = "http://{{ config.BASEURL }}/createUser";
+        document.getElementById('userForm').action = "{{ config.BASEURL }}/createUser";
         document.getElementById("saveButton").text = "Create New User";
         document.getElementById('FirstName').value = "";
         document.getElementById('LastName').value = "";
@@ -65,7 +65,7 @@ function closeNav() {
 </script>
 
 <div id="mySidenav"  class="sidenav">
-  <form id="userForm" action="http://{{ config.BASEURL }}/updateUser" method="POST">
+  <form id="userForm" action="{{ config.BASEURL }}/updateUser" method="POST">
   <input type="hidden" id="userId" name="userId"/>
   <div class="containerleft containernewuser">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>

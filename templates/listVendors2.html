@@ -26,7 +26,7 @@ function addUserToTable(table, user, vendor) {
 
     anchor.appendChild(linkText);
     anchor.title = "Remove";
-    anchor.href = "http://{{ config.BASEURL }}/removeVendorUser?vendorId=" + vendor.id + "&userId=" + user.id;
+    anchor.href = "{{ config.BASEURL }}/removeVendorUser?vendorId=" + vendor.id + "&userId=" + user.id;
     
     cell1.appendChild(nameText);
     cell2.appendChild(emailText);
@@ -55,7 +55,7 @@ function openNav(vendor) {
 
     if (vendor) {
         document.getElementById("vendorId").value = vendor.id;
-        document.getElementById('vendorForm').action = "http://{{ config.BASEURL }}/updateVendor";
+        document.getElementById('vendorForm').action = "{{ config.BASEURL }}/updateVendor";
         document.getElementById("saveButton").text = "Update";
         document.getElementById('name').value = vendor.name;
         document.getElementById('contact').value = vendor.contact;
@@ -74,7 +74,7 @@ function openNav(vendor) {
         }
         document.getElementById('vendorUserFormVendorId').value = vendor.id;
     } else {
-        document.getElementById('vendorForm').action = "http://{{ config.BASEURL }}/createVendor";
+        document.getElementById('vendorForm').action = "{{ config.BASEURL }}/createVendor";
         document.getElementById("saveButton").text = "Create New Vendor";
         document.getElementById('name').value = "";
         document.getElementById('contact').value = "";
@@ -95,7 +95,7 @@ function closeNav() {
 
 
 <div id="mySidenav"  class="sidenav"> 
-  <form id="vendorForm" action="http://{{ config.BASEURL }}/updateVendor" method="POST">
+  <form id="vendorForm" action="{{ config.BASEURL }}/updateVendor" method="POST">
   <div class="containerleft containereditvendors">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <h2>Create/Edit Vendor</h2>
@@ -133,7 +133,7 @@ function closeNav() {
     </table>
 <br>
     <table>
-        <form id="vendorUserForm" action="http://{{ config.BASEURL }}/createVendorUser" method="POST">
+        <form id="vendorUserForm" action="{{ config.BASEURL }}/createVendorUser" method="POST">
         <input type="hidden" name="vendorId" id="vendorUserFormVendorId"/>
 	<tr>
         <td colspan="2" valign="top">

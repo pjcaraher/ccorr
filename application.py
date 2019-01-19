@@ -532,7 +532,6 @@ def new_user_email_tmppass(user, tmpPassword) :
 	html = html.replace("<PASSWORD>",tmpPassword)
     	send_ses(recipient, subject, text, html)
     else :
-    	print newUserURL
 	with open ("templates/new_webuser_email.txt", "r") as myfile:
 		text=myfile.read()
 	text = text.replace("<BASEURL>",os.environ['BASEURL'])
@@ -679,7 +678,7 @@ def select_job_get():
 def send_ses(recipient, subject, text, html=None) :
     # Replace sender@example.com with your "From" address.
     # This address must be verified with Amazon SES.
-    SENDER = "info@mustangdm.com"
+    SENDER = "ccorr@mustangdm.com"
 
     # Replace recipient@example.com with a "To" address. If your account 
     # is still in the sandbox, this address must be verified.

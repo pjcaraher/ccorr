@@ -24,8 +24,11 @@ from threading import Thread
 
 application = Flask(__name__)
 # ONLY turn this on when testing.   Otherwise, it cause problems with DB Session timeouts.
-# application.debug=True
+application.debug=True
 application.secret_key = '3915408C-CFCC-47D4-86B4-E2A2819804B6'
+
+# Recommended due to deprecations
+application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Used by the templates
 application.config['BASEURL'] = os.environ['BASEURL']
@@ -605,7 +608,17 @@ def before_request() :
 @application.route('/')
 def index():
     global AllJobs
-    return render_template('pmMainPage.html', Jobs=AllJobs)
+    userDict = session['user']
+    user = None
+
+    if userDict:
+    	user = user_for_id(userDict['id'])
+    
+    if user == None :
+    	WarningMessage = ""
+    	return render_template('loginUser.html', warning=WarningMessage)
+    else :
+    	return render_template('listJobs2.html', Jobs=AllJobs, User=user)
 
 @application.route('/refreshDB')
 def refresh_db():

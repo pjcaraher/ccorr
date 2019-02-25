@@ -708,7 +708,7 @@ def send_ses(recipient, subject, text, html=None) :
     AWS_REGION = "us-west-2"
 
     # The subject line for the email.
-    SUBJECT = "Amazon SES Test (SDK for Python)"
+    SUBJECT = "Welcome to the Crown Corr app"
 
     # The email body for recipients with non-HTML email clients.
     BODY_TEXT = text

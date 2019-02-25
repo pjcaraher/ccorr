@@ -526,12 +526,12 @@ def new_user_email_tmppass(user, tmpPassword) :
 	with open ("templates/new_fieldstaff_email.txt", "r") as myfile:
 		text=myfile.read()
 	text = text.replace("<MOBILEDOWNLOADURL>",os.environ['MOBILEDOWNLOADURL'])
-	text = text.replace("<USERID>",str(user.id))
+	text = text.replace("<USEREMAIL>",str(user.email))
 	text = text.replace("<PASSWORD>",tmpPassword)
 	with open ("templates/new_fieldstaff_email.html", "r") as myfile:
 		html=myfile.read()
 	html = html.replace("<MOBILEDOWNLOADURL>",os.environ['MOBILEDOWNLOADURL'])
-	html = html.replace("<USERID>",str(user.id))
+	html = html.replace("<USEREMAIL>",str(user.email))
 	html = html.replace("<PASSWORD>",tmpPassword)
     	send_ses(recipient, subject, text, html)
     else :

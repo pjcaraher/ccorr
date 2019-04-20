@@ -3,7 +3,7 @@
 </head>
 
 <body>
-<a href="http://localhost:8888/mainPage">Main Page</a><br>
+<a href="{{ config.BASEURL }}/mainPage">Main Page</a><br>
 <h1 style="color:red;"">{{ warning }}</h1>
 <table>
 <tr>
@@ -15,7 +15,7 @@
 	<td>
 	</td>
 	<td valign="top">
-		<form action="http://localhost:8888/createUser" method="POST">
+		<form action="{{ config.BASEURL }}/createUser" method="POST">
 			email : <input type="text" name="email" value=""/><br>
 			FirstName : <input type="text" name="firstName" value=""/><br>
 			LastName : <input type="text" name="lastName" value=""/><br>

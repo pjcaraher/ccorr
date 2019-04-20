@@ -3,13 +3,13 @@
 </head>
 
 <body>
-<a href="http://localhost:8888/logout">logout</a></br>
-<a href="http://localhost:8888/mainPage">Main Page</a>
+<a href="{{ config.BASEURL }}/logout">logout</a></br>
+<a href="{{ config.BASEURL }}/mainPage">Main Page</a>
 <h1>Vendors</h1>
 	<ul>
 		{% for Vendor in Vendors %}
 		<li>
-			{{ Vendor.name }} <a href="http://localhost:8888/editVendor?vendorId={{ Vendor.id }}">Edit</a>
+			{{ Vendor.name }} <a href="{{ config.BASEURL }}/editVendor?vendorId={{ Vendor.id }}">Edit</a>
 		</li>
 		{% endfor %}
 	</ul>

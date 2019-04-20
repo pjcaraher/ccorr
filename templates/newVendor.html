@@ -3,11 +3,11 @@
 </head>
 
 <body>
-<a href="http://localhost:8888/logout">logout</a><br>
-<a href="http://localhost:8888/mainPage">Main Page</a><br>
+<a href="{{ config.BASEURL }}/logout">logout</a><br>
+<a href="{{ config.BASEURL }}/mainPage">Main Page</a><br>
 <h1 style="color:red;"">{{ warning }}</h1>
 <table>
-<form id="vendorForm" action="http://localhost:8888/createVendor" method="POST">
+<form id="vendorForm" action="{{ config.BASEURL }}/createVendor" method="POST">
 <tr>
 	<th width="50"></th>
 	<th>New Vendor</th>

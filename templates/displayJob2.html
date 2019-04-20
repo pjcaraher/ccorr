@@ -1,0 +1,714 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<script>
+function clearTable(tableId) {
+    var table = document.getElementById(tableId);
+    if (table) {
+    	var tableHeaderRowCount = 1;
+    	var rowCount = table.rows.length;
+    	for (var i = tableHeaderRowCount; i < rowCount; i++) {
+    		table.deleteRow(tableHeaderRowCount);
+    	}
+    }
+    return table;
+}
+
+function addCommentToTable(table, comment) {
+    var firstRow = table.insertRow(table.rows.length);
+    var cell1  = firstRow.insertCell(0);
+    var cell2  = firstRow.insertCell(1);
+    var cell3  = firstRow.insertCell(2);
+
+    var dateText  = document.createTextNode(comment.commentDate);
+    var nameText  = document.createTextNode(comment.userName);
+    cell1.appendChild(dateText);
+    cell3.appendChild(nameText);
+
+    var secondRow = table.insertRow(table.rows.length);
+    var commentCell  = secondRow.insertCell(0);
+    var commentText  = document.createTextNode(comment.comment);
+    commentCell.colSpan = "3";
+    commentCell.appendChild(commentText);
+}
+
+function addPhotoToTable(table, photo) {
+    var firstRow = table.insertRow(table.rows.length);
+    var cell1  = firstRow.insertCell(0);
+    var cell2  = firstRow.insertCell(1);
+
+    var mImg = document.createElement("img");
+    mImg.setAttribute('src', photo.image_url);
+    mImg.setAttribute('alt', photo.id);
+    mImg.setAttribute('width', "304px");
+    mImg.setAttribute('height', "228px");
+    cell1.appendChild(mImg);
+
+    var timeText  = document.createTextNode(photo.photoDate);
+    cell2.appendChild(timeText);
+    cell2.setAttribute('class', "toptd");
+}
+
+function elementStringValue(value) {
+	var stringValue = "";
+	if (value) {
+		stringValue = value;
+	}
+	return stringValue;
+}
+
+function minuteValue(value) {
+	var minute = "00";
+
+	if (parseInt(value) >= 45) {
+		minute = "45";	
+	} else if (parseInt(value) >= 30) {
+		minute = "30";	
+	} else if (parseInt(value) >= 15) {
+		minute = "15";	
+	} 
+
+	return minute;
+}
+
+function setDateValues(prefix, dateValue) {
+    	var monthElement = document.getElementById(prefix + 'month');
+    	var dayElement = document.getElementById(prefix + 'day');
+    	var yearElement = document.getElementById(prefix + 'year');
+    	var hourElement = document.getElementById(prefix + 'hour');
+    	var minuteElement = document.getElementById(prefix + 'minute');
+    	var meridianElement = document.getElementById(prefix + 'meridian');
+    	var month = null;
+    	var day = null;
+    	var year = null;
+    	if (dateValue) {
+		var dt1 = dateValue.split("-");
+		var dt2 = dt1[2].split(" ");
+		var dt3 = dt2[1].split(":");
+    		var hour = parseInt(dt3[0]) % 12; 
+    		var meridian = Math.floor( dt3[0] / 12 );
+
+    		monthElement.value = dt1[1];
+    		dayElement.value = dt2[0]
+    		yearElement.value = dt1[0];
+    		hourElement.value = ("00" + hour).slice(-2)
+    		minuteElement.value = minuteValue(dt3[1]);
+    		if (meridian >= 1) {
+    			meridianElement.value = "PM";
+		} else {
+    			meridianElement.value = "AM";
+		}
+	} else {
+    		monthElement.value = "None";
+    		dayElement.value = 1;
+    		yearElement.value = (new Date()).getFullYear();
+    		hourElement.value = 1;
+    		minuteElement.value = 1;
+    		meridianElement.value = "AM";
+	}
+}
+
+function openNav(vendor, delivery, defaultInstructions) {
+    document.getElementById("mySidenav").style.width = "700px";
+    document.getElementById("main").style.marginRight = "700px";
+    document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    var commentTable = clearTable('commentTable');
+    var photoTable = clearTable('photoTable');
+    var photoUploadDiv = document.getElementById('photoUploadDiv');
+    var printButtonAnchor = document.getElementById('PrintButton');
+
+    if (delivery) {
+	{% if Job.showDateLoaded %}
+    		setDateValues("shipped_", delivery.shippedDate);
+	{% endif %}
+    	setDateValues("expected_", delivery.expectedDate);
+	{% if Job.showDeliveryDate %}
+    		setDateValues("arrival_", delivery.arrivalDate);
+	{% endif %}
+    	document.getElementById('deliveryForm').action = "{{ config.BASEURL }}/updateShipment";
+    	document.getElementById("shipmentId").value = delivery.id.toString();
+    	document.getElementById("saveButton").text = "Update Delivery";
+    	document.getElementById("VendorLabel").innerHTML = vendor.name;
+    	document.getElementById("vendorId").value = vendor.id;
+	{% if Job.showDescriptionOfGoods %}
+    		document.getElementById("description").value = elementStringValue(delivery.description);
+	{% endif %}
+	{% if Job.showDeliveryNumber %}
+    		document.getElementById("deliveryNumber").value = elementStringValue(delivery.deliveryNumber);
+	{% endif %}
+	{% if Job.showNumberOfPackages %}
+    		document.getElementById("numberOfPackages").value = elementStringValue(delivery.numberOfPackages);
+	{% endif %}
+	{% if Job.showTypeOfTruck %}
+    		document.getElementById("truckType").value = elementStringValue(delivery.truckType);
+	{% endif %}
+	{% if Job.showWeightOfLoad %}
+    		document.getElementById("weight").value = elementStringValue(delivery.weight);
+	{% endif %}
+	{% if Job.showTruckingCompany %}
+    		document.getElementById("truckingCompany").value = elementStringValue(delivery.truckingCompany);
+	{% endif %}
+	{% if Job.showSpecialInstructions %}
+    		document.getElementById("specialInstructions").value = elementStringValue(delivery.specialInstructions);
+	{% endif %}
+	{% if Job.showTrackingNumber %}
+    		document.getElementById("trackingNumber").value = elementStringValue(delivery.trackingNumber);
+	{% endif %}
+	{% if Job.showDriverName %}
+    		document.getElementById("driverName").value = elementStringValue(delivery.driverName);
+	{% endif %}
+	{% if Job.showDriverPhone %}
+    		document.getElementById("driverPhone").value = elementStringValue(delivery.driverPhone);
+	{% endif %}
+	{% if Job.showVendorNotes %}
+    		document.getElementById("vendorNotes").value = elementStringValue(delivery.vendorNotes);
+	{% endif %}
+
+    	document.getElementById("photoShipmentId").value = delivery.id.toString();
+    	photoUploadDiv.style.visibility = 'visible';
+
+	printButtonAnchor.setAttribute("href", "{{ config.BASEURL }}/printShipment?shipmentId=" + delivery.id);
+    	printButtonAnchor.style.visibility = 'visible';
+
+    	var index;
+    	for (index = 0; index < delivery.reversedComments.length; index++) { 
+    		var comment = delivery.reversedComments[index];
+    		addCommentToTable(commentTable, comment);
+    	}
+    	if (photoTable) {
+    		for (index = 0; index < delivery.photos.length; index++) { 
+    			var photo = delivery.photos[index];
+    			addPhotoToTable(photoTable, photo);
+    		}
+    	}
+    }
+    else {
+    	document.getElementById('deliveryForm').action = "{{ config.BASEURL }}/createShipment";
+    	document.getElementById("vendorId").value = vendor.id;
+    	document.getElementById("VendorLabel").innerHTML = vendor.name;
+    	document.getElementById("saveButton").text = "Create New Delivery";
+	{% if Job.showDescriptionOfGoods %}
+    		document.getElementById("description").value = "";
+	{% endif %}
+	{% if Job.showDeliveryNumber %}
+    		document.getElementById("deliveryNumber").value = "";
+	{% endif %}
+	{% if Job.showNumberOfPackages %}
+    		document.getElementById("numberOfPackages").value = "";
+	{% endif %}
+	{% if Job.showTypeOfTruck %}
+    		document.getElementById("truckType").value = "";
+	{% endif %}
+	{% if Job.showWeightOfLoad %}
+    		document.getElementById("weight").value = "";
+	{% endif %}
+	{% if Job.showTruckingCompany %}
+    		document.getElementById("truckingCompany").value = "";
+	{% endif %}
+	{% if Job.showSpecialInstructions %}
+    		document.getElementById("specialInstructions").value = defaultInstructions;
+	{% endif %}
+	{% if Job.showTrackingNumber %}
+    		document.getElementById("trackingNumber").value = "";
+	{% endif %}
+	{% if Job.showDriverName %}
+    		document.getElementById("driverName").value = "";
+	{% endif %}
+	{% if Job.showDriverPhone %}
+    		document.getElementById("driverPhone").value = "";
+	{% endif %}
+	{% if Job.showVendorNotes %}
+    		document.getElementById("vendorNotes").value = "";
+	{% endif %}
+
+    	photoUploadDiv.style.visibility = 'hidden';
+	printButtonAnchor.removeAttribute('href');
+    	printButtonAnchor.style.visibility = 'hidden';
+    }
+
+
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginRight= "0";
+    document.body.style.backgroundColor = "white";
+}
+
+function openMapNav() {
+    document.getElementById("myMapSidenav").style.width = "890px";
+    document.getElementById("main").style.marginRight = "890px";
+    document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+}
+
+function closeMapNav() {
+    document.getElementById("myMapSidenav").style.width = "0";
+    document.getElementById("main").style.marginRight= "0";
+    document.body.style.backgroundColor = "white";
+}
+
+</script>
+
+
+<div id="mySidenav"  class="sidenav">
+  <form id="deliveryForm" action="{{ config.BASEURL }}/updateShipment" method="POST">
+  <div class="containerleft containereditdelivery">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <h2>Create/Edit Delivery</h2>
+    <input type="hidden" id="jobId" name="jobId" value="{{ Job.id }}" />
+    <input type="hidden" id="shipmentId" name="shipmentId"/>
+    <input type="hidden" id="vendorId" name="vendorId"/>
+  <br>
+    <label id="VendorLabel">Vendor</label>
+    <a id="PrintButton" class="bttn bttnright" href="#" target="_blank">Print</a>
+    <br>
+{% if Job.showDateLoaded %}
+    <label for="ShippedDate">Shipped</label>
+    <select id="shipped_month" name="shipped_month">
+    	<option value="None">None</option>
+    	<option value="01">Jan</option>
+    	<option value="02">Feb</option>
+    	<option value="03">Mar</option>
+    	<option value="04">Apr</option>
+    	<option value="05">May</option>
+    	<option value="06">Jun</option>
+    	<option value="07">Jul</option>
+    	<option value="08">Aug</option>
+    	<option value="09">Sep</option>
+    	<option value="10">Oct</option>
+    	<option value="11">Nov</option>
+    	<option value="12">Dec</option>
+    </select>
+    <select id="shipped_day" name="shipped_day">
+    	<option value="01">1</option>
+    	<option value="02">2</option>
+    	<option value="03">3</option>
+    	<option value="04">4</option>
+    	<option value="05">5</option>
+    	<option value="06">6</option>
+    	<option value="07">7</option>
+    	<option value="08">8</option>
+    	<option value="09">9</option>
+    	<option value="10">10</option>
+    	<option value="11">11</option>
+    	<option value="12">12</option>
+    	<option value="13">13</option>
+    	<option value="14">14</option>
+    	<option value="15">15</option>
+    	<option value="16">16</option>
+    	<option value="17">17</option>
+    	<option value="18">18</option>
+    	<option value="19">19</option>
+    	<option value="20">20</option>
+    	<option value="21">21</option>
+    	<option value="22">22</option>
+    	<option value="23">23</option>
+    	<option value="24">24</option>
+    	<option value="25">25</option>
+    	<option value="26">26</option>
+    	<option value="27">27</option>
+    	<option value="28">28</option>
+    	<option value="29">29</option>
+    	<option value="30">30</option>
+    	<option value="31">31</option>
+    </select>
+    <select id="shipped_year" name="shipped_year">
+	{% for Year in Years %}
+    	<option value="{{ Year }}">{{ Year }}</option>
+	{% endfor %}
+    </select>
+    <select id="shipped_hour" name="shipped_hour">
+    	<option value="01">1</option>
+    	<option value="02">2</option>
+    	<option value="03">3</option>
+    	<option value="04">4</option>
+    	<option value="05">5</option>
+    	<option value="06">6</option>
+    	<option value="07">7</option>
+    	<option value="08">8</option>
+    	<option value="09">9</option>
+    	<option value="10">10</option>
+    	<option value="11">11</option>
+    	<option value="12">12</option>
+    </select> :
+    <select id="shipped_minute" name="shipped_minute">
+    	<option value="00">00</option>
+    	<option value="15">15</option>
+    	<option value="30">30</option>
+    	<option value="45">45</option>
+    </select>
+    <select id="shipped_meridian" name="shipped_meridian">
+    	<option value="AM">AM</option>
+    	<option value="PM">PM</option>
+    </select> <br>
+{% endif %}
+    <label for="ExpectedDate">Expected</label>
+    <select id="expected_month" name="expected_month">
+    	<option value="None">None</option>
+    	<option value="01">Jan</option>
+    	<option value="02">Feb</option>
+    	<option value="03">Mar</option>
+    	<option value="04">Apr</option>
+    	<option value="05">May</option>
+    	<option value="06">Jun</option>
+    	<option value="07">Jul</option>
+    	<option value="08">Aug</option>
+    	<option value="09">Sep</option>
+    	<option value="10">Oct</option>
+    	<option value="11">Nov</option>
+    	<option value="12">Dec</option>
+    </select>
+    <select id="expected_day" name="expected_day">
+    	<option value="01">1</option>
+    	<option value="02">2</option>
+    	<option value="03">3</option>
+    	<option value="04">4</option>
+    	<option value="05">5</option>
+    	<option value="06">6</option>
+    	<option value="07">7</option>
+    	<option value="08">8</option>
+    	<option value="09">9</option>
+    	<option value="10">10</option>
+    	<option value="11">11</option>
+    	<option value="12">12</option>
+    	<option value="13">13</option>
+    	<option value="14">14</option>
+    	<option value="15">15</option>
+    	<option value="16">16</option>
+    	<option value="17">17</option>
+    	<option value="18">18</option>
+    	<option value="19">19</option>
+    	<option value="20">20</option>
+    	<option value="21">21</option>
+    	<option value="22">22</option>
+    	<option value="23">23</option>
+    	<option value="24">24</option>
+    	<option value="25">25</option>
+    	<option value="26">26</option>
+    	<option value="27">27</option>
+    	<option value="28">28</option>
+    	<option value="29">29</option>
+    	<option value="30">30</option>
+    	<option value="31">31</option>
+    </select>
+    <select id="expected_year" name="expected_year">
+	{% for Year in Years %}
+    	<option value="{{ Year }}">{{ Year }}</option>
+	{% endfor %}
+    </select>
+    <select id="expected_hour" name="expected_hour">
+    	<option value="01">1</option>
+    	<option value="02">2</option>
+    	<option value="03">3</option>
+    	<option value="04">4</option>
+    	<option value="05">5</option>
+    	<option value="06">6</option>
+    	<option value="07">7</option>
+    	<option value="08">8</option>
+    	<option value="09">9</option>
+    	<option value="10">10</option>
+    	<option value="11">11</option>
+    	<option value="12">12</option>
+    </select> :
+    <select id="expected_minute" name="expected_minute">
+    	<option value="00">00</option>
+    	<option value="15">15</option>
+    	<option value="30">30</option>
+    	<option value="45">45</option>
+    </select>
+    <select id="expected_meridian" name="expected_meridian">
+    	<option value="AM">AM</option>
+    	<option value="PM">PM</option>
+    </select></br>
+{% if Job.showDeliveryDate %}
+    <label for="ArrivalDate">Arrival</label>
+    <select id="arrival_month" name="arrival_month">
+    	<option value="None">None</option>
+    	<option value="01">Jan</option>
+    	<option value="02">Feb</option>
+    	<option value="03">Mar</option>
+    	<option value="04">Apr</option>
+    	<option value="05">May</option>
+    	<option value="06">Jun</option>
+    	<option value="07">Jul</option>
+    	<option value="08">Aug</option>
+    	<option value="09">Sep</option>
+    	<option value="10">Oct</option>
+    	<option value="11">Nov</option>
+    	<option value="12">Dec</option>
+    </select>
+    <select id="arrival_day" name="arrival_day">
+    	<option value="01">1</option>
+    	<option value="02">2</option>
+    	<option value="03">3</option>
+    	<option value="04">4</option>
+    	<option value="05">5</option>
+    	<option value="06">6</option>
+    	<option value="07">7</option>
+    	<option value="08">8</option>
+    	<option value="09">9</option>
+    	<option value="10">10</option>
+    	<option value="11">11</option>
+    	<option value="12">12</option>
+    	<option value="13">13</option>
+    	<option value="14">14</option>
+    	<option value="15">15</option>
+    	<option value="16">16</option>
+    	<option value="17">17</option>
+    	<option value="18">18</option>
+    	<option value="19">19</option>
+    	<option value="20">20</option>
+    	<option value="21">21</option>
+    	<option value="22">22</option>
+    	<option value="23">23</option>
+    	<option value="24">24</option>
+    	<option value="25">25</option>
+    	<option value="26">26</option>
+    	<option value="27">27</option>
+    	<option value="28">28</option>
+    	<option value="29">29</option>
+    	<option value="30">30</option>
+    	<option value="31">31</option>
+    </select>
+    <select id="arrival_year" name="arrival_year">
+	{% for Year in Years %}
+    	<option value="{{ Year }}">{{ Year }}</option>
+	{% endfor %}
+    </select>
+    <select id="arrival_hour" name="arrival_hour">
+    	<option value="01">1</option>
+    	<option value="02">2</option>
+    	<option value="03">3</option>
+    	<option value="04">4</option>
+    	<option value="05">5</option>
+    	<option value="06">6</option>
+    	<option value="07">7</option>
+    	<option value="08">8</option>
+    	<option value="09">9</option>
+    	<option value="10">10</option>
+    	<option value="11">11</option>
+    	<option value="12">12</option>
+    </select> :
+    <select id="arrival_minute" name="arrival_minute">
+    	<option value="00">00</option>
+    	<option value="15">15</option>
+    	<option value="30">30</option>
+    	<option value="45">45</option>
+    </select>
+    <select id="arrival_meridian" name="arrival_meridian">
+    	<option value="AM">AM</option>
+    	<option value="PM">PM</option>
+    </select></br>
+{% endif %}
+
+{% if Job.showDescriptionOfGoods %}
+    <label id="DescriptionLabel">Description</label>
+    <input name="description" id="description"/>
+{% endif %}
+{% if Job.showDeliveryNumber %}
+    <label id="DeliveryNumberLabel">Delivery Number</label>
+    <input name="deliveryNumber" id="deliveryNumber"/>
+{% endif %}
+{% if Job.showNumberOfPackages %}
+    <label id="NumberOfPackagesLabel">Number of Packages</label>
+    <input name="numberOfPackages" id="numberOfPackages"/>
+{% endif %}
+{% if Job.showTypeOfTruck %}
+    <label id="TruckTypeLabel">Truck Type</label>
+    <input name="truckType" id="truckType"/>
+{% endif %}
+{% if Job.showWeightOfLoad %}
+    <label id="WeightLabel">Weight</label>
+    <input name="weight" id="weight"/>
+{% endif %}
+{% if Job.showTruckingCompany %}
+    <label id="TruckingCompanyLabel">Trucking Company</label>
+    <input name="truckingCompany" id="truckingCompany"/>
+{% endif %}
+{% if Job.showSpecialInstructions %}
+    <label id="SpecialInstructionsLabel">Special Instructions</label>
+    <input name="specialInstructions" id="specialInstructions"/>
+{% endif %}
+{% if Job.showTrackingNumber %}
+    <label id="TrackingNumberLabel">Tracking Number</label>
+    <input name="trackingNumber" id="trackingNumber"/>
+{% endif %}
+{% if Job.showDriverName %}
+    <label id="DriverNameLabel">Driver Name</label>
+    <input name="driverName" id="driverName"/>
+{% endif %}
+{% if Job.showDriverPhone %}
+    <label id="DriverPhoneLabel">Driver Phone</label>
+    <input name="driverPhone" id="driverPhone"/>
+{% endif %}
+{% if Job.showVendorNotes %}
+    <label id="VendorNotesLabel">Vendor Notes</label></br>
+    <textarea name="vendorNotes" id="vendorNotes"></textarea>
+{% endif %}
+<label id="NewCommentLabel">New Comment:</label></br>
+<textarea name="comment" cols="40" rows="5"></textarea>
+<br>
+
+<table id="commentTable">
+	<tr>
+		<th colspan="3">Comments</th>
+	</tr>
+</table>
+
+
+<table id="photoTable">
+	<tr>
+		<th colspan="2">Photos</th>
+	</tr>
+</table>
+
+<div class="bttnright bttnrightbottom">
+      <a class="bttn bttn2" onclick="closeNav()">Cancel</a>
+      <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('deliveryForm').submit();">Create New Delivery</a>
+</div>
+</form> <!-- Close the main form -->
+</div>
+	<div id="photoUploadDiv" class="containerleft containeruploadphoto">
+		<label id="NewPhotoLabel">New Photo:</label></br>
+    		<form id="uploadPhotoForm" action="{{ config.BASEURL }}/uploadPhoto" method="POST" enctype=multipart/form-data>
+    			<input type=file name=file>
+    			<input type="hidden" id="photoShipmentId" name="shipmentId"/>
+    			<a class="bttn bttn2 bttnsmall" onclick="closeNav()">Cancel</a>
+    			<a class="bttn bttn2 bttnsmall" onclick="document.getElementById('uploadPhotoForm').submit();">Save</a>
+    		</form>
+	</div>
+</div>
+
+<div id="myMapSidenav"  class="sidenav">
+  <div class="containerleft containereditjobs">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeMapNav()">&times;</a>
+    <h2>Create Map</h2>
+    <form id="createMapForm" action="{{ config.BASEURL }}/upload/map" method="POST" enctype=multipart/form-data>
+    	<input type=file name=file>
+    	<label id="MapName">Name</label>
+    	<input name="mapName" id="mapName"/>
+    	<a class="bttn bttn2" onclick="closeMapNav()">Cancel</a>
+    	<a class="bttn" id="saveButton" href="#" onclick="document.getElementById('createMapForm').submit();">Create New Map</a>
+    </form>
+  </div>
+</div>
+
+<div class="containerleft containerjobs" id="main">
+  <h1>{{ Job.name }}</h1>
+{% if User.permissionId < 4 %}
+
+  <h3>Create New Delivery</h3>
+  <main>
+     <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+      <table class="jobs">
+      {% for Vendor in Job.vendors %}
+      <tr>		
+		<td>New Delivery from</td>
+		<td><a onclick="openNav({{ Vendor.asDict() }},null,'{{ Job.instructions }}')">
+			{{ Vendor.name }}
+		</a></td>
+      	</tr>
+      {% endfor %}
+      </table>
+     </div>
+  </main>
+{% endif %}
+
+
+  <h3>Open Deliveries</h3>
+      <main>
+      <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+        <table class="jobs">
+	{% for Shipment in OpenShipments %}
+        	<tr>
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
+			{% if Shipment.expectedDate %}
+				{% if User.permissionId != 4 %}
+					{{ Shipment.vendor.name }} 
+				{% endif %}
+				Expected
+    				</a></td>
+    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
+				{{ Shipment.expectedDate.strftime("%m/%d/%Y %I:%M %p") }}
+    				</a></td>
+			{% else %}
+				{% if User.permissionId != 4 %}
+					{{ Shipment.vendor.name }} 
+				{% endif %}
+				Shipped
+    				</a></td>
+    				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
+				{{ Shipment.shippedDate.strftime("%m/%d/%Y %I:%M %p") }}
+    				</a></td>
+			{% endif %}
+        	</tr>
+	{% endfor %}
+        </table>
+      </div>
+      </main>
+  <h3>Completed Deliveries</h3>
+      <main>
+      <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+        <table class="jobs">
+	{% for Shipment in CompletedShipments %}
+        	<tr>
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
+    			{% if User.permissionId != 4 %}
+				{{ Shipment.vendor.name }} 
+			{% endif %}
+			Arrived 
+    			</a></td>
+    			<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
+			{{ Shipment.arrivalDate.strftime("%m/%d/%Y %I:%M %p") }}
+    			</a></td>
+        	</tr>
+	{% endfor %}
+        </table>
+      </div>
+      </main>
+
+{% if User.permissionId < 4 %}
+<div class="bttnright bttnabovetable">
+    <a class="bttn" onclick="openMapNav()">New Map</a>
+</div>
+
+<h3>Maps</h3>
+<main>
+<div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+      
+{% for Map in Job.maps %}
+	{% if not Map.deleted %}
+    	<div class="mapimagecell">
+       		<form action="{{ config.BASEURL }}/deleteMap" method="POST">
+       		<input type="hidden" name="mapId" value="{{ Map.id}}"/>
+    		<div class="bttnmapimage">
+    			<a class="bttn bttn2 bttnsmall" onclick="$(this).closest('form').submit();">Delete</a>
+    		</div>
+		</form>
+    		<div class="mapimage">
+    			<img src="{{ Map.image_url() }}" width="100">
+      		</div>
+    	</div>
+    	{% endif %}
+{% endfor %}
+
+</div>
+</main>
+{% endif %}
+
+
+{% if User.permissionId == 4 %}
+<div class="bttnright bttnabovetable">
+    {% for Vendor in Job.vendors %}
+	{% if Vendor.id == User.vendorId %}
+		<a class="bttn" onclick="openNav({{ Vendor.asDict() }},null,'{{ Job.instructions }}')">New Delivery</a>
+	{% endif %}
+    {% endfor %}
+</div>
+
+{% endif %}
+
+</div>
+</div>
+
+{% endblock %}

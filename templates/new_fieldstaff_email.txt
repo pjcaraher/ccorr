@@ -1,0 +1,9 @@
+Welcome to the Crown Corr Delivery app
+
+iPhone users: Open this email on your iPhone and follow these 2 steps:
+     1. Download
+          Download the iPhone app by clicking the following URL: <MOBILEDOWNLOADURL>
+     2. Allow
+          After downloading the app, allow it to run by opening the Settings app.    Go to Settings->General->Device Management->Crown Corr Inc.   Click Trust "Crown Corr Inc" in order to allow the app to run.
+     3. Login
+          After allowing the app to run, click the following link for your initial log in: ccorr://newUserReset?userId=<USEREMAIL>&temp=<PASSWORD>

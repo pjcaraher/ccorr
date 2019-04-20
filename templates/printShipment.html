@@ -1,0 +1,92 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html, charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=1" />
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta http-equiv="Content-Language" content="en">
+    <title>Crown Corr</title>
+    <link rel="icon" href="/static/images/favicon.gif" sizes="16x16 32x32" type="image/png">
+
+    <link href="/static/css/crown_corr.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+
+</head>
+
+<body onload="window.print()" style="margin:10;padding:10">
+<html>
+
+<label>{{ Vendor.name }}</label><br>
+{% if Job.showDateLoaded %}
+    <label>Shipped</label> {{ Shipment.shippedDate }} <br>
+{% endif %}
+    <label>Expected</label> {{ Shipment.expectedDate }} <br>
+{% if Job.showDeliveryDate %}
+    <label>Arrival</label> {{ Shipment.arrivalDate }} <br>
+{% endif %}
+
+{% if Job.showDescriptionOfGoods %}
+    <label id="DescriptionLabel">Description</label> {{ Shipment.description }}<br>
+{% endif %}
+{% if Job.showDeliveryNumber %}
+    <label id="DeliveryNumberLabel">Delivery Number</label> {{ Shipment.deliveryNumber }}<br>
+{% endif %}
+{% if Job.showNumberOfPackages %}
+    <label id="NumberOfPackagesLabel">Number of Packages</label> {{ Shipment.numberOfPackages }}<br>
+{% endif %}
+{% if Job.showTypeOfTruck %}
+    <label id="TruckTypeLabel">Truck Type</label> {{ Shipment.truckType }}<br>
+{% endif %}
+{% if Job.showWeightOfLoad %}
+    <label id="WeightLabel">Weight</label> {{ Shipment.weight }}<br>
+{% endif %}
+{% if Job.showTruckingCompany %}
+    <label id="TruckingCompanyLabel">Trucking Company</label> {{ Shipment.truckingCompany }}<br>
+{% endif %}
+{% if Job.showSpecialInstructions %}
+    <label id="SpecialInstructionsLabel">Special Instructions</label> {{ Shipment.specialInstructions }}<br>
+{% endif %}
+{% if Job.showTrackingNumber %}
+    <label id="TrackingNumberLabel">Tracking Number</label> {{ Shipment.trackingNumber }}<br>
+{% endif %}
+{% if Job.showDriverName %}
+    <label id="DriverNameLabel">Driver Name</label> {{ Shipment.driverName }}<br>
+{% endif %}
+{% if Job.showDriverPhone %}
+    <label id="DriverPhoneLabel">Driver Phone</label> {{ Shipment.driverPhone }}<br>
+{% endif %}
+{% if Job.showVendorNotes %}
+    <label id="VendorNotesLabel">Vendor Notes</label></br> {{ Shipment.vendorNotes }}<br>
+{% endif %}
+
+<table>
+	<tr>
+		<th colspan="3">Comments</th>
+	</tr>
+	{% for Comment in Shipment.reversedComments() %}
+	<tr>
+		<td>{{ Comment.commentDate }}</td>
+		<td></td>
+		<td>{{ Comment.userName }}</td>
+	</tr>
+	<tr>
+		<td colSpan="3">{{ Comment.comment }}</td>
+	</tr>
+	{% endfor %}
+</table>
+
+
+<table>
+	<tr>
+		<th colspan="2">Photos</th>
+	</tr>
+	{% for Photo in Shipment.photos %}
+	<tr>
+		<td><img src="{{ Photo.image_url() }}" width="304px" height="228px"</td>
+		<td valign="top">{{ Photo.photoDate }}</td>
+	</tr>
+	{% endfor %}
+</table>
+
+</html>
+

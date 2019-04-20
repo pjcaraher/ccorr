@@ -4,10 +4,10 @@
 </head>
 
 <body>
-<a href="http://localhost:8888/logout">logout</a>
+<a href="{{ config.BASEURL }}/logout">logout</a>
 {% if User %}
  {% if User.hasPermission(3) %}
-		 <br><a href="http://localhost:8888/mainPage">Main Page</a>
+		 <br><a href="{{ config.BASEURL }}/mainPage">Main Page</a>
  {% endif %}
 <h1><i>{{ Job.name }}</i></h1><br>
     <h1>Open Deliveries</i></h1><br>
@@ -16,7 +16,7 @@
 		<li>
 		Delivery from {{ shipment.vendor.name }} expected {{ shipment.expectedDate }} 
 		<br><i>{{ shipment.description }}</i>
-		<form action="http://localhost:8888/editShipment" method="POST"> <input type="hidden" name="shipmentId" value="{{ shipment.id}}"/> <input type="submit" value="Edit"/>
+		<form action="{{ config.BASEURL }}/editShipment" method="POST"> <input type="hidden" name="shipmentId" value="{{ shipment.id}}"/> <input type="submit" value="Edit"/>
 			</form>
 		</li>
 		{% endfor %}
@@ -27,7 +27,7 @@
 		<li>
 		Delivery from {{ shipment.vendor.name }} arrived {{ shipment.arrivalDate }} 
 		<br><i>{{ shipment.description }}</i>
-		<form action="http://localhost:8888/editShipment" method="POST"> <input type="hidden" name="shipmentId" value="{{ shipment.id}}"/> <input type="submit" value="Edit"/>
+		<form action="{{ config.BASEURL }}/editShipment" method="POST"> <input type="hidden" name="shipmentId" value="{{ shipment.id}}"/> <input type="submit" value="Edit"/>
 			</form>
 		</li>
 		{% endfor %}
@@ -37,7 +37,7 @@
      {% if Job.vendorList()|length > 0 %}
 	{% for vendor in Job.vendorList() %}
 	New Delivery for {{ vendor.name }} 
-	<form action="http://localhost:8888/newShipment" method="POST">
+	<form action="{{ config.BASEURL }}/newShipment" method="POST">
 		<input type="hidden" name="vendorId" value="{{ vendor.id}}"/>
 		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
 		<input type="submit" value="Create"/>
@@ -49,7 +49,7 @@
      {% endif %}
  {% elif User.hasPermission(4) %}
 	<h1>New Delivery</h1>
-	New Delivery <form action="http://localhost:8888/newShipment" method="POST">
+	New Delivery <form action="{{ config.BASEURL }}/newShipment" method="POST">
 		<input type="hidden" name="vendorId" value="{{ User.vendorId}}"/>
 		<input type="hidden" name="jobId" value="{{ Job.id}}"/>
 		<input type="submit" value="Create"/>
@@ -58,7 +58,7 @@
 {% endif %}
 {% if User.permissionId < 4 %}
 	<br><h1>Maps</h1>
-	<form id="jobForm" action="http://localhost:8888/updateJob" method="POST">
+	<form id="jobForm" action="{{ config.BASEURL }}/updateJob" method="POST">
 		<input type="hidden" name="jobId" value="{{ Job.id }}"/><br>
 	<ul>
 	{% for Map in Job.maps %}
@@ -75,7 +75,7 @@
 
 	{% if User.hasPermission(3) %}
     	<h1>Upload new Map</h1>
-    	<form id="jobMapForm" action="http://localhost:8888/upload/map" method="POST" enctype=multipart/form-data>
+    	<form id="jobMapForm" action="{{ config.BASEURL }}/upload/map" method="POST" enctype=multipart/form-data>
       		<input type=file name=file>
       		Name: <input type="text" name="mapName"/>
       		<input type=submit value=Upload>

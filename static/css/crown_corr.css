@@ -1,0 +1,606 @@
+/* Author: Travis Lee Wiggins */
+/* Date: 2018 */
+
+
+
+html, body {
+	margin: 0;
+	padding: 0;
+	font-family: 'Montserrat', sans-serif;
+	font-weight: 200;
+	color: #315A7F;
+}	
+
+body {
+	height: 100vh;
+}
+
+
+/* Containers */
+
+div.container {
+	text-align: center;
+	vertical-align: top;
+	padding: 80px 10px 10px;
+	margin: 0 auto;
+	max-width: 700px;
+}
+
+div.container > img {
+	padding: 0 10px 10px 0;
+}
+
+	/* Containers for login */
+
+div.login {
+	text-align:left;
+	max-width: 440px;
+	margin-left: auto;
+	margin-right: auto;
+	color: #fff !important;
+	margin-bottom: 20px;
+}
+
+.loginlogo {
+	text-align: center;
+	margin-top: 10%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	margin-bottom: 40px;
+}
+
+.loginlogo img {
+	width: 100%;
+	max-width: 500px;
+}
+
+.backgroundimage {
+	background-image: /static/images/bg_login@2x.jpg;
+	background-repeat: no-repeat;
+    background-size: 100%;
+	width:100%;
+	height:100%;
+	text-align:center;
+}
+	/* End Containers for login */
+
+
+div.containerleft {
+	text-align: left;
+	vertical-align: top;
+	padding: 20px 10px 10px;
+	margin: 10px 20px;
+	max-width: 700px;
+	transition: margin-left .5s;
+    padding: 16px 16px 140px 16px;
+}
+
+div.containerright {
+	padding: 40px !important;
+	float: right;
+}
+
+div.containerright_middlecolumn {
+	padding: 40px !important;
+	float: left;
+}
+
+/* all of these below control the width of the slideout window containters, which are slightly differnet on pages */
+
+.containerjobs {
+	max-width: 500px !important;
+}
+
+.containereditjobs {
+	max-width:450px !important;
+	float: left;
+	padding-top: 40px !important;
+}
+
+.containereditdelivery {
+	max-width:600px !important;
+	float: left;
+	padding-top: 40px !important;
+}
+
+.containeruploadphoto {
+	max-width:600px !important;
+	float: left;
+	padding-top: 10px !important;
+}
+
+.containervendors {
+	max-width: 600px !important;
+}
+
+.containereditvendors {
+	max-width: 600px !important;
+}
+
+.containerusers {
+	max-width: 770px !important;
+}
+
+.containernewuser {
+	max-width: 500px !important;
+}
+
+/*
+div.containerright {
+	float: right;
+	width:500px;
+	height: 100%;
+	box-shadow: 10px;
+	background-color: #fff;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	padding: 30px;
+}
+
+div.containerrightopen {
+	right: 500px;
+	padding: 30px;
+}
+*/
+
+
+/* fonts - mostly just used headlines*/
+
+h1 {
+	font-size: 34px;
+	font-weight: 500;
+	margin: 0 0 20px 0;
+}
+
+h2 {
+	font-size: 30px;
+	font-weight: 500;
+	margin: 0 0 20px 0;
+}
+
+
+h3 {
+	font-size: 18px;
+	font-weight: 500;
+	margin: 0 0 6px 0;
+}
+
+h4 {
+	font-size: 18px;
+	font-weight: 500;
+	margin: 0 0 10px 0;
+}
+
+div.clear {
+	clear: both;
+}
+
+strong {
+	font-weight: 700; 
+}
+
+a, a:visited, a:hover {
+	color: #000;
+}
+
+.whitetext {
+	color: #fff;
+}
+
+
+
+/*Navigation */
+
+.navicon {
+	height: 50px;
+	text-align:left;
+	float: left;
+	margin: 10px;
+}
+
+ul {
+	list-style-type: none;
+	background-color:#000;
+	margin: 0;
+	text-align: right;
+}
+
+ul.nav {
+	padding: 0;
+	margin: 0;
+	text-align: right;
+	width: 100%;
+	background: #315A7F; /* Old browsers */
+}
+
+ul.nav li {	
+	padding: 0;
+	margin: 0;
+	display: inline-block;
+}
+
+ul.nav li:first-child {	
+	padding: 0 0px 0 0px;
+	margin: 0;
+	display: inline;
+}
+
+ul.nav li a {
+	padding: 20px 66px 24px 0px;
+	display:inline-block;
+	font-size: 20px;
+}
+
+
+ul.nav li a, ul.nav li a:visited {
+	color: #fff;
+	text-decoration: none;	
+}
+
+ul.nav li a:hover {
+	color: #21AE3C;
+}
+
+
+
+/* Buttons */
+
+.bttn, .bttn:visited {
+	border-radius: 20px;
+	background: #21AE3C;
+	font-size: 20px;
+	font-weight: 300;
+	text-align: center;
+	padding: 6px 18px;
+	color: #fff;
+	display: inline-block;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.bttn:hover {
+	background-color:#21AE3C;
+	color:#81de93;
+	cursor: pointer;
+}
+
+.bttn:active {
+	background-color: #217b32;
+}
+
+.bttn2 {
+	border: 2px solid #21AE3C;
+	color: #21AE3C;
+	background-color: #fff;
+	cursor: pointer;
+}
+
+.bttnsmall {
+	font-size: 12px !important;
+	margin-right: 10px;
+	font-weight: 500;
+}
+
+.bttn2:hover {
+	background-color:#21AE3C;
+	color:#fff;
+	cursor: pointer;
+}
+
+.bttn2:active {
+	background-color: #217b32;
+}
+
+.bttnright {
+	float: right;
+	display: inline;
+}
+
+.bttnright a {
+	display: inline !important;
+}
+
+.bttnrightbottom {
+	margin: 20px 0;
+}
+
+.bttnabovetable {
+	margin: -8px 0 0 0;
+}
+
+.bttnmapimage {
+	float: right;
+	margin-right: -10px;
+}
+
+/*images*/
+
+.mapimagecell {
+	font-weight: 400;
+	float: left;
+	font-size: 14px;
+	margin: 10px 20px 5px 0;
+}
+
+.mapimage {
+	width: 130px;
+	height: 130px;
+	background-color: #cccccc;
+	margin: 10px 20px 5px 0;
+
+}
+
+
+/*checkboxes*/
+
+/* Customize the label (the container) */
+.checkboxcontainer {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.checkboxcontainer input {
+  position: absolute;
+  opacity: 0;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.checkboxcontainer:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.checkboxcontainer input:checked ~ .checkmark {
+  background-color: #21AE3C;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.checkboxcontainer input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.checkboxcontainer .checkmark:after {
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+
+/* end checkboxes*/
+
+/* select boxes */
+
+
+select {
+	border: 2px solid #000;
+	border-radius: 20px;
+	height: 46px;
+	font-size: 16px;
+	padding: 0 10px 0 10px;
+	margin: 0 0 30px 10px;
+	box-sizing: border-box;
+	background-color: #fff;
+}
+
+
+/*end select boxes */
+
+
+
+
+
+/* Table Stlying */
+
+
+main {
+  display: block;
+  box-sizing: border-box;
+  width: auto;
+  padding: 1.5vw 2vw;
+  margin: 0 0 30px;
+  color: #315A7F;
+  border: 2px solid #26496A;
+  border-radius: 20px;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 18px;
+  width: 100%;
+  font-weight: 500;
+}
+
+table th,
+td {
+  padding: 0.45em 0.5em 0.45em 1em;
+  vertical-align: text-top;
+  text-align: left;
+  text-indent: -0.5em;
+}
+
+.toptd {
+  vertical-align: top;
+}
+
+table th {
+  vertical-align: bottom;
+  font-weight: 400;
+}
+
+table tr:hover {
+	background-color:#21AE3C;
+	color: #fff;
+	cursor: pointer;
+}
+
+table.nohover tr:hover:first-child {
+	background-color:#fff;
+	color:#315A7F;
+	cursor: auto;
+}
+
+
+div.table {
+  overflow: auto;
+}
+
+
+table.users tr:last-child {
+	text-align:right;
+}
+
+
+table.users th:nth-of-type(3),
+td:nth-of-type(3) {
+  text-align: right;
+}
+
+table.users th:nth-of-type(4),
+td:nth-of-type(4) {
+  text-align: right;
+}
+
+.tabletitle {
+	margin-bottom: 10px;
+	font-weight: 500;
+	font-size: 18px;
+}
+
+td a {
+	width: 100%;
+	text-decoration: none;
+}
+
+tr a {
+	width: 100%;
+	text-decoration: none;
+	display: block;
+}
+
+
+
+/* forms */
+
+input {
+	width: 100%;
+	border: 2px solid #000;
+	border-radius: 20px;
+	height: 46px;
+	font-size: 16px;
+	padding: 0 10px 0 10px;
+	margin: 0 0 30px 0;
+	box-sizing: border-box;
+}
+
+.inputlogin {
+	border: 2px solid #fff !important;
+}
+
+textarea {
+	width: 100%;
+	border: 2px solid #000;
+	border-radius: 20px 20px 0 20px;
+	height: 46px;
+	font-size: 16px;
+	padding: 10px 10px 0 10px;
+	margin: 0 0 30px 0;
+	box-sizing:border-box;
+}
+
+label {
+	margin-bottom: 10px;
+	font-weight: 500;
+	font-size: 18px;
+}
+
+
+
+
+
+/* sidenav */
+
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    right: 0;
+    background-color: #fff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    top: 68px;
+    box-shadow: 10px;
+	background-color: #fff;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.sidenav .closebtn {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav .closebtn:hover {
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: -6px;
+    right: 6px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+#main {
+    transition: margin-left .5s;
+    padding: 16px;
+}
+
+/* to show scrollbar all the time.  messes up layout so didn't implement */
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+

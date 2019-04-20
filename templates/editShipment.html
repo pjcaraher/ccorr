@@ -3,15 +3,15 @@
 </head>
 
 <body>
-<a href="http://localhost:8888/logout">logout</a><br>
-<a href="http://localhost:8888/mainPage">Main Page</a><br>
-<br><form action="http://localhost:8888/selectJob" method="POST">
+<a href="{{ config.BASEURL }}/logout">logout</a><br>
+<a href="{{ config.BASEURL }}/mainPage">Main Page</a><br>
+<br><form action="{{ config.BASEURL }}/selectJob" method="POST">
 	<input type="hidden" name="jobId" value="{{ Shipment.jobId}}"/>
 	<input type="submit" value="Back"/>
 </form>
 <h1>Edit Delivery</h1>
 Vendor : {{ Vendor.name }}<br>
-	<form id="shipmentForm" action="http://localhost:8888/updateShipment" method="POST">
+	<form id="shipmentForm" action="{{ config.BASEURL }}/updateShipment" method="POST">
 		<input type="hidden" name="shipmentId" value="{{ Shipment.id}}"/>
 		Shipped Date: <select name="shipped_month">
 					<option value="None">None</option>
@@ -309,7 +309,7 @@ New Comment:<br>
 <textarea name="comment" cols="40" rows="5"></textarea><br>
 		<input type="submit" value="Save"/>
 	</form>
-	<form action="http://localhost:8888/cancelEditShipment" method="POST">
+	<form action="{{ config.BASEURL }}/cancelEditShipment" method="POST">
 		<input type="submit" value="Cancel"/>
 	</form>
 <br>

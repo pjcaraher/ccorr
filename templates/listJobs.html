@@ -1,28 +1,50 @@
-<html>
-<head>
-</head>
+{% extends 'base.html' %}
 
-<body>
-<a href="http://localhost:8888/logout">logout</a>
-{% if User %}
-        {% if User.hasPermission(1) %}
-                <br><a href="http://localhost:8888/newJob">Create New Job</a>
-        {% endif %}
-        {% if User.hasPermission(2) %}
-                <br><a href="http://localhost:8888/newUser">Create New User</a>
-        {% endif %}
-{% endif %}
-<h1>Select Job</h1>
-	<ul>
-		{% for Job in Jobs %}
-		<li>
-			{{ Job.name }}
-			<form action="http://localhost:8888/selectJob" method="POST">
-				<input type="hidden" name="jobId" value="{{ Job.id}}"/>
-				<input type="submit" value="Use"/>
-			</form>
-		</li>
-		{% endfor %}
-	</ul>
-</body>
-</html>
+{% block container %}
+<script>
+function openNav() {
+    document.getElementById("mySidenav").style.width = "890px";
+    document.getElementById("main").style.marginRight = "890px";
+    document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginRight= "0";
+    document.body.style.backgroundColor = "white";
+}
+</script>
+
+<div id="mySidenav"  class="sidenav">
+ <div class="containerleft">
+  <h1>Jobs</h1>
+  <div class="bttnright bttnabovetable">
+    <a class="bttn" onclick="openNav()">Create New Job</a>
+  </div>
+  <div class="tabletitle">Active Jobs</div>
+   <main>
+    <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+      <table>
+	{% for Job in Jobs %}
+        	<tr>
+          		<td><a href="{{ config.BASEURL }}/selectJob?jobId={{ Job.id}}">{{ Job.name }}</a></td>
+          		<td><a href="#" class="menu-toggle">Toggle</a></td>
+        	</tr>
+	{% endfor %}
+      </table>
+    </div>
+  </main>
+ </div>
+ <div class='containerleft-open'>
+ </div>
+</div>
+<script>
+(function() {
+	var body = $('body');
+	$('.menu-toggle').bind('click',function(){
+		body.toggleClass('containerleft-open');
+		return false;
+	});
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block container %}
+<script>
+function clearTable(tableId) {
+    var table = document.getElementById(tableId);
+    if (table) {        
+        var tableHeaderRowCount = 1;
+        var rowCount = table.rows.length;
+        for (var i = tableHeaderRowCount; i < rowCount; i++) {
+                table.deleteRow(tableHeaderRowCount);
+        }       
+    }           
+    return table;
+}               
+                
+function addUserToTable(table, user, vendor) {
+    var row = table.insertRow(table.rows.length);
+    var cell1  = row.insertCell(0);
+    var cell2  = row.insertCell(1);
+    var cell3  = row.insertCell(2);
+    var nameText  = document.createTextNode(user.firstName + " " + user.lastName);
+    var emailText  = document.createTextNode(user.email);
+    var anchor = document.createElement('a');
+    var linkText = document.createTextNode("Remove");
+
+    anchor.appendChild(linkText);
+    anchor.title = "Remove";
+    anchor.href = "{{ config.BASEURL }}/removeVendorUser?vendorId=" + vendor.id + "&userId=" + user.id;
+    
+    cell1.appendChild(nameText);
+    cell2.appendChild(emailText);
+    cell3.appendChild(anchor);
+}       
+
+function isJobIdInList(jobId, list) {
+    var jobIds = list.split(",");
+    var isInList = false;
+    var arrayLength = jobIds.length;
+    for (var i = 0; i < arrayLength; i++) {
+    	if (jobIds[i] == jobId) {
+    		isInList = true;
+    		break;
+	}
+    }
+
+    return isInList;
+}
+
+function openNav(vendor) {
+    document.getElementById("mySidenav").style.width = "600px";
+    document.getElementById("main").style.marginRight = "600px";
+    document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+    var userTable = clearTable('userTable');
+
+    if (vendor) {
+        document.getElementById("vendorId").value = vendor.id;
+        document.getElementById('vendorForm').action = "{{ config.BASEURL }}/updateVendor";
+        document.getElementById("saveButton").text = "Update";
+        document.getElementById('name').value = vendor.name;
+        document.getElementById('contact').value = vendor.contact;
+        document.getElementById('phone').value = vendor.phone;
+        document.getElementById('emailList').value = vendor.emailList;
+	{% for Job in Jobs %}
+        	document.getElementById("jobId_{{ Job.id }}").checked = isJobIdInList({{ Job.id}}, vendor.jobIds)
+	{% endfor %}
+        if (userTable) {
+                var usersString = vendor.users.replace(/\'/g,'\"');
+                var users = JSON.parse(usersString);
+                for (index = 0; index < users.length; index++) {
+                        var user = users[index];
+                        addUserToTable(userTable, user, vendor);
+                }
+        }
+        document.getElementById('vendorUserFormVendorId').value = vendor.id;
+    } else {
+        document.getElementById('vendorForm').action = "{{ config.BASEURL }}/createVendor";
+        document.getElementById("saveButton").text = "Create New Vendor";
+        document.getElementById('name').value = "";
+        document.getElementById('contact').value = "";
+        document.getElementById('phone').value = "";
+        document.getElementById('emailList').value = "";
+	{% for Job in Jobs %}
+        	document.getElementById("jobId_{{ Job.id }}").checked = false;
+	{% endfor %}
+    }
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginRight= "0";
+    document.body.style.backgroundColor = "white";
+}
+</script>
+
+
+<div id="mySidenav"  class="sidenav"> 
+  <form id="vendorForm" action="{{ config.BASEURL }}/updateVendor" method="POST">
+  <div class="containerleft containereditvendors">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <h2>Create/Edit Vendor</h2>
+    <input type="hidden" id="vendorId" name="vendorId"/>
+    <label for="VendorName">Vendor Name</label>
+    <input id="name" name="name">
+    <label for="Contact">Contact</label>
+    <input id="contact" name="contact">
+    <label for="Phone">Phone</label>
+    <input id="phone" name="phone">
+    <label for="Email">Email</label>
+    <input id="emailList" name="emailList">
+
+
+    <h4>Vendor Jobs</h4>
+{% for Job in Jobs %}
+    <label class="checkboxcontainer">{{ Job.name }}
+      <input type="checkbox" id="jobId_{{ Job.id }}" name="jobId_{{ Job.id }}">
+      <span class="checkmark"></span>
+    </label>
+{% endfor %}
+
+    <div class="bttnright bttnrightbottom">
+      <a class="bttn bttn2" onclick="closeNav()">Cancel</a>
+      <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('vendorForm').submit();">Create New Vendor</a>
+    </div>
+
+
+  </form>
+
+    <table id="userTable">
+    <tr>
+                <td colspan="3">Users for Vendor</th>
+    </tr>
+    </table>
+<br>
+    <table>
+        <form id="vendorUserForm" action="{{ config.BASEURL }}/createVendorUser" method="POST">
+        <input type="hidden" name="vendorId" id="vendorUserFormVendorId"/>
+	<tr>
+        <td colspan="2" valign="top">
+                Add New User for Vendor
+        </td>
+        </tr>
+        <tr>
+        <td valign="top">
+        	First Name : <input type="text" name="firstName"/>
+        </td>
+        <td height="30" valign="top">
+                Last Name : <input type="text" name="lastName"/>
+        </td>
+	</tr>
+	<tr>
+        <td colspan="2" valign="top">
+                Email : <input type="text" name="email"/>
+        </td>
+	</tr>
+	<tr>
+        <td colspan="2">
+                <input type="submit" value="Add"/>
+        </td>
+	</tr>
+        </form>
+    </table>
+  </div>
+
+</div>
+
+
+
+
+
+<div class="containerleft containervendors" id="main">
+  <h1>Vendors</h1>
+
+  <div class="bttnright bttnabovetable">
+    <a class="bttn" onclick="openNav()">Create New Vendor</a>
+  </div>
+
+  <h3>Vendors</h3>
+    <main>
+      <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
+        <table class="jobs">
+          {% for Vendor in Vendors %}
+          	<tr>
+            		<td><a onclick="openNav({{ Vendor.asDict() }})">{{ Vendor.name }}</a></td>
+          	</tr>
+          {% endfor %}
+        </table>
+      </div>
+    </main>
+</div>
+
+{% endblock %}

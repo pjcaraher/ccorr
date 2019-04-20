@@ -639,10 +639,15 @@ def login_user():
                 db.session.expire_all()
                 db.session.commit()
                 user = db.session.query(User).filter_by(email=email.lower()).first()
-    except Exception as ex :
+    except Exception as ex1 :
         db.session.rollback()
-    	sys.stderr.write('Exception fetching User id [' + str(email) + '] ' + str(ex))
-    	user = None
+        # Try again.
+        try :
+    		sys.stderr.write('Try second login for ' + str(email))
+    		user = db.session.query(User).filter_by(email=email.lower()).first()
+        except Exception as ex :
+    		sys.stderr.write('Exception fetching User id [' + str(email) + '] ' + str(ex))
+    		user = None
 
     if None == user :
     	WarningMessage = "No user for email " + str(email)

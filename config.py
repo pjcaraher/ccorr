@@ -16,4 +16,10 @@ PERMISSION_PM = 2
 PERMISSION_FS = 3
 PERMISSION_VENDOR = 4
 
+# Used by the templates
+BASEURL = os.environ['BASEURL']
 
+UPLOAD_FOLDER = '/tmp'
+
+# Recommended due to deprecations
+SQLALCHEMY_TRACK_MODIFICATIONS = False

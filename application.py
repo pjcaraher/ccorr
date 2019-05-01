@@ -23,17 +23,12 @@ from application import apUtils
 from threading import Thread
 
 application = Flask(__name__)
+application.config.from_object('config')
+db.init_app(application)
+
 # ONLY turn this on when testing.   Otherwise, it cause problems with DB Session timeouts.
-application.debug=True
+#     application.debug=True
 application.secret_key = '3915408C-CFCC-47D4-86B4-E2A2819804B6'
-
-# Recommended due to deprecations
-application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Used by the templates
-application.config['BASEURL'] = os.environ['BASEURL']
-
-application.config['UPLOAD_FOLDER'] = '/tmp'
 
 AllJobs = []
 AllVendors = []
@@ -1866,6 +1861,6 @@ def save_shipment_photo(hashName, shipment) :
     return retVal
 
 if __name__ == "__main__":
-	application.run(debug=True,host='0.0.0.0',port=8888)
-	# application.run(debug=True,host='172.20.10.4',port=9999)
+    application.run(debug=True,host='0.0.0.0',port=8888)
+    # application.run(debug=True,host='172.20.10.4',port=9999)
 

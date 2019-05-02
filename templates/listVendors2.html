@@ -52,7 +52,8 @@ function openNav(vendor) {
     document.getElementById("main").style.marginRight = "600px";
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     var userTable = clearTable('userTable');
-
+    var vendorUsers = document.getElementById("vendorUsers");
+  
     if (vendor) {
         document.getElementById("vendorId").value = vendor.id;
         document.getElementById('vendorForm').action = "{{ config.BASEURL }}/updateVendor";
@@ -64,6 +65,11 @@ function openNav(vendor) {
 	{% for Job in Jobs %}
         	document.getElementById("jobId_{{ Job.id }}").checked = isJobIdInList({{ Job.id}}, vendor.jobIds)
 	{% endfor %}
+
+	if (vendorUsers.style.display === "none") {
+		vendorUsers.style.display = "block";
+	}
+  
         if (userTable) {
                 var usersString = vendor.users.replace(/\'/g,'\"');
                 var users = JSON.parse(usersString);
@@ -83,6 +89,8 @@ function openNav(vendor) {
 	{% for Job in Jobs %}
         	document.getElementById("jobId_{{ Job.id }}").checked = false;
 	{% endfor %}
+	// Don't add users until Vendor has been created
+	vendorUsers.style.display = "none";
     }
 }
 
@@ -126,6 +134,7 @@ function closeNav() {
 
   </form>
 
+    <div id="vendorUsers">
     <table id="userTable">
     <tr>
                 <td colspan="3">Users for Vendor</th>
@@ -160,6 +169,7 @@ function closeNav() {
 	</tr>
         </form>
     </table>
+    </div>
   </div>
 
 </div>

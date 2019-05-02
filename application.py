@@ -941,23 +941,27 @@ def save_vendor_from_form(vendor, action, form):
     global WarningMessage
     global AllJobs
     userDict = session['user']
-    vendor.name = str(form['name'])
-    vendor.contact = str(form['contact'])
-    vendor.contact = str(form['contact'])
-    vendor.phone = str(form['phone'])
-    vendor.emailList = str(form['emailList'])
+    submittedName = str(form['name'])
 
     jobs = jobs_from_form(form)
     vendor.jobs = jobs
     vendors = db.session.query(Vendor).all()
     
-    try :
-        db.session.commit()
-    	WarningMessage = "Updates saved for " + str(vendor.name)
-    except Exception as ex:
+    if submittedName and len(submittedName) > 0 :
+    	vendor.name = submittedName
+    	vendor.contact = str(form['contact'])
+    	vendor.phone = str(form['phone'])
+    	vendor.emailList = str(form['emailList'])
+
+    	try :
+        	db.session.commit()
+    		WarningMessage = "Updates saved for " + str(vendor.name)
+    	except Exception as ex:
+        	db.session.rollback()
+        	print str(ex)
+    else :
         db.session.rollback()
-        print str(ex)
-    	WarningMessage = "Unable to " + str(action) + " Vendor " + str(vendor.name) + " " + str(ex.message)
+    	WarningMessage = "Name is required for Vendor"
 
     return render_template('listVendors2.html', Vendors=vendors, User=userDict, Jobs=AllJobs, warning=WarningMessage)
 

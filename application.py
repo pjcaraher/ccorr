@@ -1669,6 +1669,48 @@ def mobile_fetch_photos_for_shipment():
 
     return Response(json.dumps(retVal),  mimetype='application/json')
 
+@application.route('/mFetchCommentsForShipment',methods=['POST'])
+def mobile_fetch_comments_for_shipment():
+    dict = json.loads(str(request.data))
+    access_token = None
+    user = None
+    error = None
+    status = ERR_CALL_FAILED
+    retVal = {}
+
+    try :
+    	access_token = dict['access_token']
+    	user = user_for_jwt(access_token)
+    	if user :
+    		# Update the access_token
+    		retVal['access_token'] = jwt_for_user(user)
+    		shipmentId = dict['shipmentId']
+    		shipment = shipment_for_id(shipmentId)
+    		if shipment :
+    			# Refresh the Shipment.   We had problems with photos
+    			# hanging around after they were deleted.
+    			db.session.expire(shipment)
+    			db.session.commit()
+    			shipment = shipment_for_id(shipmentId)
+    			retVal['shipment'] = shipment.asDict()
+    			comments = []
+    			for comment in shipment.comments :
+    				commentDict = comment.asDict()
+    				comments.append(commentDict)
+    			retVal['comments'] = comments
+    			status = ERR_NONE
+    	else :
+    		status = ERR_NO_USER
+    		error = "No user defined"
+    except Exception as ex :
+    	error = str(ex)
+    	status = ERR_NO_USER
+
+    retVal['status'] = status
+    retVal['error'] = error
+
+    return Response(json.dumps(retVal),  mimetype='application/json')
+
 @application.route('/mDeleteShipmentPhoto',methods=['POST'])
 def mobile_delete_shipment_photo():
     dict = json.loads(str(request.data))
@@ -1701,6 +1743,7 @@ def mobile_delete_shipment_photo():
     		error = "No user defined"
     except Exception as ex :
     	error = str(ex)
+    	print 'Exception in mobile_delete_shipment_photo : ' + error
     	status = ERR_NO_USER
 
     retVal['status'] = status

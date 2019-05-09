@@ -1609,6 +1609,7 @@ def mobile_post_photo() :
     						shipment = shipment_for_id(shipment.id)
     						db.session.refresh(shipment)
     						status = ERR_NONE
+    						retVal['shipmentPhoto'] = shipmentPhoto.asDict()
     					except Exception as ex:
     						db.session.rollback()
     						print 'Unable to save ShipmentPhoto [%s]' % str(ex)

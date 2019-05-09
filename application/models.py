@@ -195,7 +195,6 @@ class Vendor(db.Model):
 			users.append(user.asDict())
 		returnDict['users'] = str(users)
 	
-		print "PJC Vendor asDict is : " + str(returnDict)
 		return returnDict
 
 	def belongsToJob(self, job):
@@ -489,6 +488,8 @@ class ShipmentComment(db.Model):
 		returnDict['id'] = str(self.id)
 		returnDict['comment'] = str(self.comment)
 		returnDict['commentDate'] = str(self.commentDate)
+		returnDict['userId'] = str(self.userId)
+		returnDict['userName'] = str(self.user().name())
 	
 		return returnDict
 

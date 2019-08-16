@@ -1173,6 +1173,47 @@ def create_user():
 
     return render_template('listUsers2.html', User=user, Users=users, Jobs=AllJobs, warning=WarningMessage)
 
+@application.route('/resendNewUserEmail',methods=['POST'])
+def resend_newuser_email():
+    global WarningMessage
+    global AllJobs
+    global AllVendors
+    users = []
+    user = None
+    userId = request.form['userId']
+    userDict = session['user']
+    currentPermission = int(userDict['permissionId'])
+    newUser = user_for_id(userId)
+    tmpPassword = User.tmpPassword()
+    newUser.setPassword(tmpPassword)
+    newUser.passwordRequiresReset = True
+    templateName = "newUser.html"
+
+    if userDict:
+    	user = user_for_id(userDict['id'])
+
+    try :
+        db.session.commit()
+    	WarningMessage = "New User email re-sent to " + str(newUser.email) + ".   Check your email inbox (and Spam folder) for a temporary password."
+    	new_user_email_tmppass(newUser, tmpPassword)
+    except Exception as ex:
+        db.session.rollback()
+    	print dir(ex)
+    	WarningMessage = "Unable to resend invite to User " + str(newUser.email) + " " + str(ex.message)
+        print 'Unable to resend invite to User [%s]' % str(ex)
+
+    job = None
+    if user.hasPermission(config.PERMISSION_ADMIN) :  # If we are Admin
+    	users = users_visible_to_user(user, job)
+    else :
+    	try :
+    		job = user.jobs[0]
+    		users = users_visible_to_user(user, job)
+    	except Exception as e :
+	     	WarningMessage = "A job needs to be specified."
+
+    return render_template('listUsers2.html', User=user, Users=users, Jobs=AllJobs, warning=WarningMessage)
+
 @application.route('/resetPassword',methods=['POST'])
 def reset_password():
     global WarningMessage

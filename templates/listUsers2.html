@@ -32,6 +32,7 @@ function openNav(user) {
     document.getElementById("main").style.marginRight = "600px";
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     if (user) {
+        document.getElementById("titleHeader").innerHTML = "User Edit";
         document.getElementById("userId").value = user.id;
         document.getElementById('userForm').action = "{{ config.BASEURL }}/updateUser";
         document.getElementById("saveButton").text = "Update";
@@ -43,7 +44,12 @@ function openNav(user) {
 	{% for Job in Jobs %}
         	document.getElementById("jobId_{{ Job.id }}").checked = isJobIdInList({{ Job.id}}, user.jobIds);
 	{% endfor %}
+        var resetButton = document.getElementById("resetButton");
+        alert(resetButton);
+        alert(resetButton.outerHTML);
+        resetButton.outerHTML = "<a style=\"visibility: visible\" class=\"bttn\" id=\"resetButton\" href=\"#\" onclick=\"document.getElementById('resendUserEmailForm').submit();\">Resend Email</a>";
     } else {
+        document.getElementById("titleHeader").innerHTML = "Create New User";
         document.getElementById('userForm').action = "{{ config.BASEURL }}/createUser";
         document.getElementById("saveButton").text = "Create New User";
         document.getElementById('FirstName').value = "";
@@ -54,6 +60,8 @@ function openNav(user) {
 	{% for Job in Jobs %}
         	document.getElementById("jobId_{{ Job.id }}").checked = false;
 	{% endfor %}
+        var resetButton = document.getElementById("resetButton");
+        resetButton.outerHTML = "<a style=\"visibility: hidden\" class=\"bttn\" id=\"resetButton\" href=\"#\" onclick=\"document.getElementById('resendUserEmailForm').submit();\"></a>";
     }
 }
 
@@ -65,11 +73,15 @@ function closeNav() {
 </script>
 
 <div id="mySidenav"  class="sidenav">
+  <form id="resendUserEmailForm" action="{{ config.BASEURL }}/resendNewUserEmail" method="POST">
+  <input type="hidden" id="userId" name="userId"/>
+  </form>
+
   <form id="userForm" action="{{ config.BASEURL }}/updateUser" method="POST">
   <input type="hidden" id="userId" name="userId"/>
   <div class="containerleft containernewuser">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <h2>Create New User</h2>
+    <h2 id="titleHeader">Hello Create New User</h2>
     <label for="FirstName">First Name</label>
     <input id="FirstName" name="firstName">
     <label for="LastName">Last Name</label>
@@ -96,6 +108,7 @@ function closeNav() {
     {% endfor %}
 
     <div class="bttnright bttnrightbottom">
+      <a class="bttn" id="resetButton" href="#" onclick="document.getElementById('resendUserEmailForm').submit();">Resend Email</a>
       <a class="bttn bttn2" onclick="closeNav()">Cancel</a>
       <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('userForm').submit();">Create New User</a>
     </div>

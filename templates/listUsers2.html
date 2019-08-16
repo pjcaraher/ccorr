@@ -45,8 +45,6 @@ function openNav(user) {
         	document.getElementById("jobId_{{ Job.id }}").checked = isJobIdInList({{ Job.id}}, user.jobIds);
 	{% endfor %}
         var resetButton = document.getElementById("resetButton");
-        alert(resetButton);
-        alert(resetButton.outerHTML);
         resetButton.outerHTML = "<a style=\"visibility: visible\" class=\"bttn\" id=\"resetButton\" href=\"#\" onclick=\"document.getElementById('resendUserEmailForm').submit();\">Resend Email</a>";
     } else {
         document.getElementById("titleHeader").innerHTML = "Create New User";

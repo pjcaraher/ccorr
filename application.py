@@ -45,12 +45,12 @@ def user_for_id(userId) :
     user = None
 
     try :
-    	user = db.session.query(User).filter_by(id=userId).first()
+    	user = db.session.query(User).filter(User.isHidden == 0).filter_by(id=userId).first()
     	# Sometimes the new Object did not make it in to the Session.
     	if None == user :
                 db.session.expire_all()
                 db.session.commit()
-                user = db.session.query(User).filter_by(id=userId).first()
+                user = db.session.query(User).filter(User.isHidden == 0).filter_by(id=userId).first()
     except Exception as ex :
         db.session.rollback()
     	print 'Exception fetching user id [' + str(userId) + '] ' + str(ex)
@@ -62,7 +62,7 @@ def user_for_email(email) :
     user = None
 
     try :
-    	user = db.session.query(User).filter(User.email.ilike(email)).first()
+    	user = db.session.query(User).filter(User.isHidden == 0).filter(User.email.ilike(email)).first()
     except Exception as ex :
         db.session.rollback()
     	print 'Exception fetching user for email [' + str(email) + '] ' + str(ex)
@@ -269,9 +269,9 @@ def updateUser_from_form(user, form) :
 def users_visible_to_user(user, job) :
     users = []
     if user.hasPermission(config.PERMISSION_ADMIN) :  # If we are Admin
-    	users = db.session.query(User).filter(or_(User.permissionId == config.PERMISSION_PM, User.permissionId == config.PERMISSION_FS)).all()
+    	users = db.session.query(User).filter(User.isHidden == 0).filter(or_(User.permissionId == config.PERMISSION_PM, User.permissionId == config.PERMISSION_FS)).all()
     elif user.hasPermission(config.PERMISSION_PM) :  # If we are Project Manager
-    	dbUsers = db.session.query(User).filter(or_(User.permissionId == config.PERMISSION_PM, User.permissionId == config.PERMISSION_FS)).all()
+    	dbUsers = db.session.query(User).filter(User.isHidden == 0).filter(or_(User.permissionId == config.PERMISSION_PM, User.permissionId == config.PERMISSION_FS)).all()
     	for _u in dbUsers :
     		if _u.hasJob(job) :
     			users.append(_u)
@@ -558,7 +558,7 @@ def startup() :
     	print 'Exception fetching Jobs ' + str(ex)
 
     try :
-    	AllVendors = db.session.query(User).filter_by(permissionId=config.PERMISSION_VENDOR)
+    	AllVendors = db.session.query(User).filter(User.isHidden == 0).filter_by(permissionId=config.PERMISSION_VENDOR)
     except Exception as ex :
         db.session.rollback()
     	AllVendors = []
@@ -628,18 +628,18 @@ def login_user():
     user = None
 
     try :
-    	user = db.session.query(User).filter_by(email=email.lower()).first()
+    	user = db.session.query(User).filter(User.isHidden == 0).filter_by(email=email.lower()).first()
     	# Sometimes the new Object did not make it in to the Session.
     	if None == user :
                 db.session.expire_all()
                 db.session.commit()
-                user = db.session.query(User).filter_by(email=email.lower()).first()
+                user = db.session.query(User).filter(User.isHidden == 0).filter_by(email=email.lower()).first()
     except Exception as ex1 :
         db.session.rollback()
         # Try again.
         try :
     		sys.stderr.write('Try second login for ' + str(email))
-    		user = db.session.query(User).filter_by(email=email.lower()).first()
+    		user = db.session.query(User).filter(User.isHidden == 0).filter_by(email=email.lower()).first()
         except Exception as ex :
     		sys.stderr.write('Exception fetching User id [' + str(email) + '] ' + str(ex))
     		user = None
@@ -978,7 +978,7 @@ def remove_vendor_user():
     users = vendor.users()
     for user in users :
     	if user.id == userId :
-    		user.vendorId = None
+    		user.isHidden = 1
     		break
 
     try :
@@ -1271,6 +1271,39 @@ def new_user_reset():
     	session['user'] = None
     	return render_template('loginUser.html', warning=WarningMessage)
 
+@application.route('/hideUser',methods=['POST'])
+def hide_user():
+    global WarningMessage
+    global AllJobs
+    users = []
+    user = None
+    userToHide = None
+    userDict = session['user']
+    idForUserToHide = request.form['userId']
+
+    if userDict:
+    	user = user_for_id(userDict['id'])
+
+    userToHide = user_for_id(idForUserToHide)
+    if userToHide :
+    	try :
+        	userToHide.isHidden = 1
+        	db.session.commit()
+    	except Exception as ex:
+        	db.session.rollback()
+    		print dir(ex)
+    		WarningMessage = "Unable to remove User " + str(userToHid.email) + " " + str(ex.message)
+        	print 'Unable to set isHidden for User [%s]' % str(ex)
+    else :
+    	# If there is no user print warning
+    	WarningMessage = "No user was defined"
+
+    job = None
+    if user.hasPermission(config.PERMISSION_ADMIN) :  # If we are Admin
+    	users = users_visible_to_user(user, job)
+
+    return render_template('listUsers2.html', User=user, Users=users, Jobs=AllJobs, warning=WarningMessage)
+
 @application.route('/cancel',methods=['POST','GET'])
 def cancel() :
     return render_job_page()
@@ -1353,12 +1386,12 @@ def mobile_login_user():
     retVal = {}
 
     try :
-    	user = db.session.query(User).filter_by(email=email.lower()).first()
+    	user = db.session.query(User).filter(User.isHidden == 0).filter_by(email=email.lower()).first()
     	# Sometimes the new Object did not make it in to the Session.
     	if None == user :
                 db.session.expire_all()
                 db.session.commit()
-                user = db.session.query(User).filter_by(email=email.lower()).first()
+                user = db.session.query(User).filter(User.isHidden == 0).filter_by(email=email.lower()).first()
     except Exception as ex :
         db.session.rollback()
     	print 'Exception fetching User id [' + str(email) + '] ' + str(ex)
@@ -1391,12 +1424,12 @@ def mobile_reset_user_password():
     retVal = {}
 
     try :
-    	user = db.session.query(User).filter_by(email=email.lower()).first()
+    	user = db.session.query(User).filter(User.isHidden == 0).filter_by(email=email.lower()).first()
     	# Sometimes the new Object did not make it in to the Session.
     	if None == user :
                 db.session.expire_all()
                 db.session.commit()
-                user = db.session.query(User).filter_by(email=email.lower()).first()
+                user = db.session.query(User).filter(User.isHidden == 0).filter_by(email=email.lower()).first()
     except Exception as ex :
         db.session.rollback()
     	print 'Exception fetching User id [' + str(email) + '] ' + str(ex)

@@ -33,6 +33,7 @@ class User(db.Model):
 	lastName = db.Column(db.String(32))
 	hashPassword = db.Column(db.String(64))
 	passwordRequiresReset = db.Column(db.Boolean)
+	isHidden = db.Column(db.Boolean)
 	permissionId = db.Column(db.Integer, db.ForeignKey('Permission.id'))
 	vendorId = db.Column(db.Integer, db.ForeignKey('Vendor.id'))
 	jobs = db.relationship('Job' ,
@@ -60,6 +61,7 @@ class User(db.Model):
 			jobIds.append(job.id)
 		returnDict['jobIds'] = ','.join(str(e) for e in jobIds)
 		returnDict['passwordRequiresReset'] = str(self.passwordRequiresReset)
+		returnDict['isHidden'] = str(self.isHidden)
 		returnDict['permissionName'] = self.permissionName()
 	
 		return returnDict
@@ -172,7 +174,7 @@ class Vendor(db.Model):
 
 	def users(self):
 		users = []
-		query = db.session.query(User).filter_by(vendorId=self.id)
+		query = db.session.query(User).filter_by(isHidden=0).filter_by(vendorId=self.id)
 		for user in query :
 			users.append(user)
 		return users

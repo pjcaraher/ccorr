@@ -2,6 +2,22 @@
 
 {% block container %}
 <script>
+
+var selectedUser;
+
+function deleteUserWarn() {
+  var email = selectedUser.email;
+  var userId = selectedUser.id;
+  if (confirm("Are you certain you want to delete " + email + "?")) {
+	var xhr = new XMLHttpRequest();
+	var url = "{{ config.BASEURL }}/hideUser";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xhr.send("userId=" + userId);
+	location.reload();
+  }
+}
+
 function isJobIdInList(jobId, list) {
     var jobIds = list.split(",");
     var isInList = false;
@@ -32,6 +48,7 @@ function openNav(user) {
     document.getElementById("main").style.marginRight = "600px";
     document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     if (user) {
+        selectedUser = user;
         document.getElementById("titleHeader").innerHTML = "User Edit";
         document.getElementById("userId").value = user.id;
         document.getElementById('userForm').action = "{{ config.BASEURL }}/updateUser";
@@ -44,9 +61,17 @@ function openNav(user) {
 	{% for Job in Jobs %}
         	document.getElementById("jobId_{{ Job.id }}").checked = isJobIdInList({{ Job.id}}, user.jobIds);
 	{% endfor %}
+
+	var buttons = document.getElementById("existingUserButtons");
+        buttons.style.display = 'block';
+
+	var deleteButton = document.getElementById("deleteButton");
+	deleteButton.outerHTML = "<a style=\"visibility: visible\" class=\"bttn\" id=\"deleteButton\" href=\"#\" onclick=\"deleteUserWarn()\">Delete User</a>";
+
         var resetButton = document.getElementById("resetButton");
         resetButton.outerHTML = "<a style=\"visibility: visible\" class=\"bttn\" id=\"resetButton\" href=\"#\" onclick=\"document.getElementById('resendUserEmailForm').submit();\">Resend Email</a>";
     } else {
+        selectedUser = null;
         document.getElementById("titleHeader").innerHTML = "Create New User";
         document.getElementById('userForm').action = "{{ config.BASEURL }}/createUser";
         document.getElementById("saveButton").text = "Create New User";
@@ -58,8 +83,15 @@ function openNav(user) {
 	{% for Job in Jobs %}
         	document.getElementById("jobId_{{ Job.id }}").checked = false;
 	{% endfor %}
+
+	var deleteButton = document.getElementById("deleteButton");
+	deleteButton.outerHTML = "<a style=\"visibility: hidden\" class=\"bttn\" id=\"deleteButton\" href=\"#\">Delete User</a>";
+
         var resetButton = document.getElementById("resetButton");
         resetButton.outerHTML = "<a style=\"visibility: hidden\" class=\"bttn\" id=\"resetButton\" href=\"#\" onclick=\"document.getElementById('resendUserEmailForm').submit();\"></a>";
+
+	var buttons = document.getElementById("existingUserButtons");
+        buttons.style.display = 'none';
     }
 }
 
@@ -79,7 +111,7 @@ function closeNav() {
   <input type="hidden" id="userId" name="userId"/>
   <div class="containerleft containernewuser">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <h2 id="titleHeader">Hello Create New User</h2>
+    <h2 id="titleHeader">Create New User</h2>
     <label for="FirstName">First Name</label>
     <input id="FirstName" name="firstName">
     <label for="LastName">Last Name</label>
@@ -106,10 +138,15 @@ function closeNav() {
     {% endfor %}
 
     <div class="bttnright bttnrightbottom">
-      <a class="bttn" id="resetButton" href="#" onclick="document.getElementById('resendUserEmailForm').submit();">Resend Email</a>
       <a class="bttn bttn2" onclick="closeNav()">Cancel</a>
       <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('userForm').submit();">Create New User</a>
     </div>
+    <br>
+    <div id="existingUserButtons" class="bttnright bttnrightbottom">
+      <a class="bttn" id="resetButton" href="#" onclick="document.getElementById('resendUserEmailForm').submit();">Resend Email</a>
+      <a class="bttn" id="deleteButton" href="#" onclick="deleteUserWarn('pj@carahers.com','2')">Delete User</a>
+    </div>
+    <br>
   </div>
 
   </form>

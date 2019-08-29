@@ -163,6 +163,7 @@ class Vendor(db.Model):
 	contact = db.Column(db.String(32))
 	phone = db.Column(db.String(32))
 	emailList = db.Column(db.String(256))
+	isHidden = db.Column(db.Boolean)
 	shipments = db.relationship('Shipment', backref='vendor')
 	jobs = db.relationship('Job' ,
                                   secondary=vendorJobs,
@@ -186,6 +187,7 @@ class Vendor(db.Model):
 		returnDict['contact'] = str(self.contact)
 		returnDict['phone'] = str(self.phone)
 		returnDict['emailList'] = str(self.emailList)
+		returnDict['isHidden'] = str(self.isHidden)
 
 		jobIds = []
 		for job in self.jobs:

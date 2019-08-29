@@ -58,11 +58,14 @@ def user_for_id(userId) :
 
     return user
 
-def user_for_email(email) :
+def user_for_email(email, filterHidden=True) :
     user = None
 
     try :
-    	user = db.session.query(User).filter(User.isHidden == 0).filter(User.email.ilike(email)).first()
+    	if filterHidden :
+    		user = db.session.query(User).filter(User.isHidden == 0).filter(User.email.ilike(email)).first()
+    	else :
+    		user = db.session.query(User).filter(User.email.ilike(email)).first()
     except Exception as ex :
         db.session.rollback()
     	print 'Exception fetching user for email [' + str(email) + '] ' + str(ex)
@@ -1117,18 +1120,25 @@ def create_user():
     global WarningMessage
     global AllJobs
     global AllVendors
+    tmpPassword = User.tmpPassword()
+    templateName = "newUser.html"
     users = []
     userId = request.form['userId']
     userDict = session['user']
     user = None
+    newUser = user_for_email(request.form['email'], False)
     currentPermission = int(userDict['permissionId'])
-    newUser = User()
-    newUser.setEmail(request.form['email'])
+
+    if newUser :
+    	newUser.isHidden = 0
+    else :
+    	newUser = User()
+    	newUser.setEmail(request.form['email'])
+    	db.session.add(newUser)
+
     newUser.permissionId = request.form['permissionId']
-    tmpPassword = User.tmpPassword()
     newUser.setPassword(tmpPassword)
     newUser.passwordRequiresReset = True
-    templateName = "newUser.html"
 
     if userDict:
     	user = user_for_id(userDict['id'])
@@ -1150,7 +1160,6 @@ def create_user():
     	jobs = jobs_from_form(request.form)
     	newUser.jobs = jobs
 
-    db.session.add(newUser)
     try :
         db.session.commit()
     	WarningMessage = "User " + str(newUser.email) + " has been created.   Check your email inbox for a temporary password"
@@ -1292,7 +1301,7 @@ def hide_user():
     	except Exception as ex:
         	db.session.rollback()
     		print dir(ex)
-    		WarningMessage = "Unable to remove User " + str(userToHid.email) + " " + str(ex.message)
+    		WarningMessage = "Unable to remove User " + str(userToHide.email) + " " + str(ex.message)
         	print 'Unable to set isHidden for User [%s]' % str(ex)
     else :
     	# If there is no user print warning
@@ -1303,6 +1312,34 @@ def hide_user():
     	users = users_visible_to_user(user, job)
 
     return render_template('listUsers2.html', User=user, Users=users, Jobs=AllJobs, warning=WarningMessage)
+
+@application.route('/hideVendor',methods=['POST'])
+def hide_vendor():
+    global WarningMessage
+    global AllJobs
+    vendors = db.session.query(Vendor).all()
+    vendorToHide = None
+    userDict = session['user']
+    idForVendorToHide = request.form['vendorId']
+
+    vendorToHide = vendor_for_id(idForVendorToHide)
+    if vendorToHide :
+    	try :
+        	vendorToHide.isHidden = 1
+        	vUsers = vendorToHide.users()
+        	for user in vUsers :
+			user.isHidden = 1
+        	db.session.commit()
+    	except Exception as ex:
+        	db.session.rollback()
+    		print dir(ex)
+    		WarningMessage = "Unable to remove Vendor " + str(vendorToHide.email) + " " + str(ex.message)
+        	print 'Unable to set isHidden for Vendor [%s]' % str(ex)
+    else :
+    	# If there is no Vendor print warning
+    	WarningMessage = "No Vendor was defined"
+
+    return render_template('listVendors2.html', Jobs=AllJobs, User=userDict, Vendors=vendors, warning=WarningMessage)
 
 @application.route('/cancel',methods=['POST','GET'])
 def cancel() :

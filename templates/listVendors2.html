@@ -2,6 +2,22 @@
 
 {% block container %}
 <script>
+
+var selectedVendor;
+
+function deleteVendorWarn() {
+  var name = selectedVendor.name;
+  var vendorId = selectedVendor.id;
+  if (confirm("Are you certain you want to delete " + name + "?")) {
+        var xhr = new XMLHttpRequest();
+        var url = "{{ config.BASEURL }}/hideVendor";
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send("vendorId=" + vendorId);
+        location.reload();
+  }
+}
+
 function clearTable(tableId) {
     var table = document.getElementById(tableId);
     if (table) {        
@@ -55,6 +71,8 @@ function openNav(vendor) {
     var vendorUsers = document.getElementById("vendorUsers");
   
     if (vendor) {
+        selectedVendor = vendor;
+        document.getElementById("titleHeader").innerHTML = "Edit Vendor";
         document.getElementById("vendorId").value = vendor.id;
         document.getElementById('vendorForm').action = "{{ config.BASEURL }}/updateVendor";
         document.getElementById("saveButton").text = "Update";
@@ -79,7 +97,15 @@ function openNav(vendor) {
                 }
         }
         document.getElementById('vendorUserFormVendorId').value = vendor.id;
+
+        var buttons = document.getElementById("existingVendorButtons");
+        buttons.style.display = 'block';
+
+        var deleteButton = document.getElementById("deleteButton");
+        deleteButton.outerHTML = "<a style=\"visibility: visible\" class=\"bttn\" id=\"deleteButton\" href=\"#\" onclick=\"deleteVendorWarn()\">Delete Vendor</a>";
     } else {
+        selectedVendor = null;
+        document.getElementById("titleHeader").innerHTML = "Create New Vendor";
         document.getElementById('vendorForm').action = "{{ config.BASEURL }}/createVendor";
         document.getElementById("saveButton").text = "Create New Vendor";
         document.getElementById('name').value = "";
@@ -91,6 +117,11 @@ function openNav(vendor) {
 	{% endfor %}
 	// Don't add users until Vendor has been created
 	vendorUsers.style.display = "none";
+
+        var deleteButton = document.getElementById("deleteButton");
+        deleteButton.outerHTML = "<a style=\"visibility: hidden\" class=\"bttn\" id=\"deleteButton\" href=\"#\">Delete Vendor</a>";
+        var buttons = document.getElementById("existingVendorButtons");
+        buttons.style.display = 'none';
     }
 }
 
@@ -106,7 +137,7 @@ function closeNav() {
   <form id="vendorForm" action="{{ config.BASEURL }}/updateVendor" method="POST">
   <div class="containerleft containereditvendors">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <h2>Create/Edit Vendor</h2>
+    <h2 id="titleHeader">Create/Edit Vendor</h2>
     <input type="hidden" id="vendorId" name="vendorId"/>
     <label for="VendorName">Vendor Name</label>
     <input id="name" name="name">
@@ -131,9 +162,7 @@ function closeNav() {
       <a class="bttn" id="saveButton" href="#" onclick="document.getElementById('vendorForm').submit();">Create New Vendor</a>
     </div>
 
-
   </form>
-
     <div id="vendorUsers">
     <table id="userTable">
     <tr>
@@ -169,6 +198,10 @@ function closeNav() {
 	</tr>
         </form>
     </table>
+    <div id="existingVendorButtons">
+      <a class="bttn" id="deleteButton" href="#" onclick="deleteVendorWarn()">Delete Vendor</a>
+    </div>
+
     </div>
   </div>
 
@@ -190,9 +223,11 @@ function closeNav() {
       <div role="region" aria-labeledby="Cap1" tabindex="0" class="table">
         <table class="jobs">
           {% for Vendor in Vendors %}
+          	{% if Vendor.isHidden == 0 %}
           	<tr>
             		<td><a onclick="openNav({{ Vendor.asDict() }})">{{ Vendor.name }}</a></td>
           	</tr>
+          	{% endif %}
           {% endfor %}
         </table>
       </div>

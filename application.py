@@ -929,6 +929,7 @@ def list_vendors():
 @application.route('/createVendor',methods=['POST'])
 def create_vendor():
     vendor = Vendor()
+    vendor.isHidden = 0
     db.session.add(vendor)
 
     return save_vendor_from_form(vendor, "create", request.form)
@@ -1020,6 +1021,7 @@ def create_vendor_user():
     	user.setPassword(tmpPassword)
     	user.passwordRequiresReset = True
     	user.permissionId = config.PERMISSION_VENDOR
+    	user.isHidden = 0
     	WarningMessage = "Created User " + user.email + " with a temporary password of " + str(tmpPassword)
     else :
     	WarningMessage = "email address is required for new users"
@@ -1134,6 +1136,7 @@ def create_user():
     else :
     	newUser = User()
     	newUser.setEmail(request.form['email'])
+    	newUser.isHidden = 0
     	db.session.add(newUser)
 
     newUser.permissionId = request.form['permissionId']

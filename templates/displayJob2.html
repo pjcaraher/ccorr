@@ -639,7 +639,11 @@ function closeMapNav() {
 				Shipped
     				</a></td>
     				<td><a onclick="openNav({{ Shipment.vendor.asDict() }},{{ Shipment.asStringDict() }},null)">
-				{{ Shipment.shippedDate.strftime("%m/%d/%Y %I:%M %p") }}
+				{% if Shipment.shippedDate %}
+					{{ Shipment.shippedDate.strftime("%m/%d/%Y %I:%M %p") }}
+				{% else %}
+					Date Not Set
+				{% endif %}
     				</a></td>
 			{% endif %}
         	</tr>

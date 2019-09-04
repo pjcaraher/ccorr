@@ -9,12 +9,19 @@ function deleteUserWarn() {
   var email = selectedUser.email;
   var userId = selectedUser.id;
   if (confirm("Are you certain you want to delete " + email + "?")) {
-	var xhr = new XMLHttpRequest();
-	var url = "{{ config.BASEURL }}/hideUser";
-	xhr.open("POST", url, true);
-	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", '/hideUser', true);
+
+        //Send the proper header information along with the request
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        xhr.onreadystatechange = function() { // Call a function when the state changes.
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                        // Request finished. Do processing here.
+                        location.reload();
+                }
+        }
 	xhr.send("userId=" + userId);
-	location.reload();
   }
 }
 

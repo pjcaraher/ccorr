@@ -53,7 +53,7 @@ def user_for_id(userId) :
                 user = db.session.query(User).filter(User.isHidden == 0).filter_by(id=userId).first()
     except Exception as ex :
         db.session.rollback()
-    	print 'Exception fetching user id [' + str(userId) + '] ' + str(ex)
+    	print('Exception fetching user id [' + str(userId) + '] ' + str(ex))
     	user = None
 
     return user
@@ -68,7 +68,7 @@ def user_for_email(email, filterHidden=True) :
     		user = db.session.query(User).filter(User.email.ilike(email)).first()
     except Exception as ex :
         db.session.rollback()
-    	print 'Exception fetching user for email [' + str(email) + '] ' + str(ex)
+    	print('Exception fetching user for email [' + str(email) + '] ' + str(ex))
     	user = None
 
     return user
@@ -86,7 +86,7 @@ def job_for_id(jobId) :
     except Exception as ex :
         db.session.rollback()
     	job = None
-    	print 'Exception fetching job for id [' + str(jobId) + '] = ' + str(ex)
+    	print('Exception fetching job for id [' + str(jobId) + '] = ' + str(ex))
 
     return job
 
@@ -103,7 +103,7 @@ def map_for_id(mapId) :
     except Exception as ex :
         db.session.rollback()
     	map = None
-    	print 'Exception fetching map for id [' + str(mapId) + '] = ' + str(ex)
+    	print('Exception fetching map for id [' + str(mapId) + '] = ' + str(ex))
 
     return map
 
@@ -120,7 +120,7 @@ def vendor_for_id(vendorId) :
     except Exception as ex :
         db.session.rollback()
     	vendor = None
-    	print 'Exception fetching vendor for id [' + str(vendorId) + '] = ' + str(ex)
+    	print('Exception fetching vendor for id [' + str(vendorId) + '] = ' + str(ex))
 
     return vendor
 
@@ -136,7 +136,7 @@ def shipment_for_id(shipmentId) :
                 shipment = db.session.query(Shipment).filter_by(id=shipmentId).first()
     except Exception as ex :
         db.session.rollback()
-    	print 'Exception fetching shipment id [' + str(shipmentId) + '] ' + str(ex)
+    	print('Exception fetching shipment id [' + str(shipmentId) + '] ' + str(ex))
     	shipment = None
 
     return shipment
@@ -148,7 +148,7 @@ def shipment_photo_for_id(shipmentPhotoId) :
     	shipmentPhoto = db.session.query(ShipmentPhoto).filter_by(id=shipmentPhotoId).first()
     except Exception as ex :
         db.session.rollback()
-    	print 'Exception fetching shipment Photo id [' + str(shipmentPhotoId) + '] ' + str(ex)
+    	print('Exception fetching shipment Photo id [' + str(shipmentPhotoId) + '] ' + str(ex))
     	shipmentPhoto = None
 
     return shipmentPhoto
@@ -189,7 +189,7 @@ def date_from_mobile(prefix, dict) :
     except Exception as ex:
     	returnDate = None
 
-    print 'PJC date for ' + str(dateString) + ' is ' + str(returnDate)
+    print('PJC date for ' + str(dateString) + ' is ' + str(returnDate))
     return returnDate
 
 def date_with_prefix(prefix, form) :
@@ -367,19 +367,19 @@ def save_shipment(shipment, request):
     	shippedDate = date_with_prefix('shipped_', request.form)
     	shipment.shippedDate = shippedDate
     except :
-    	print "No shipmentDate"
+    	print("No shipmentDate")
     
     try :
     	expectedDate = date_with_prefix('expected_', request.form)
     	shipment.expectedDate = expectedDate
     except :
-    	print "No expectedDate"
+    	print("No expectedDate")
 
     try :
     	arrivalDate = date_with_prefix('arrival_', request.form)
     	shipment.arrivalDate = arrivalDate
     except :
-    	print "No arrivalDate"
+    	print("No arrivalDate")
 
     maps = maps_from_form(request.form)
     comment = None
@@ -400,7 +400,7 @@ def save_shipment(shipment, request):
                 	shipmentComment.userId = user.id
                 	db.session.add(shipmentComment)
     		else :
-                	print "Error adding Comment.   There is no logged in User."
+                	print("Error adding Comment.   There is no logged in User.")
 
 
     try :
@@ -409,7 +409,7 @@ def save_shipment(shipment, request):
     except Exception as ex:
         db.session.rollback()
         WarningMessage = "Failed to Update Delivery"
-        print 'Unable to save Shipment [%s]' % str(ex)
+        print('Unable to save Shipment [%s]' % str(ex))
 
     vendor = vendor_for_id(shipment.vendorId)
     job = job_for_id(shipment.jobId)
@@ -442,7 +442,7 @@ def save_job_map(mapName, s3Key, type, job) :
     except Exception as ex:
         db.session.rollback()
     	WarningMessage = "Unable to create new Job " + str(ex.message)
-        print 'Unable to create Job [%s]' % str(ex)
+        print('Unable to create Job [%s]' % str(ex))
 
     return map.id
 
@@ -515,7 +515,7 @@ def years_to_display() :
     return years
 
 def new_user_email_tmppass(user, tmpPassword) :
-    print 'PJC: Welcome to CrownCorr, Your temporary password is ' + tmpPassword
+    print('PJC: Welcome to CrownCorr, Your temporary password is ' + tmpPassword)
 
     subject = "Welcome to the Crown Corr Delivery App"
     recipient = user.email
@@ -558,14 +558,14 @@ def startup() :
     except Exception as ex :
         db.session.rollback()
     	AllJobs = []
-    	print 'Exception fetching Jobs ' + str(ex)
+    	print('Exception fetching Jobs ' + str(ex))
 
     try :
     	AllVendors = db.session.query(User).filter(User.isHidden == 0).filter_by(permissionId=config.PERMISSION_VENDOR)
     except Exception as ex :
         db.session.rollback()
     	AllVendors = []
-    	print 'Exception fetching Vendors ' + str(ex)
+    	print('Exception fetching Vendors ' + str(ex))
 
 @application.before_request
 def before_request() :
@@ -576,14 +576,14 @@ def before_request() :
     # Ensure that we are logged in.
     userDict = session.get('user')
 
-    print 'PJC processing : [' + str(request.endpoint) + ']'
+    print('PJC processing : [' + str(request.endpoint) + ']')
 
     # Make certain that we have cleared out any prior user
     if request.endpoint == 'logout_user' :
     	userDict = None
     	session['user'] = None
 
-    print 'PJC userDict : ' + str(userDict)
+    print('PJC userDict : ' + str(userDict))
     if None == userDict :
     	if request.endpoint and request.endpoint.startswith('mobile_') :
     		pass
@@ -783,9 +783,9 @@ def send_async_email(app, msg):
     try :
     	with app.app_context(): 
     		resp = mail.send(msg)
-    		print 'PJC mail response is ' + str(resp)
+    		print('PJC mail response is ' + str(resp))
     except Exception as ex :
-    	print 'Email exception of ' + str(ex)
+    	print('Email exception of ' + str(ex))
 
 @application.route('/newJob',methods=['GET'])
 def new_job():
@@ -831,7 +831,7 @@ def create_job():
     except Exception as ex:
         db.session.rollback()
     	WarningMessage = "Unable to create new Job " + str(ex.message)
-        print 'Unable to create Job [%s]' % str(ex)
+        print('Unable to create Job [%s]' % str(ex))
 
     if user :
     	if user.permissionId <= config.PERMISSION_ADMIN :
@@ -880,7 +880,7 @@ def update_job():
     except Exception as ex:
         db.session.rollback()
     	WarningMessage = "Unable to update Job " + str(ex.message)
-        print 'Unable to update Job [%s]' % str(ex)
+        print('Unable to update Job [%s]' % str(ex))
 
     if user :
     	if user.permissionId <= config.PERMISSION_ADMIN :
@@ -962,7 +962,7 @@ def save_vendor_from_form(vendor, action, form):
     		WarningMessage = "Updates saved for " + str(vendor.name)
     	except Exception as ex:
         	db.session.rollback()
-        	print str(ex)
+        	print(str(ex))
     else :
         db.session.rollback()
     	WarningMessage = "Name is required for Vendor"
@@ -990,7 +990,7 @@ def remove_vendor_user():
     	WarningMessage = "Updates saved for Vendor " + str(vendor.name)
     except Exception as ex:
         db.session.rollback()
-        print str(ex)
+        print(str(ex))
     	WarningMessage = "Unable to " + str(action) + " Vendor " + str(vendor.name) + " " + str(ex.message)
     
     return render_template('listVendors2.html', Vendors=vendors, User=userDict, Jobs=AllJobs, warning=WarningMessage)
@@ -1036,7 +1036,7 @@ def create_vendor_user():
         	new_user_email_tmppass(user, tmpPassword)
     	except Exception as ex:
         	db.session.rollback()
-        	print str(ex)
+        	print(str(ex))
     		WarningMessage = "Unable to create new user for Vendor"
     
     return render_template('listVendors2.html', Vendors=vendors, User=userDict, Jobs=AllJobs, warning=WarningMessage)
@@ -1052,7 +1052,7 @@ def create_vendor_user():
 #     	WarningMessage = "Updates saved for Vendor " + str(vendor.name())
 #     except Exception as ex:
 #         db.session.rollback()
-#     	print dir(ex)
+#     	print(dir(ex))
 #     	WarningMessage = "Unable to create update Vendor " + str(vendor.name) + " " + str(ex.message)
 # 
 #     return render_template('editVendorConfig.html', Vendor=vendor, Config=vendorConfig, warning=WarningMessage)
@@ -1112,7 +1112,7 @@ def update_user():
     	WarningMessage = "User " + str(userToUpdate.email) + " updated."
     except Exception as ex:
         db.session.rollback()
-    	print dir(ex)
+    	print(dir(ex))
     	WarningMessage = "Unable to update User " + str(user.email) + " " + str(ex.message)
     
     return render_template('listUsers2.html', User=user, Users=users, Jobs=AllJobs, warning=WarningMessage)
@@ -1169,9 +1169,9 @@ def create_user():
     	new_user_email_tmppass(newUser, tmpPassword)
     except Exception as ex:
         db.session.rollback()
-    	print dir(ex)
+    	print(dir(ex))
     	WarningMessage = "Unable to create new User " + str(newUser.email) + " " + str(ex.message)
-        print 'Unable to save User [%s]' % str(ex)
+        print('Unable to save User [%s]' % str(ex))
 
     job = None
     if user.hasPermission(config.PERMISSION_ADMIN) :  # If we are Admin
@@ -1210,9 +1210,9 @@ def resend_newuser_email():
     	new_user_email_tmppass(newUser, tmpPassword)
     except Exception as ex:
         db.session.rollback()
-    	print dir(ex)
+    	print(dir(ex))
     	WarningMessage = "Unable to resend invite to User " + str(newUser.email) + " " + str(ex.message)
-        print 'Unable to resend invite to User [%s]' % str(ex)
+        print('Unable to resend invite to User [%s]' % str(ex))
 
     job = None
     if user.hasPermission(config.PERMISSION_ADMIN) :  # If we are Admin
@@ -1251,7 +1251,7 @@ def reset_password():
     			return render_jobs_page(user)
     		except Exception as ex:
     			db.session.rollback()
-    			print 'Unable to update User [%s]' % str(ex)
+    			print('Unable to update User [%s]' % str(ex))
     			WarningMessage = "Error updating User"
     			return render_template('resetPassword.html', user=user.asDict(), warning=WarningMessage)
     	else :
@@ -1303,9 +1303,9 @@ def hide_user():
         	db.session.commit()
     	except Exception as ex:
         	db.session.rollback()
-    		print dir(ex)
+    		print(dir(ex))
     		WarningMessage = "Unable to remove User " + str(userToHide.email) + " " + str(ex.message)
-        	print 'Unable to set isHidden for User [%s]' % str(ex)
+        	print('Unable to set isHidden for User [%s]' % str(ex))
     else :
     	# If there is no user print warning
     	WarningMessage = "No user was defined"
@@ -1335,9 +1335,9 @@ def hide_vendor():
         	db.session.commit()
     	except Exception as ex:
         	db.session.rollback()
-    		print dir(ex)
+    		print(dir(ex))
     		WarningMessage = "Unable to remove Vendor " + str(vendorToHide.email) + " " + str(ex.message)
-        	print 'Unable to set isHidden for Vendor [%s]' % str(ex)
+        	print('Unable to set isHidden for Vendor [%s]' % str(ex))
     else :
     	# If there is no Vendor print warning
     	WarningMessage = "No Vendor was defined"
@@ -1434,7 +1434,7 @@ def mobile_login_user():
                 user = db.session.query(User).filter(User.isHidden == 0).filter_by(email=email.lower()).first()
     except Exception as ex :
         db.session.rollback()
-    	print 'Exception fetching User id [' + str(email) + '] ' + str(ex)
+    	print('Exception fetching User id [' + str(email) + '] ' + str(ex))
     	user = None
 
     if None == user :
@@ -1472,7 +1472,7 @@ def mobile_reset_user_password():
                 user = db.session.query(User).filter(User.isHidden == 0).filter_by(email=email.lower()).first()
     except Exception as ex :
         db.session.rollback()
-    	print 'Exception fetching User id [' + str(email) + '] ' + str(ex)
+    	print('Exception fetching User id [' + str(email) + '] ' + str(ex))
     	user = None
 
     if None == user :
@@ -1489,7 +1489,7 @@ def mobile_reset_user_password():
     			status = ERR_NONE
     		except Exception as ex:
     			error = str(ex)
-    			print str(ex)
+    			print(str(ex))
     	else :
     		error = "Password is incorrect."
 
@@ -1641,7 +1641,7 @@ def mobile_post_comment() :
                                 status = ERR_NONE
                         except Exception as ex:
                                 db.session.rollback()
-                                print 'Unable to save ShipmentComment [%s]' % str(ex)
+                                print('Unable to save ShipmentComment [%s]' % str(ex))
     	else :
     		status = ERR_NO_USER
     		error = "No user defined"
@@ -1707,9 +1707,9 @@ def mobile_post_photo() :
     							# }
     							success = True
     						except Exception as putObjectEx :
-    							print "Exception while saving photo to S3 Bucket: " + str(putObjectEx)
+    							print("Exception while saving photo to S3 Bucket: " + str(putObjectEx))
     				except Exception as ex :
-    					print "Exception while loading photo from S3 Bucket: " + str(ex)
+    					print("Exception while loading photo from S3 Bucket: " + str(ex))
 
     				if success:
     					shipmentPhoto = ShipmentPhoto()
@@ -1726,10 +1726,10 @@ def mobile_post_photo() :
     						retVal['shipmentPhoto'] = shipmentPhoto.asDict()
     					except Exception as ex:
     						db.session.rollback()
-    						print 'Unable to save ShipmentPhoto [%s]' % str(ex)
+    						print('Unable to save ShipmentPhoto [%s]' % str(ex))
     					else:
     						# Something else has gone wrong.
-    						print 'Error Saving Shipment ' + str(e)
+    						print('Error Saving Shipment ' + str(e))
     	else :
     		status = ERR_NO_USER
     		error = "No user defined"
@@ -1850,7 +1850,7 @@ def mobile_delete_shipment_photo():
     				status = ERR_NONE
     			except Exception as ex:
     				db.session.rollback()
-    				print 'Unable to delete ShipmentPhoto [%s]' % str(ex)
+    				print('Unable to delete ShipmentPhoto [%s]' % str(ex))
     		else :
     			error = "No ShipmentPhoto for Id " + str(shipmentPhotoId)
     	else :
@@ -1858,7 +1858,7 @@ def mobile_delete_shipment_photo():
     		error = "No user defined"
     except Exception as ex :
     	error = str(ex)
-    	print 'Exception in mobile_delete_shipment_photo : ' + error
+    	print('Exception in mobile_delete_shipment_photo : ' + error)
     	status = ERR_NO_USER
 
     retVal['status'] = status
@@ -1882,7 +1882,7 @@ def delete_map():
     		WarningMessage = "Map Deleted"
     	except Exception as ex:
     		db.session.rollback()
-    		print ex
+    		print(ex)
     		WarningMessage = "Unable to delete Map"
     else :
     	WarningMessage = "No Map for MapId " + str(mapId)
@@ -1908,7 +1908,7 @@ def assign_map_to_job(inputFilename) :
     	s3Key = upload_map_file(file, fileExtension)
     	mapId = save_job_map(mapName, s3Key, fileExtension, job)
     else :
-    	print "no file name"
+    	print("no file name")
 
     userDict = session['user']
     user = None
@@ -1953,10 +1953,10 @@ def upload_s3_file(fileStorage, bucket, fileExtension) :
     	else:
     		# Something else has gone wrong.
     		WarningMessage = "Error saving file."
-    		print 'Error Saving File ' + str(e)
+    		print('Error Saving File ' + str(e))
     except Exception as ex :
     	WarningMessage = "Error saving file."
-    	print "Exception while saving file " + hashName + " to S3 Bucket: " + str(ex)
+    	print("Exception while saving file " + hashName + " to S3 Bucket: " + str(ex))
 
     os.remove(fileFullPath)
     return hashName
@@ -1974,7 +1974,7 @@ def assign_photo_to_shipment() :
     	retVal = save_shipment_photo(s3Key, shipment)
     else :
     	retVal['status'] = ERR_NONE
-    	print "no file name"
+    	print("no file name")
 
     if ERR_NONE == retVal['status'] :
     	WarningMessage = "Error saving photo"
@@ -2006,10 +2006,10 @@ def save_shipment_photo(hashName, shipment) :
     			status = ERR_NONE
     		except Exception as ex:
     			db.session.rollback()
-    			print 'Unable to save ShipmentPhoto [%s]' % str(ex)
+    			print('Unable to save ShipmentPhoto [%s]' % str(ex))
     		else:
     			# Something else has gone wrong.
-    			print 'Error Saving Shipment ' + str(e)
+    			print('Error Saving Shipment ' + str(e))
     	else :
     		status = ERR_NO_SHIPMENT
     		error = "No shipment defined"

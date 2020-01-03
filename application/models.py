@@ -136,7 +136,7 @@ class User(db.Model):
 	def hashP(password) :
 		salt = "JJwV/8"
 
-		hash = hashlib.md5(salt + password).hexdigest()
+		hash = hashlib.md5(salt.encode('utf-8') + password.encode('utf-8')).hexdigest()
 		return "%s" % (hash)
 
 class Permission(db.Model):

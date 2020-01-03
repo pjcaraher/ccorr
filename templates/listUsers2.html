@@ -58,6 +58,7 @@ function openNav(user) {
         selectedUser = user;
         document.getElementById("titleHeader").innerHTML = "User Edit";
         document.getElementById("userId").value = user.id;
+        document.getElementById("resendUserId").value = user.id;
         document.getElementById('userForm').action = "{{ config.BASEURL }}/updateUser";
         document.getElementById("saveButton").text = "Update";
         document.getElementById('FirstName').value = user.firstName;
@@ -111,7 +112,7 @@ function closeNav() {
 
 <div id="mySidenav"  class="sidenav">
   <form id="resendUserEmailForm" action="{{ config.BASEURL }}/resendNewUserEmail" method="POST">
-  <input type="hidden" id="userId" name="userId"/>
+    <input type="hidden" id="resendUserId" name="userId"/>
   </form>
 
   <form id="userForm" action="{{ config.BASEURL }}/updateUser" method="POST">

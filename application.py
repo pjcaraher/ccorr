@@ -1416,7 +1416,7 @@ def print_shipment() :
 
 @application.route('/mLoginUser',methods=['POST'])
 def mobile_login_user():
-	dict = request.json
+	dict = json.loads(request.data)
 	user = None
 	email = dict['email']
 	password = dict['password']
@@ -1453,7 +1453,7 @@ def mobile_login_user():
 
 @application.route('/mResetUserPassword',methods=['POST'])
 def mobile_reset_user_password():
-	dict = request.data
+	dict = json.loads(request.data)
 	user = None
 	email = dict['email']
 	oldPassword = dict['oldPassword']
@@ -1499,7 +1499,7 @@ def mobile_reset_user_password():
 
 @application.route('/mListJobs',methods=['POST'])
 def mobile_list_jobs():
-	dict = request.data
+	dict = json.loads(request.data)
 	access_token = None
 	user = None
 	global AllJobs
@@ -1532,7 +1532,7 @@ def mobile_list_jobs():
 
 @application.route('/mSelectJob',methods=['POST'])
 def mobile_select_job() :
-	dict = request.data
+	dict = json.loads(request.data)
 	access_token = None
 	user = None
 	error = None
@@ -1610,7 +1610,7 @@ def mobile_edit_shipment() :
 
 @application.route('/mPostComment',methods=['POST'])
 def mobile_post_comment() :
-	dict = request.data
+	dict = json.loads(request.data)
 	access_token = None
 	user = None
 	error = None
@@ -1655,7 +1655,7 @@ def mobile_post_comment() :
 
 @application.route('/mPostPhoto',methods=['POST'])
 def mobile_post_photo() :
-	dict = request.data
+	dict = json.loads(request.data)
 	access_token = None
 	user = None
 	error = None
@@ -1742,7 +1742,7 @@ def mobile_post_photo() :
 
 @application.route('/mFetchPhotosForShipment',methods=['POST'])
 def mobile_fetch_photos_for_shipment():
-	dict = request.data
+	dict = json.loads(request.data)
 	access_token = None
 	user = None
 	error = None
@@ -1784,7 +1784,7 @@ def mobile_fetch_photos_for_shipment():
 
 @application.route('/mFetchCommentsForShipment',methods=['POST'])
 def mobile_fetch_comments_for_shipment():
-	dict = request.data
+	dict = json.loads(request.data)
 	access_token = None
 	user = None
 	error = None
@@ -1826,7 +1826,7 @@ def mobile_fetch_comments_for_shipment():
 
 @application.route('/mDeleteShipmentPhoto',methods=['POST'])
 def mobile_delete_shipment_photo():
-	dict = request.data
+	dict = json.loads(request.data)
 	access_token = None
 	user = None
 	error = None

@@ -160,7 +160,7 @@ def jwt_for_user(user) :
 	payload['expiration_time'] = str(expiration_time)
 	encoded = jwt.encode(payload, application.secret_key, algorithm='HS256')
 
-	return encoded
+	return encoded.decode('utf8')
 
 def user_for_jwt(encoded) :
 	payload = jwt.decode(encoded, application.secret_key, algorithm=['HS256'])
@@ -990,7 +990,7 @@ def remove_vendor_user():
 	except Exception as ex:
 		db.session.rollback()
 		print(str(ex))
-		WarningMessage = "Unable to " + str(action) + " Vendor " + str(vendor.name) + " " + str(ex)
+		WarningMessage = "Unable to update Vendor " + str(vendor.name) + " " + str(ex)
 
 	return render_template('listVendors2.html', Vendors=vendors, User=userDict, Jobs=AllJobs, warning=WarningMessage)
 
@@ -1416,7 +1416,7 @@ def print_shipment() :
 
 @application.route('/mLoginUser',methods=['POST'])
 def mobile_login_user():
-	dict = json.loads(str(request.data))
+	dict = request.json
 	user = None
 	email = dict['email']
 	password = dict['password']
@@ -1453,7 +1453,7 @@ def mobile_login_user():
 
 @application.route('/mResetUserPassword',methods=['POST'])
 def mobile_reset_user_password():
-	dict = json.loads(str(request.data))
+	dict = request.data
 	user = None
 	email = dict['email']
 	oldPassword = dict['oldPassword']
@@ -1499,7 +1499,7 @@ def mobile_reset_user_password():
 
 @application.route('/mListJobs',methods=['POST'])
 def mobile_list_jobs():
-	dict = json.loads(str(request.data))
+	dict = request.data
 	access_token = None
 	user = None
 	global AllJobs
@@ -1532,7 +1532,7 @@ def mobile_list_jobs():
 
 @application.route('/mSelectJob',methods=['POST'])
 def mobile_select_job() :
-	dict = json.loads(str(request.data))
+	dict = request.data
 	access_token = None
 	user = None
 	error = None
@@ -1567,7 +1567,7 @@ def mobile_select_job() :
 
 @application.route('/mEditShipment',methods=['POST'])
 def mobile_edit_shipment() :
-	dict = json.loads(str(request.data))
+	dict = request.data
 	access_token = None
 	user = None
 	error = None
@@ -1610,7 +1610,7 @@ def mobile_edit_shipment() :
 
 @application.route('/mPostComment',methods=['POST'])
 def mobile_post_comment() :
-	dict = json.loads(str(request.data))
+	dict = request.data
 	access_token = None
 	user = None
 	error = None
@@ -1655,7 +1655,7 @@ def mobile_post_comment() :
 
 @application.route('/mPostPhoto',methods=['POST'])
 def mobile_post_photo() :
-	dict = json.loads(str(request.data))
+	dict = request.data
 	access_token = None
 	user = None
 	error = None
@@ -1742,7 +1742,7 @@ def mobile_post_photo() :
 
 @application.route('/mFetchPhotosForShipment',methods=['POST'])
 def mobile_fetch_photos_for_shipment():
-	dict = json.loads(str(request.data))
+	dict = request.data
 	access_token = None
 	user = None
 	error = None
@@ -1784,7 +1784,7 @@ def mobile_fetch_photos_for_shipment():
 
 @application.route('/mFetchCommentsForShipment',methods=['POST'])
 def mobile_fetch_comments_for_shipment():
-	dict = json.loads(str(request.data))
+	dict = request.data
 	access_token = None
 	user = None
 	error = None
@@ -1826,7 +1826,7 @@ def mobile_fetch_comments_for_shipment():
 
 @application.route('/mDeleteShipmentPhoto',methods=['POST'])
 def mobile_delete_shipment_photo():
-	dict = json.loads(str(request.data))
+	dict = request.data
 	access_token = None
 	user = None
 	error = None
@@ -2020,7 +2020,7 @@ def save_shipment_photo(hashName, shipment) :
 
 	return retVal
 
-if __name__ == "__main__":
+if __name__ == "__main__" :
 	application.run(debug=True,host='0.0.0.0',port=8888)
 	# application.run(debug=True,host='172.20.10.4',port=9999)
 

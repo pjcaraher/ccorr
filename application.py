@@ -774,6 +774,8 @@ def send_ses(recipient, subject, text, html=None) :
 	# Display an error if something goes wrong.
 	except ClientError as e:
 		print(e.response['Error']['Message'])
+	except Exception as ex:
+		print(ex)
 	else:
 		print("Email sent! Message ID:"),
 		print(response['MessageId'])
